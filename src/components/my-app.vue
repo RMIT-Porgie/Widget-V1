@@ -43,24 +43,19 @@ export default {
                             type: "Feature",
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }]
-                        
                 },
-                // folder: {
-                //     id: "tree-folder",
-                //     name: "Trees Folder"
-                // },
                 layer: {
                     id: "tree-layer",
                     name: "tree POI",
                 },
-                // render: {
-                //     anchor: true,
-                //     color: "rgb(255,255,255)",
-                //     scale: [0.5, 0.5, 0.5],
-                //     shape: "billboard",
-                //     switchDistance: 500,
-                //     opacity: 1
-                // }
+                render: {
+                    anchor: true,
+                    color: "rgb(0,255,0)",
+                    scale: [1, 1, 1],
+                    shape: "sphere",
+                    switchDistance: 500,
+                    opacity: 1
+                }
             },
         }
     },
