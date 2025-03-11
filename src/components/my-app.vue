@@ -31,6 +31,10 @@ export default {
             x: null,
             y: null,
             z: null,
+            colorInterval: null,
+            hue: 0,
+            colorIndex: 0,
+            colors: ['rgb(255,0,0)', 'rgb(0,0,255)', 'rgb(0,255,0)'],
 
             tree_coordinate: {
                 widgetID: widget.id,
@@ -66,8 +70,11 @@ export default {
         console.log("App mounted");
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
-        this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.world_on_click_coordinate);
-
+    },
+    beforeUnmount() {
+        if (this.colorInterval) {
+            clearInterval(this.colorInterval);
+        }
     },
     methods: {
         handleWorldClick(res) {
@@ -78,8 +85,41 @@ export default {
         },
         createPoint() {
             console.log("Creating Point");
-            // this.world_on_click_coordinate.geojson.features[0].geometry.coordinates = [this.x, this.y, this.z];
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
+            // Start color animation
+            this.startColorAnimation();
+        },
+        startColorAnimation() {
+            if (this.colorInterval) {
+                clearInterval(this.colorInterval);
+            }
+            
+            let count = 0;
+            this.colorIndex = 0;
+            
+            this.colorInterval = setInterval(() => {
+                const updateContent = {
+                    widgetID: widget.id,
+                    layerID: "tree-layer",
+                    geojson: {
+                        type: "FeatureCollection",
+                        features: this.tree_coordinate.geojson.features,
+                        render: {
+                            ...this.tree_coordinate.render,
+                            color: this.colors[this.colorIndex]
+                        }
+                    }
+                };
+                
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
+                
+                this.colorIndex = (this.colorIndex + 1) % 3;
+                count++;
+                
+                if (count >= 10) {
+                    clearInterval(this.colorInterval);
+                }
+            }, 1000); // Update every 1 second
         }
     }
 };
