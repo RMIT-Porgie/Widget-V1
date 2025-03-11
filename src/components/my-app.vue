@@ -2,7 +2,7 @@
     <v-app>
         <v-main>
             <v-container>
-                <h1>{{ message }}</h1>
+                <h1>Hello World From RMIT</h1>
             </v-container>
         </v-main>
     </v-app>
@@ -13,22 +13,25 @@ import { widget } from "@widget-lab/3ddashboard-utils";
 import { mapStores } from "pinia";
 import { useGlobalStore } from "@/store/global";
 
-console.debug(widget);
-
 export default {
     name: "App",
     data() {
         return {
-            message: "hello world from RMIT"
+
         };
     },
     computed: {
         ...mapStores(useGlobalStore)
     },
+    async mounted() {
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+    },
     methods: {
-        click() {
-            this.message = "hello world from RMIT";
-            this.globalStore.setTitle("Widget");
+        // on world click, console log the you have clicked on the world
+        onWorldSelected() {
+            this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", (data) => {
+                console.log("You have clicked on the world");
+            });
         }
     }
 };
