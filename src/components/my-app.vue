@@ -3,6 +3,11 @@
         <v-main>
             <v-container>
                 <h1>Hello World From RMIT</h1>
+                <div>
+                    <p>X: {{ x }}</p>
+                    <p>Y: {{ y }}</p>
+                    <p>Z: {{ z }}</p>
+                </div>
             </v-container>
         </v-main>
     </v-app>
@@ -17,7 +22,9 @@ export default {
     name: "App",
     data() {
         return {
-
+            x: null,
+            y: null,
+            z: null
         };
     },
     computed: {
@@ -30,6 +37,9 @@ export default {
     methods: {
         handleWorldClick(res) {
             console.log("World Clicked", res);
+            this.x = res.x;
+            this.y = res.y;
+            this.z = res.z;
         }
     }
 };
