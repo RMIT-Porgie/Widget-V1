@@ -25,13 +25,12 @@ export default {
     },
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", res => console.log(res));
+        this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
     },
     methods: {
-        // on world click, console log the you have clicked on the world
-        // onWorldClick() {
-        //     this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", res => console.log(res));
-        // }
+        handleWorldClick(res) {
+            console.log("World Clicked", res);
+        }
     }
 };
 </script>
