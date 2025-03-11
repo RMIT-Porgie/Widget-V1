@@ -30,13 +30,35 @@ export default {
                 geojson: {
                     type: "FeatureCollection",
                     name: "sensor-points",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::3857" } },
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
                     features: [
                         {
                             type: "Feature",
                             properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
-                            geometry: { type: "Point", coordinates: [this.x, this.y, this.z] }
+                            geometry: { type: "Point", coordinates: [0, 0, 0] }
                         }]
+                },
+                layer: {
+                    id: "sensor-layer",
+                    name: "Sensors POI",
+                    // attributeMapping: {
+                    //     "STRID": "id",
+                    //     "Temperature": "currentTemperature",
+                    //     "Humidity": "currentHumidity",
+                    //     "Wind Speed": "currentWindSpeed"
+                    // }
+                },
+                folder: {
+                    id: "sensor-folder",
+                    name: "Sensors Folder"
+                },
+                render: {
+                    anchor: true,
+                    color: "rgb(255,255,255)",
+                    scale: [0.5, 0.5, 0.5],
+                    shape: "billboard",
+                    switchDistance: 500,
+                    opacity: 1
                 }
             },
         }
@@ -57,7 +79,7 @@ export default {
             this.z = res.z;
             
             this.world_on_click_coordinate.geojson.features[0].geometry.coordinates = [this.x, this.y, this.z];
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.world_on_click_coordinate);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.world_on_click_coordinate);
         }
     }
 };
