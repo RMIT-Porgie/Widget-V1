@@ -84,20 +84,24 @@ export default {
             this.z = res.z;
         },
         createPoint() {
-            console.log("Creating Point");
+            console.log("Creating Point with initial color:", this.tree_coordinate.render.color);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
-            // Start color animation
             this.startColorAnimation();
         },
         startColorAnimation() {
+            console.log("Starting color animation");
             if (this.colorInterval) {
                 clearInterval(this.colorInterval);
+                console.log("Cleared previous interval");
             }
             
             let count = 0;
             this.colorIndex = 0;
             
             this.colorInterval = setInterval(() => {
+                const currentColor = this.colors[this.colorIndex];
+                console.log(`Animation iteration ${count + 1}/10: Setting color to ${currentColor}`);
+                
                 const updateContent = {
                     widgetID: widget.id,
                     layerID: "tree-layer",
@@ -106,20 +110,27 @@ export default {
                         features: this.tree_coordinate.geojson.features,
                         render: {
                             ...this.tree_coordinate.render,
-                            color: this.colors[this.colorIndex]
+                            color: currentColor
                         }
                     }
                 };
                 
+                console.log("Publishing update with content:", updateContent);
                 this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
                 
                 this.colorIndex = (this.colorIndex + 1) % 3;
                 count++;
                 
                 if (count >= 10) {
+                    console.log("Animation complete - clearing interval");
                     clearInterval(this.colorInterval);
                 }
-            }, 1000); // Update every 1 second
+            }, 1000);
+            
+            // Subscribe to the return event to check for any errors
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", (response) => {
+                console.log("Update3DPOIContent response:", response);
+            });
         }
     }
 };
