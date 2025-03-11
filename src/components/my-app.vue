@@ -7,6 +7,12 @@
                     <p>X: {{ x }}</p>
                     <p>Y: {{ y }}</p>
                     <p>Z: {{ z }}</p>
+                    <v-btn 
+                        color="primary" 
+                        @click="createPoint"
+                    >
+                        Create Point
+                    </v-btn>
                 </div>
             </v-container>
         </v-main>
@@ -26,7 +32,7 @@ export default {
             y: null,
             z: null,
 
-            world_on_click_coordinate: {
+            tree_coordinate: {
                 widgetID: widget.id,
                 geojson: {
                     type: "FeatureCollection",
@@ -70,12 +76,15 @@ export default {
     },
     methods: {
         handleWorldClick(res) {
-            console.log("World Clicked", res);
+            console.log("World Clicked Millie Says", res);
             this.x = res.x;
             this.y = res.y;
             this.z = res.z;
-            
+        },
+        createPoint() {
+            console.log("Creating Point");
             // this.world_on_click_coordinate.geojson.features[0].geometry.coordinates = [this.x, this.y, this.z];
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
         }
     }
 };
