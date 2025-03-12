@@ -30,6 +30,14 @@
                     >
                         Set Temperature to 10
                     </v-btn>
+                    <v-btn 
+                        color="info" 
+                        class="ml-2"
+                        @click="updateTemperature"
+                        :disabled="!pointExists"
+                    >
+                        Update Temperature to 10
+                    </v-btn>
                 </div>
             </v-container>
         </v-main>
@@ -126,6 +134,35 @@ export default {
             
             // Update local state to match
             this.tree_coordinate.geojson.features[0].properties.Temperature = 10;
+        },
+
+        updateTemperature() {
+            console.log("Updating temperature to 10 using Update3DPOIContent");
+            
+            // Update local state
+            this.tree_coordinate.geojson.features[0].properties.Temperature = 10;
+            
+            const updateContent = {
+                widgetID: widget.id,
+                layerID: "tree-layer",
+                geojson: {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: { ...this.tree_coordinate.geojson.features[0].properties },
+                            geometry: this.tree_coordinate.geojson.features[0].geometry
+                        }
+                    ]
+                }
+            };
+            
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
+            
+            // Subscribe to return event
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", (response) => {
+                console.log("Update3DPOIContent response:", response);
+            });
         }
     }
 };
