@@ -22,6 +22,14 @@
                     >
                         Remove Point
                     </v-btn>
+                    <v-btn 
+                        color="warning" 
+                        class="ml-2"
+                        @click="setTemperature"
+                        :disabled="!pointExists"
+                    >
+                        Set Temperature to 10
+                    </v-btn>
                 </div>
             </v-container>
         </v-main>
@@ -68,8 +76,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "blue",
-                    scale: [0.5, 0.5, 0.5],
-                    shape: "sphere",
+                    scale: [5, 5, 20],
+                    shape: "tube",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -85,12 +93,6 @@ export default {
         console.log("App mounted");
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
-        this.startTemperatureUpdate();
-    },
-    beforeUnmount() {
-        if (this.temperatureInterval) {
-            clearInterval(this.temperatureInterval);
-        }
     },
 
     methods: {
@@ -115,6 +117,15 @@ export default {
             console.log("Removing Point");
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
             this.pointExists = false;
+        },
+
+        setTemperature() {
+            console.log("Setting temperature to 10");
+            const setArray = ["tree-layer", "currentTemperature", 10];
+            this.platformAPI.publish("3DEXPERIENCity.Set", setArray);
+            
+            // Update local state to match
+            this.tree_coordinate.geojson.features[0].properties.Temperature = 10;
         }
     }
 };
