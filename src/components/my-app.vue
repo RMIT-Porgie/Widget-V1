@@ -9,9 +9,16 @@
                     <p>Z: {{ z }}</p>
                     <v-btn 
                         color="primary" 
+                        class="mr-2"
                         @click="createPoint"
                     >
                         Create Point
+                    </v-btn>
+                    <v-btn 
+                        color="secondary" 
+                        @click="changeColor"
+                    >
+                        Change Color
                     </v-btn>
                 </div>
             </v-container>
@@ -31,11 +38,9 @@ export default {
             x: null,
             y: null,
             z: null,
-            colorInterval: null,
-            hue: 0,
+            pointCreated: false,
             colorIndex: 0,
             colors: ['rgb(255,0,0)', 'rgb(0,0,255)', 'rgb(0,255,0)'],
-
             tree_coordinate: {
                 widgetID: widget.id,
                 geojson: {
@@ -71,11 +76,6 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
     },
-    beforeUnmount() {
-        if (this.colorInterval) {
-            clearInterval(this.colorInterval);
-        }
-    },
     methods: {
         handleWorldClick(res) {
             console.log("World Clicked Millie Says", res);
@@ -84,53 +84,29 @@ export default {
             this.z = res.z;
         },
         createPoint() {
-            console.log("Creating Point with initial color:", this.tree_coordinate.render.color);
+            console.log("Creating Point");
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
-            this.startColorAnimation();
+            this.pointCreated = true;
         },
-        startColorAnimation() {
-            console.log("Starting color animation");
-            if (this.colorInterval) {
-                clearInterval(this.colorInterval);
-                console.log("Cleared previous interval");
-            }
+        changeColor() {
+            this.colorIndex = (this.colorIndex + 1) % 3;
+            const currentColor = this.colors[this.colorIndex];
+            console.log("Changing color to:", currentColor);
             
-            let count = 0;
-            this.colorIndex = 0;
-            
-            this.colorInterval = setInterval(() => {
-                const currentColor = this.colors[this.colorIndex];
-                console.log(`Animation iteration ${count + 1}/10: Setting color to ${currentColor}`);
-                
-                const updateContent = {
-                    widgetID: widget.id,
-                    layerID: "tree-layer",
-                    geojson: {
-                        type: "FeatureCollection",
-                        features: this.tree_coordinate.geojson.features,
-                        render: {
-                            ...this.tree_coordinate.render,
-                            color: currentColor
-                        }
+            const updateContent = {
+                widgetID: widget.id,
+                layerID: "tree-layer",
+                geojson: {
+                    type: "FeatureCollection",
+                    features: this.tree_coordinate.geojson.features,
+                    render: {
+                        ...this.tree_coordinate.render,
+                        color: currentColor
                     }
-                };
-                
-                console.log("Publishing update with content:", updateContent);
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
-                
-                this.colorIndex = (this.colorIndex + 1) % 3;
-                count++;
-                
-                if (count >= 10) {
-                    console.log("Animation complete - clearing interval");
-                    clearInterval(this.colorInterval);
                 }
-            }, 1000);
+            };
             
-            // Subscribe to the return event to check for any errors
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", (response) => {
-                console.log("Update3DPOIContent response:", response);
-            });
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
         }
     }
 };
