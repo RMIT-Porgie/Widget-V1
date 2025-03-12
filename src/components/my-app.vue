@@ -98,6 +98,10 @@ export default {
         createPoint() {
             console.log("Creating Point");
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
+            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOISetReturn", (res) => {
+                console.log("MIlle Says Add3DPOISetReturn", res);
+            });
+
             this.pointExists = true;
         },
 
