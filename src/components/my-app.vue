@@ -14,6 +14,14 @@
                     >
                         Create Point
                     </v-btn>
+                    <v-btn 
+                        color="error" 
+                        class="ml-2"
+                        @click="removePoint"
+                        :disabled="!pointExists"
+                    >
+                        Remove Point
+                    </v-btn>
                 </div>
             </v-container>
         </v-main>
@@ -60,6 +68,7 @@ export default {
                 }
             },
             temperatureInterval: null,
+            pointExists: false,
         }
     },
     computed: {
@@ -89,23 +98,13 @@ export default {
         createPoint() {
             console.log("Creating Point");
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
-            this.pointCreated = true;
+            this.pointExists = true;
         },
 
-        startTemperatureUpdate() {
-            this.temperatureInterval = setInterval(() => {
-                this.tree_coordinate.geojson.features[0].properties.Temperature += 1;
-                
-                // Update POI with new temperature
-                const updateContent = {
-                    widgetID: widget.id,
-                    layerID: "tree-layer",
-                    geojson: this.tree_coordinate.geojson
-                };
-                
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
-                console.log("Temperature updated:", this.tree_coordinate.geojson.features[0].properties.Temperature);
-            }, 1000);
+        removePoint() {
+            console.log("Removing Point");
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
+            this.pointExists = false;
         }
     }
 };
