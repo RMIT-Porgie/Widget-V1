@@ -74,7 +74,6 @@ export default {
                     opacity: 1
                 }
             },
-            temperatureInterval: null,
             pointExists: false,
         }
     },
