@@ -58,12 +58,19 @@ export default {
                 layer: {
                     id: "tree-layer",
                     name: "tree POI",
+                    attributeMapping: {
+                        "STRID": "id",
+                        "Temperature": "currentTemperature",
+                        "Humidity": "currentHumidity",
+                        "Wind Speed": "currentWindSpeed"
+                    }
                 },
                 render: {
                     anchor: true,
                     color: "blue",
-                    scale: [1, 1, 1],
+                    scale: [0.5, 0.5, 0.5],
                     shape: "sphere",
+                    switchDistance: 500,
                     opacity: 1
                 }
             },
