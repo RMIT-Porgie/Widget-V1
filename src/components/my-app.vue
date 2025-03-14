@@ -24,6 +24,7 @@
 import { widget } from "@widget-lab/3ddashboard-utils";
 import { mapStores } from "pinia";
 import { useGlobalStore } from "@/store/global";
+import mqtt from "mqtt";
 
 export default {
     name: "App",
@@ -95,13 +96,31 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         
-        // Start temperature update interval (changed to 10000ms)
-        this.temperatureInterval = setInterval(this.updateTemperatureAutomatic, 10000);
+        // Connect to MQTT broker
+        this.mqttClient = mqtt.connect('mqtt://54.206.8.7:1883');
+        
+        this.mqttClient.on('connect', () => {
+            console.log('Connected to MQTT broker');
+            this.mqttClient.subscribe('sensor/temperature');
+        });
+
+        this.mqttClient.on('message', (topic, message) => {
+            if (topic === 'sensor/temperature') {
+                this.currentTemperature = parseFloat(message.toString());
+                if (this.pointExists) {
+                    this.updateTemperatureAutomatic();
+                }
+            }
+        });
     },
 
     beforeUnmount() {
         if (this.temperatureInterval) {
             clearInterval(this.temperatureInterval);
+        }
+        // Cleanup MQTT connection
+        if (this.mqttClient) {
+            this.mqttClient.end();
         }
     },
 
@@ -192,7 +211,7 @@ export default {
         updateTemperatureAutomatic() {
             if (!this.pointExists) return;
             
-            this.currentTemperature += 1;
+            // No longer incrementing temperature as it comes from MQTT
             const updateContent = {
                 widgetID: widget.id,
                 layerID: "tree-layer",
