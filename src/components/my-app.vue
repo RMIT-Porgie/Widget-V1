@@ -11,7 +11,7 @@
                     <v-btn color="primary" class="mr-2" @click="create3DPOISet"> Create Point SET</v-btn>
                     <v-btn color="primary" class="mr-2" @click="create3DPOISetPopulate"> Create Point SET Populate </v-btn>
                     <v-btn color="primary" class="mr-2" @click="create3DPOILine"> Create Line </v-btn>
-                    
+
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
                     <v-btn color="warning" class="ml-2" @click="setTemperature" :disabled="!pointExists"> Set Temperature to 10 </v-btn>
                     <v-btn color="info" class="ml-2" @click="updateTemperature" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
@@ -25,7 +25,7 @@
 import { widget } from "@widget-lab/3ddashboard-utils";
 import { mapStores } from "pinia";
 import { useGlobalStore } from "@/store/global";
-import mqtt from "mqtt";
+// import mqtt from "mqtt";
 
 export default {
     name: "App",
@@ -94,49 +94,49 @@ export default {
 
     async mounted() {
         console.log("App mounted");
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         
-        // Connect to MQTT broker using WebSocket
-        const options = {
-            protocol: 'ws',
-            hostname: '54.206.8.77',
-            port: 8083,
-            path: '/mqtt',
-            clientId: 'widget_' + Math.random().toString(16).substr(2, 8)
-        };
+    //     // Connect to MQTT broker using WebSocket
+    //     const options = {
+    //         protocol: 'ws',
+    //         hostname: '54.206.8.77',
+    //         port: 8083,
+    //         path: '/mqtt',
+    //         clientId: 'widget_' + Math.random().toString(16).substr(2, 8)
+    //     };
         
-        // this.mqttClient = mqtt.connect(options);
-        this.mqttClient = mqtt.connect('ws://54.206.8.77:8083');
+    //     // this.mqttClient = mqtt.connect(options);
+    //     this.mqttClient = mqtt.connect('ws://54.206.8.77:8083');
         
-        this.mqttClient.on('connect', () => {
-            console.log('Connected to MQTT broker');
-            this.mqttClient.subscribe('sensor/temperature');
-        });
+    //     this.mqttClient.on('connect', () => {
+    //         console.log('Connected to MQTT broker');
+    //         this.mqttClient.subscribe('sensor/temperature');
+    //     });
 
-        this.mqttClient.on('error', (error) => {
-            console.error('MQTT connection error:', error);
-        });
+    //     this.mqttClient.on('error', (error) => {
+    //         console.error('MQTT connection error:', error);
+    //     });
 
-        this.mqttClient.on('message', (topic, message) => {
-            if (topic === 'sensor/temperature') {
-                this.currentTemperature = parseFloat(message.toString());
-                if (this.pointExists) {
-                    this.updateTemperatureAutomatic();
-                }
-            }
-        });
+    //     this.mqttClient.on('message', (topic, message) => {
+    //         if (topic === 'sensor/temperature') {
+    //             this.currentTemperature = parseFloat(message.toString());
+    //             if (this.pointExists) {
+    //                 this.updateTemperatureAutomatic();
+    //             }
+    //         }
+    //     });
     },
 
-    beforeUnmount() {
-        if (this.temperatureInterval) {
-            clearInterval(this.temperatureInterval);
-        }
-        // Cleanup MQTT connection
-        if (this.mqttClient) {
-            this.mqttClient.end();
-        }
-    },
+    // beforeUnmount() {
+    //     if (this.temperatureInterval) {
+    //         clearInterval(this.temperatureInterval);
+    //     }
+    //     // Cleanup MQTT connection
+    //     if (this.mqttClient) {
+    //         this.mqttClient.end();
+    //     }
+    // },
 
     methods: {
         handleWorldClick(res) {
