@@ -95,8 +95,8 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         
-        // Start temperature update interval
-        this.temperatureInterval = setInterval(this.updateTemperatureAutomatic, 5000);
+        // Start temperature update interval (changed to 10000ms)
+        this.temperatureInterval = setInterval(this.updateTemperatureAutomatic, 10000);
     },
 
     beforeUnmount() {
