@@ -48,7 +48,13 @@ export default {
                             type: "Feature",
                             properties: { "id": 0, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
-                            // geometry: { type: "Point", coordinates: [this.x, this.y, this.z] }
+                       
+                        },
+                        {
+                            type: "Feature",
+                            properties: { "id": 0, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
+                            geometry: { type: "Point", coordinates: [344748.34285080613, 5966162.11668492, 120.66504647215706] }
+                       
                         }
                     ]
                 },
@@ -133,6 +139,12 @@ export default {
                             type: "Feature",
                             properties: { "id": 0, "Temperature": 10, "Humidity": 10, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
+                        },
+                        {
+                            type: "Feature",
+                            properties: { "id": 0, "Temperature": 10, "Humidity": 0, "Wind Speed": 10 },
+                            geometry: { type: "Point", coordinates: [344748.34285080613, 5966162.11668492, 120.66504647215706] }
+                       
                         }
                     ]
                 }
