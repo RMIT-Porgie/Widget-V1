@@ -3,12 +3,6 @@
         <v-main>
             <v-container style="background: white; min-height: 100vh">
                 <h1>Hello World From RMIT</h1>
-                <div class="temperature-display mb-4">
-                    <h2>Current Temperature</h2>
-                    <v-card elevation="2" class="pa-4 text-center">
-                        <span class="text-h3">{{ currentTemperature }}°C</span>
-                    </v-card>
-                </div>
                 <div>
                     <p>X: {{ x }}</p>
                     <p>Y: {{ y }}</p>
@@ -61,6 +55,12 @@ export default {
                         }
                     ]
                 },
+
+                folder: {
+                    id:"tree-folder",
+                    name: "tree folder",
+                },
+
                 layer: {
                     id: "tree-layer",
                     name: "tree POI",
