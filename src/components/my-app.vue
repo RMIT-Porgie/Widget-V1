@@ -96,9 +96,9 @@ export default {
 
         createPoint() {
             console.log("Creating Point");
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOISet", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOISetReturn", res => {
-                console.log("MIlle Says Add3DPOISetReturn", res);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
+            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+                console.log("MIlle Says Add3DPOIReturn", res);
             });
 
             this.pointExists = true;
@@ -120,7 +120,6 @@ export default {
         },
 
         updateTemperature() {
-            console.log(`Updating temperature to ${temp} using Update3DPOIContent`);
 
             const updateContent = {
                 widgetID: widget.id,
