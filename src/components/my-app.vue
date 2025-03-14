@@ -49,7 +49,7 @@ export default {
                         },
                         {
                             type: "Feature",
-                            properties: { "id": 0, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
+                            properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344748.34285080613, 5966162.11668492, 120.66504647215706] }
                        
                         }
