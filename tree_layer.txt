@@ -1,0 +1,342 @@
+{
+    "impl": {
+        "name": "sundial_orchard_tree_information",
+        "description": "",
+        "tags": [],
+        "visible": true,
+        "selectable": true,
+        "selected": true,
+        "hoverable": false,
+        "hovered": false,
+        "PointOfView": null,
+        "Content": {
+            "pickable": true,
+            "renderID": "",
+            "objectId": "3376d5ea-a8ee-4c8f-a41f-71d2875eab9f",
+            "loadInfo": {
+                "loaded": 41,
+                "total": 41
+            },
+            "levelMin": 7,
+            "levelMax": 9,
+            "priority": 3,
+            "priorityOffset": 1,
+            "cache": 0,
+            "lodBias": 0,
+            "AABBox": {
+                "min": [
+                    344693.213288,
+                    5966110.307559
+                ],
+                "max": [
+                    344812.221841,
+                    5966229.309459
+                ]
+            },
+            "Clustering": {
+                "enable": false
+            },
+            "type": "json",
+            "url": "%globe%/datasupplier/dataset/3376d5ea-a8ee-4c8f-a41f-71d2875eab9f/%l/%x/%y?tenant=R1132100907295",
+            "listenToDateUpdate": false,
+            "upTime": "",
+            "downTime": "",
+            "invertY": true,
+            "alternUrl": "",
+            "alternDict": [],
+            "geolocalized": true,
+            "interactionBehaviours": {
+                "onSelect": {
+                    "label": true
+                },
+                "onHover": {
+                    "label": true
+                }
+            },
+            "id": "f9f16202-6360-43bb-8f12-c6aa5d8efff7",
+            "userData": {
+                "datasetType": "SimpleFeature",
+                "cache": {
+                    "dataset": {
+                        "uuid": "3376d5ea-a8ee-4c8f-a41f-71d2875eab9f",
+                        "name": "sundial_orchard_tree_information",
+                        "referentialUuid": "010d0b08-d31b-4df0-9f07-2af66917c369",
+                        "enoviaPhysicalId": "F133FC5B431A210067ABEBE300004BF4",
+                        "geometry": "POLYGON((344693.2132880000 5966110.3075590000, 344812.2218410000 5966110.3075590000, 344812.2218410000 5966229.3094590000, 344693.2132880000 5966229.3094590000, 344693.2132880000 5966110.3075590000))",
+                        "state": "Ready",
+                        "published": false,
+                        "query": {
+                            "filterList": [
+                                [
+                                    {
+                                        "operator": "equals",
+                                        "attribute": "geoItemSourceUuid",
+                                        "value": "94d5d73e-fa0c-4376-8998-c7c6d4e391f3"
+                                    }
+                                ]
+                            ]
+                        },
+                        "outputFormat": "Json",
+                        "customization": {
+                            "startLevel": 7,
+                            "endLevel": 9,
+                            "maxElementByTile": 200,
+                            "pushedToSGI": false,
+                            "byGeoItemTypeCustomizationMap": {
+                                "SimpleFeature": {
+                                    "exposedAttributeList": [
+                                        {
+                                            "name": "StreamPriority",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "STRID",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "NAME",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "LifespanStart",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "LifespanEnd",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "fruit_type",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "latitude",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "longitude",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "plot",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "row",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        }
+                                    ],
+                                    "exposeAllAttributes": false
+                                }
+                            },
+                            "storedInIndex": true,
+                            "automaticUpdate": false
+                        },
+                        "analytics": {
+                            "count": 1439,
+                            "sourceOriginList": {
+                                "94d5d73e-fa0c-4376-8998-c7c6d4e391f3": {
+                                    "count": 1439,
+                                    "requestedGeoItemCount": 1439
+                                }
+                            },
+                            "geoItemTypeList": {
+                                "SimpleFeature": {
+                                    "count": 1439
+                                }
+                            },
+                            "geometryTypeList": {
+                                "Point2D": {
+                                    "count": 1439
+                                }
+                            },
+                            "attributeList": [
+                                {
+                                    "name": "latitude",
+                                    "count": 1439,
+                                    "type": "Real",
+                                    "min": -36.4377,
+                                    "max": -36.4366,
+                                    "sum": -52433.05520000046,
+                                    "average": -36.43714746351665,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "fruit_type",
+                                    "count": 1439,
+                                    "type": "String",
+                                    "min": "Apple",
+                                    "max": "Nectarine",
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "StreamPriority",
+                                    "count": 1439,
+                                    "type": "Real",
+                                    "min": 1,
+                                    "max": 1,
+                                    "sum": 1439,
+                                    "average": 1,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "STRID",
+                                    "count": 1439,
+                                    "type": "String",
+                                    "min": "T_00170709-FA9B-4064-AC53-913DF606BBC0",
+                                    "max": "T_FFF2721D-AFA6-4CAF-980A-0C0B5554372E",
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "plot",
+                                    "count": 1439,
+                                    "type": "Integer",
+                                    "min": 1,
+                                    "max": 76,
+                                    "sum": 71279,
+                                    "average": 49.533703961084086,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "row",
+                                    "count": 1439,
+                                    "type": "Integer",
+                                    "min": 1,
+                                    "max": 40,
+                                    "sum": 29519,
+                                    "average": 20.5135510771369,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "longitude",
+                                    "count": 1439,
+                                    "type": "Real",
+                                    "min": 145.2673,
+                                    "max": 145.2686,
+                                    "sum": 209040.5677999998,
+                                    "average": 145.2679414871437,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "sourceFilename",
+                                    "count": 1439,
+                                    "type": "String",
+                                    "min": "sundial_orchard_tree_information.geojson",
+                                    "max": "sundial_orchard_tree_information.geojson",
+                                    "sortable": false
+                                },
+                                {
+                                    "name": "ORIENT",
+                                    "count": 1439,
+                                    "type": "String",
+                                    "min": "0.0 0.0 0.0",
+                                    "max": "0.0 0.0 0.0",
+                                    "sortable": false
+                                },
+                                {
+                                    "name": "SCALE",
+                                    "count": 1439,
+                                    "type": "String",
+                                    "min": "1.0 1.0 1.0",
+                                    "max": "1.0 1.0 1.0",
+                                    "sortable": false
+                                },
+                                {
+                                    "name": "TRANS",
+                                    "count": 1439,
+                                    "type": "String",
+                                    "min": "344693.213288 5966166.312545 0.0",
+                                    "max": "344812.221841 5966166.293774 0.0",
+                                    "sortable": false
+                                }
+                            ],
+                            "storageInMB": 1.661121
+                        },
+                        "createdBy": "georgewurmit",
+                        "lastModifiedBy": "georgewurmit",
+                        "creationDate": "2025-02-12T00:31:44.927Z",
+                        "lastModificationDate": "2025-02-12T00:38:26.942Z",
+                        "lastReadinessTimestamp": "1739320706942",
+                        "style": {
+                            "insource": false,
+                            "customized": false
+                        },
+                        "revision": 0,
+                        "revisionList": [],
+                        "outdatedOriginList": [],
+                        "pnOAccessModel": {
+                            "showAccess": true,
+                            "downloadAccess": true,
+                            "modifyAccess": true,
+                            "deleteAccess": true
+                        },
+                        "type": "SimpleFeature",
+                        "bbox": {
+                            "height": 119.00189999956638,
+                            "width": 119.00855299999239,
+                            "xmax": 344812.221841,
+                            "xmin": 344693.213288,
+                            "ymax": 5966229.309459,
+                            "ymin": 5966110.307559
+                        },
+                        "startLevel": 7,
+                        "endLevel": 9,
+                        "geoItemCount": 1439,
+                        "geometryTypeList": {
+                            "Point2D": {
+                                "count": 1439
+                            }
+                        },
+                        "exposedAttributeList": [
+                            "StreamPriority",
+                            "STRID",
+                            "NAME",
+                            "LifespanStart",
+                            "LifespanEnd",
+                            "StreamPriority",
+                            "STRID",
+                            "NAME",
+                            "LifespanStart",
+                            "LifespanEnd",
+                            "fruit_type",
+                            "latitude",
+                            "longitude",
+                            "plot",
+                            "row"
+                        ]
+                    }
+                }
+            },
+            "className": "RdbLink",
+            "Factory": {
+                "className": "Pointofinterest3d",
+                "shapeType": "sphere",
+                "nameAttribute": "NAME",
+                "heightAttribute": 10,
+                "renderAnchor": true,
+                "switchDistance": 500,
+                "alwaysDisplayText": false
+            }
+        },
+        "Credits": null,
+        "loadInfo": {
+            "loaded": 41,
+            "total": 41
+        },
+        "children": [],
+        "exclusive": false,
+        "opened": true,
+        "id": "6b61c59f-5006-4b93-99c7-85ec961d05cf",
+        "className": "Folder"
+    }
+}

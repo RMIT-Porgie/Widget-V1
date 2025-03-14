@@ -1,0 +1,255 @@
+{
+    "impl": {
+        "name": "tree POI",
+        "description": "",
+        "tags": [],
+        "visible": true,
+        "selectable": true,
+        "selected": true,
+        "hoverable": false,
+        "hovered": false,
+        "PointOfView": null,
+        "Content": {
+            "pickable": true,
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "projection": null,
+            "shifted": false,
+            "altitudeMode": "absolute",
+            "url": "",
+            "geojson": "{\"type\":\"FeatureCollection\",\"name\":\"tree_coordinates\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::7855\"}},\"features\":[{\"type\":\"Feature\",\"properties\":{\"id\":0,\"Temperature\":0,\"Humidity\":0,\"Wind Speed\":0},\"geometry\":{\"type\":\"Point\",\"coordinates\":[344743.73853630596,5966167.156872547,120.72197453345325]}},{\"type\":\"Feature\",\"properties\":{\"id\":1,\"Temperature\":0,\"Humidity\":0,\"Wind Speed\":0},\"geometry\":{\"type\":\"Point\",\"coordinates\":[344748.34285080613,5966162.11668492,120.66504647215706]}}]}",
+            "type": "json",
+            "styleClass": "",
+            "shapeType": "tube",
+            "nbVertices": 300,
+            "shadingMode": "smooth",
+            "_renderMode": "occluded",
+            "renderType": "icon",
+            "opacityFactor": 0.3,
+            "altitude": 0,
+            "height": 10,
+            "switchDistance": 500,
+            "samplingFactor": 1,
+            "renderAnchor": true,
+            "anchorLineWidth": 2,
+            "scale": 8,
+            "orientation": 0,
+            "renderID": "",
+            "Rendering": {
+                "Material": {
+                    "opacity": 1,
+                    "wireframe": false,
+                    "alphaTest": 0.01,
+                    "side": 0,
+                    "specular": "#000000",
+                    "ambient": "#0000ff",
+                    "diffuse": "#0000ff",
+                    "depthTest": true,
+                    "depthWrite": true,
+                    "shininess": 1,
+                    "color": "#0000ff",
+                    "renderingDescription": "",
+                    "label": {
+                        "enable": false,
+                        "name": "",
+                        "styleName": "default",
+                        "position": {
+                            "mode": "billboard",
+                            "rotation": [
+                                0,
+                                0,
+                                0
+                            ],
+                            "geometryOffset": [
+                                0,
+                                0.5,
+                                0
+                            ],
+                            "labelOffset": [
+                                0,
+                                0.5
+                            ],
+                            "offset": [
+                                0,
+                                0,
+                                0
+                            ],
+                            "enableAutomaticFlip": false,
+                            "isAligned": false,
+                            "isRepeated": false
+                        },
+                        "style": {
+                            "background-color": "transparent",
+                            "border": "medium none color",
+                            "border-bottom": "medium none color",
+                            "border-left": "medium none color",
+                            "border-radius": "0px",
+                            "border-right": "medium none color",
+                            "border-top": "medium none color",
+                            "color": "#ffffff",
+                            "font-family": "Arial",
+                            "font-size": "12px",
+                            "font-style": "normal",
+                            "font-weight": "bold",
+                            "letter-spacing": "0.5px",
+                            "line-height": "124%",
+                            "opacity": "1",
+                            "padding": "3px 7px",
+                            "text-align": "left",
+                            "text-decoration": "none currentcolor solid",
+                            "text-shadow": "-1px -1px 0 rgb(0,0,0), 1px -1px 0 rgb(0,0,0), -1px 1px 0 rgb(0,0,0), 1px 1px 0 rgb(0,0,0), 0 -1px 0 rgb(0,0,0), 0 1px 0 rgb(0,0,0), 1px 0 0 rgb(0,0,0), -1px 0 0 rgb(0,0,0)",
+                            "word-spacing": "normal"
+                        }
+                    },
+                    "elevation": 0,
+                    "elevationOffset": 0,
+                    "elevationMode": "geometry",
+                    "scale": [
+                        5,
+                        5,
+                        20
+                    ],
+                    "renderMode": "overlay",
+                    "opacityFactor": 0.3,
+                    "styleClass": "",
+                    "shapeType": "tube",
+                    "nbVertices": [
+                        17,
+                        17
+                    ],
+                    "switchDistance": 500,
+                    "influenceRadius": 20,
+                    "weight": 1,
+                    "boundMin": 1,
+                    "boundMax": 100,
+                    "kernel": 0
+                },
+                "DatavizRendering": {
+                    "3DXCityDefaultLabelName": {
+                        "Filter": {
+                            "logicOps": {
+                                "name": {
+                                    "localPart": "And"
+                                },
+                                "value": {
+                                    "expression": [
+                                        {
+                                            "comparisonOps": {
+                                                "name": {
+                                                    "localPart": "PropertyIsNotNull"
+                                                },
+                                                "value": {
+                                                    "expression": [
+                                                        {
+                                                            "PropertyName": "NAME"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "comparisonOps": {
+                                                "name": {
+                                                    "localPart": "PropertyIsNotEqualTo"
+                                                },
+                                                "value": {
+                                                    "expression": [
+                                                        {
+                                                            "PropertyName": "NAME"
+                                                        },
+                                                        {
+                                                            "Literal": ""
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "DatavizMaterial": {
+                            "label": {
+                                "name": {
+                                    "PropertyName": "NAME"
+                                }
+                            }
+                        }
+                    },
+                    "3DXCityDefaultIDdefaultElevationAttributePoi3d": {
+                        "DatavizMaterial": {
+                            "elevation": {
+                                "Function": {
+                                    "Add": [
+                                        {
+                                            "Function": {
+                                                "toNumber": {
+                                                    "PropertyName": "ALTITUDE"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Function": {
+                                                "toNumber": {
+                                                    "PropertyName": "HEIGHT"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "ElementRendering": [
+                    {
+                        "ElementIds": [
+                            "AllIds"
+                        ],
+                        "ElementMaterial": {
+                            "diffuse": "#ffffff",
+                            "ambient": "#ffffff",
+                            "color": "#ffffff",
+                            "opacity": 1
+                        }
+                    }
+                ]
+            },
+            "Clustering": {
+                "enable": true
+            },
+            "nameAttribute": "NAME",
+            "stridAttribute": "id",
+            "styleClassAttribute": "STYLECLASS",
+            "altitudeAttribute": "ALTITUDE",
+            "heightAttribute": "HEIGHT",
+            "orientationAttribute": "ORIENTATION",
+            "objectId": "",
+            "serviceId": "",
+            "rtreeMin": 5,
+            "rtreeMax": 10,
+            "rtreeCoverageFactor": 2,
+            "magnitude": null,
+            "interactionBehaviours": {
+                "onSelect": {
+                    "label": true
+                },
+                "onHover": {
+                    "label": true
+                }
+            },
+            "id": "2ed92fc5-7d5e-4cb7-9c35-43bedc9081d2",
+            "className": "PointOfInterest3DSet"
+        },
+        "Credits": null,
+        "loadInfo": {
+            "loaded": 1,
+            "total": 1
+        },
+        "id": "tree-layer",
+        "className": "Feature"
+    }
+}
