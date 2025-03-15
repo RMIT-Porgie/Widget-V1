@@ -110,10 +110,9 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 console.log("Mille SAys GetSelectedItemsReturn\n\n\n\n");
 
-            // get the ID, and geoItemUuid
 
-            id = res.data[0].id;
-            geoItemUuid = res.data[0].userData.geoItemUuid;
+            const id = res.data[0].id;
+            const geoItemUuid = res.data[0].userData.geoItemUuid;
 
             console.log("ID", id);
             console.log("geoItemUuid", geoItemUuid);
