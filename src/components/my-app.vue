@@ -113,9 +113,18 @@ export default {
 
             const id = res.data[0].id;
             const geoItemUuid = res.data[0].userData.geoItemUuid;
+            const datasetUuid = res.data[0].userData.datasetUuid;
+            const referentialUuid = res.data[0].userData.referentialUuid;
 
-            console.log("ID", id);
-            console.log("geoItemUuid", geoItemUuid);
+            // create a constant array with the values
+            const id_longtitude = [id, "longitude"];
+            const id_geojson = [id, "geojson"];
+   
+            this.Get(id_geojson)
+            this.Get(id_longtitude)
+
+
+
 
                 
             });
