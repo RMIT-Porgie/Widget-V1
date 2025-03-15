@@ -91,7 +91,7 @@ export default {
 
     methods: {
         handleWorldClick(res) {
-            console.log("World Clicked Millie Says", res);
+            // console.log("World Clicked Millie Says", res);
             this.x = res.x;
             this.y = res.y;
             this.z = res.z;
@@ -100,6 +100,8 @@ export default {
         handleOnItemSelect(res) {
             console.log("Item Selected Millie Says WOWOWOOWOWOWO", res);
             this.GetSelectedItems(res);
+            this.GetListAttributes(res);
+            this.Get(res);
         },
 
         GetSelectedItems(res) {
