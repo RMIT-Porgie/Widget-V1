@@ -8,6 +8,7 @@
                     <p>Y: {{ y }}</p>
                     <p>Z: {{ z }}</p>
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
+
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
                     <v-btn color="info" class="ml-2" @click="updateTemperature" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
                 </div>
@@ -34,7 +35,19 @@ export default {
 
             tree_coordinate: {
                 widgetID: widget.id,
-                geojson: geojson, // Use the imported geojson file
+                // geojson: geojson, // Use the imported geojson file
+                geojson: {
+                    type: "FeatureCollection",
+                    name: "tree_coordinates",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: { "id": 0, "Temperature": 10, "Humidity": 10, "Wind Speed": 0 },
+                            geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
+                        }
+                    ]
+                },
                 folder: {
                     id: "tree-folder",
                     name: "tree folder"
@@ -73,18 +86,8 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemDeselect", this.handleOnItemDeselect);
     },
 
-    // beforeUnmount() {
-    //     if (this.temperatureInterval) {
-    //         clearInterval(this.temperatureInterval);
-    //     }
-    //     // Cleanup MQTT connection
-    //     if (this.mqttClient) {
-    //         this.mqttClient.end();
-    //     }
-    // },
 
     methods: {
         handleWorldClick(res) {
@@ -95,44 +98,38 @@ export default {
         },
 
         handleOnItemSelect(res) {
-            console.log("Item Selected Millie Says", res);
-            this.getSelectedItems(res);
-            this.getListAttributes(res);
-            this.get(res);
+            console.log("Item Selected Millie Says WOWOWOOWOWOWO", res);
+            this.GetSelectedItems(res);
         },
 
-        handleOnItemDeselect(res) {
-            console.log("Item Deselected Millie Says", res);
-            // Handle item deselection if needed
-        },
-
-        getSelectedItems(res) {
+        GetSelectedItems(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                console.log("Mille Says GetSelectedItemsReturn", res);
+                console.log("MIlle Says GetSelectedItemsReturn", res);
             });
         },
 
-        getListAttributes(res) {
+        GetListAttributes(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                console.log("Mille Says GetListAttributesReturn", res);
+                console.log("MIlle Says GetListAttributesReturn", res);
             });
         },
 
-
-        get(res) {
-            this.platformAPI.publish("3DEXPERIENCity.Get",res);
+        Get(res) {
+            this.platformAPI.publish("3DEXPERIENCity.Get", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-                console.log("Mille Says GetReturn", res);
+                console.log("MIlle Says GetReturn", res);
             });
         },
+
+
 
         create3DPOI() {
             console.log("Creating Point");
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
             this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("Mille Says Add3DPOIReturn", res);
+                console.log("MIlle Says Add3DPOIReturn", res);
             });
 
             this.pointExists = true;
@@ -164,9 +161,11 @@ export default {
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
+                console.log("MIlle Says Update3DPOIContentReturn", res);
             });
         }
+
+
     }
 };
 </script>
