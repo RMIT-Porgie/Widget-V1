@@ -115,7 +115,7 @@ export default {
 
                 // create a constant array with the values
 
-                const attributeValue = [datasetUuid, "selectable", "false"];
+                const attributeValue = [referentialUuid, "selectable", "false"];
                 this.SetAttribute(attributeValue);
                 console.log("Mille Says SET ATTRIBUTE VALUE !!!\n\n\n" );
 
@@ -132,7 +132,7 @@ export default {
                     ]
                 };
 
-                const attributeValue2 = [datasetUuid, "geojson", JSON.stringify(newGeoJSON)];
+                const attributeValue2 = [referentialUuid, "geojson", JSON.stringify(newGeoJSON)];
                 this.SetAttribute(attributeValue2);
                 console.log("Mille Says SET ATTRIBUTE VALUE 2222222222!!!\n\n\n" );
 
