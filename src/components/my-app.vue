@@ -107,15 +107,20 @@ export default {
         GetSelectedItems(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                console.log("MIlle Says GetSelectedItemsReturn", res);
+                // console.log("MIlle Says GetSelectedItemsReturn", res);
                 id = res.data[0].id;
                 geoItemUuid = jsonData.data[0].userData.geoItemUuid
                 referentialUuid = jsonData.data[0].userData.referentialUuid
                 datasetUuid = jsonData.data[0].userData.datasetUuid
-                console.log("ID", id);
+                console.log("Mille SAys GetSelectedItemsReturn\n\n\n\n");
+                console.log("Mille SAys ID", id);
+                // console.log("ID", id);
+
                 console.log("geoItemUuid", geoItemUuid);
                 console.log("referentialUuid", referentialUuid);
                 console.log("datasetUuid", datasetUuid);
+
+                this.Get()
             });
         },
 
