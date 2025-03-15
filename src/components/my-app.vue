@@ -115,7 +115,7 @@ export default {
 
                 // create a constant array with the values
 
-                const attributeValue = [id, "selectable", "false"];
+                const attributeValue = [geoItemUuid, "selectable", "false"];
                 this.SetAttribute(attributeValue);
                 console.log("Mille Says SET ATTRIBUTE VALUE !!!\n\n\n" );
 
@@ -132,7 +132,7 @@ export default {
                     ]
                 };
 
-                const attributeValue2 = [id, "geojson", JSON.stringify(newGeoJSON)];
+                const attributeValue2 = [geoItemUuid, "geojson", JSON.stringify(newGeoJSON)];
                 this.SetAttribute(attributeValue2);
                 console.log("Mille Says SET ATTRIBUTE VALUE 2222222222!!!\n\n\n" );
 
