@@ -34,29 +34,21 @@ export default {
 
             tree_coordinate: {
                 widgetID: widget.id,
-                // geojson: geojson, // Use the imported geojson file
-                geojson: {
-                    type: "FeatureCollection",
-                    name: "tree_coordinates",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: { "id": 0, "Temperature": 10, "Humidity": 10, "Wind Speed": 0 },
-                            geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
-                        },
-                    ]
+                geojson: geojson, // Use the imported geojson file
+                folder: {
+                    id:"tree-folder",
+                    name: "tree folder",
                 },
 
-                layer: { 
+                layer: {
                     id: "tree-layer",
                     name: "tree POI",
-                    // attributeMapping: {
-                    //     "STRID": "id",
-                    //     "Temperature": "currentTemperature",
-                    //     "Humidity": "currentHumidity",
-                    //     "Wind Speed": "currentWindSpeed"
-                    // }
+                    attributeMapping: {
+                        "STRID": "id",
+                        "Temperature": "currentTemperature",
+                        "Humidity": "currentHumidity",
+                        "Wind Speed": "currentWindSpeed"
+                    }
                 },
                 render: {
                     anchor: true,
@@ -67,10 +59,6 @@ export default {
                     opacity: 1
                 }
             },
-
-
-
-
             pointExists: false,
             mqttClient: null,
             currentTemperature: 0,
