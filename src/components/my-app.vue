@@ -21,6 +21,7 @@
 import { widget } from "@widget-lab/3ddashboard-utils";
 import { mapStores } from "pinia";
 import { useGlobalStore } from "@/store/global";
+import geojson from "@/assets/sundial_orchard_tree_information.geojson"; // Import the geojson file
 // import mqtt from "mqtt";
 
 export default {
@@ -33,27 +34,7 @@ export default {
 
             tree_coordinate: {
                 widgetID: widget.id,
-                geojson: {
-                    type: "FeatureCollection",
-                    name: "tree_coordinates",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: { "id": 0, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 }, 
-                            geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
-                       
-                        },
-                        {
-                            type: "Feature",
-                            properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
-                            geometry: { type: "Point", coordinates: [344748.34285080613, 5966162.11668492, 120.66504647215706] }
-                       
-                        }
-                    ]
-                },
-
+                geojson: geojson, // Use the imported geojson file
                 folder: {
                     id:"tree-folder",
                     name: "tree folder",
