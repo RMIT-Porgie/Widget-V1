@@ -28,6 +28,10 @@ const vuetifyConf = {
                     // Compiles Sass to CSS
                     "sass-loader"
                 ]
+            },
+            {
+                test: /\.geojson$/,
+                type: 'json'
             }
         ]
     },
