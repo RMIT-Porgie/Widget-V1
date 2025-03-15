@@ -48,11 +48,6 @@ export default {
                     ]
                 },
 
-                folder: {
-                    id:"tree-folder",
-                    name: "tree folder",
-                },
-
                 layer: { 
                     id: "tree-layer",
                     name: "tree POI",
@@ -63,7 +58,19 @@ export default {
                     //     "Wind Speed": "currentWindSpeed"
                     // }
                 },
+                render: {
+                    anchor: true,
+                    color: "blue",
+                    scale: [5, 5, 20],
+                    shape: "tube",
+                    switchDistance: 500,
+                    opacity: 1
+                }
             },
+
+
+
+
             pointExists: false,
             mqttClient: null,
             currentTemperature: 0,
