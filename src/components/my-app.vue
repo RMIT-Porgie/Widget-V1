@@ -18,7 +18,6 @@
 </template>
 
 <script>
-
 import { mapStores } from "pinia";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import geojson from "@/assets/sundial_orchard_tree_information.geojson"; // Import the geojson file
@@ -89,7 +88,6 @@ export default {
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
     },
 
-
     methods: {
         handleWorldClick(res) {
             // console.log("World Clicked Millie Says", res);
@@ -102,7 +100,7 @@ export default {
             console.log("Item Selected Millie Says WOWOWOOWOWOWO", res);
             this.GetSelectedItems(res);
             this.GetListAttributes(res);
-            this.Get(res);
+            this.GetAttribute(res);
         },
 
         GetSelectedItems(res) {
@@ -110,23 +108,35 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 console.log("Mille SAys GetSelectedItemsReturn\n\n\n\n");
 
+                const id = res.data[0].id;
+                const geoItemUuid = res.data[0].userData.geoItemUuid;
+                const datasetUuid = res.data[0].userData.datasetUuid;
+                const referentialUuid = res.data[0].userData.referentialUuid;
 
-            const id = res.data[0].id;
-            const geoItemUuid = res.data[0].userData.geoItemUuid;
-            const datasetUuid = res.data[0].userData.datasetUuid;
-            const referentialUuid = res.data[0].userData.referentialUuid;
+                // create a constant array with the values
 
-            // create a constant array with the values
-            const id_longtitude = [id, "longitude"];
-            const id_geojson = [id, "geojson"];
-   
-            this.Get(id_geojson)
-            this.Get(id_longtitude)
+                const attributeValue = [id, "selectable", "false"];
+                this.SetAttribute(attributeValue);
+                console.log("Mille Says SET ATTRIBUTE VALUE !!!\n\n\n" );
+
+                const newGeoJSON = {
+                    type: "FeatureCollection",
+                    name: "sundial_orchard_tree_information",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: { GUID: "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329", soil_moisture_content: 1, fruit_type: "Apple", row: 1, plot: 1 },
+                            geometry: { type: "Point", coordinates: [344778.227938843192533, 5966176.809605618938804] }
+                        }
+                    ]
+                };
+
+                const attributeValue2 = [id, "geojson", JSON.stringify(newGeoJSON)];
+                this.SetAttribute(attributeValue2);
+                console.log("Mille Says SET ATTRIBUTE VALUE 2222222222!!!\n\n\n" );
 
 
-
-
-                
             });
         },
 
@@ -137,14 +147,16 @@ export default {
             });
         },
 
-        Get(res) {
+        GetAttribute(res) {
             this.platformAPI.publish("3DEXPERIENCity.Get", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 console.log("MIlle Says GetReturn", res);
             });
         },
 
-
+        SetAttribute(res) {
+            this.platformAPI.publish("3DEXPERIENCity.Set", res);
+        },
 
         create3DPOI() {
             console.log("Creating Point");
@@ -185,8 +197,6 @@ export default {
                 console.log("MIlle Says Update3DPOIContentReturn", res);
             });
         }
-
-
     }
 };
 </script>
