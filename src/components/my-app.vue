@@ -43,7 +43,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 0, "Temperature": 10, "Humidity": 10, "Wind Speed": 0 },
+                            properties: { "id": 0, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -86,6 +86,15 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+
+        // Start the temperature update interval
+        this.temperatureInterval = setInterval(this.incrementTemperature, 5000);
+    },
+
+    beforeUnmount() {
+        if (this.temperatureInterval) {
+            clearInterval(this.temperatureInterval);
+        }
     },
 
     methods: {
@@ -174,6 +183,13 @@ export default {
             this.pointExists = false;
         },
 
+        incrementTemperature() {
+            if (this.pointExists) {
+                this.currentTemperature += 1;
+                this.updateTemperature();
+            }
+        },
+
         updateTemperature() {
             const updateContent = {
                 widgetID: widget.id,
@@ -185,7 +201,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 0, "Temperature": 10, "Humidity": 10, "Wind Speed": 0 },
+                            properties: { "id": 0, "Temperature": this.currentTemperature, "Humidity": 10, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -194,7 +210,7 @@ export default {
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("MIlle Says Update3DPOIContentReturn", res);
+                console.log("Mille Says Update3DPOIContentReturn", res);
             });
         }
     }

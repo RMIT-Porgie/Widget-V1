@@ -1,0 +1,30 @@
+// Get ListAttribute
+
+[
+    "position",
+    "factory",
+    "layer",
+    "className",
+    "boundingSphere",
+    "strid",
+    "geojson",
+    "name",
+    "instanceId",
+    "dataSourceId",
+    "geoItemUuid",
+    "geoItemType",
+    "userData",
+    "STRID",
+    "name",
+    "id",
+    "description",
+    "tags",
+    "visible",
+    "selectable",
+    "selected",
+    "hoverable",
+    "hovered",
+    "PointOfView",
+    "Credits",
+    "loadInfo"
+]
