@@ -90,7 +90,7 @@ export default {
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         // Connect to MQTT broker
-        this.mqttClient = mqtt.connect('ws://54.206.8.77:9001');
+        this.mqttClient = mqtt.connect('wss://54.206.8.77:9001');
         this.mqttClient.on('connect', () => {
             console.log('Connected to MQTT broker');
             this.mqttClient.subscribe('sensor/temperature', (err) => {
