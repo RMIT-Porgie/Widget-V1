@@ -101,21 +101,12 @@ export default {
             if (topic === 'sensor/temperature') {
                 // console.log(`Message: ${message.toString()}`);
                 console.log(message.toString());
-                // {"measurement":"temperature_sensor","fields":{"temperature":22.69},"timestamp":"2025-03-17T03:57:08.465Z"}
                 const data = JSON.parse(message.toString());
                 console.log(data.fields.temperature);
                 this.currentTemperature = data.fields.temperature;
-                this.updateTemperature();
-
-                // const temperature = parseFloat(message.toString());
-                // console.log(`Received temperature: ${temperature}`);
-                // this.currentTemperature = temperature;
                 // this.updateTemperature();
             }
         });
-
-        // Start the temperature update interval
-        this.temperatureInterval = setInterval(this.incrementTemperature, 5000);
     },
 
     beforeUnmount() {
@@ -213,12 +204,6 @@ export default {
             this.pointExists = false;
         },
 
-        incrementTemperature() {
-            if (this.pointExists) {
-                this.currentTemperature += 1;
-                this.updateTemperature();
-            }
-        },
 
         updateTemperature() {
             const updateContent = {
