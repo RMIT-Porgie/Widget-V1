@@ -12,6 +12,9 @@
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
                     <v-btn color="info" class="ml-2" @click="updateTemperature" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
                 </div>
+                <div class="temperature-display">
+                    <p>Current Temperature: {{ currentTemperature }}°C</p>
+                </div>
             </v-container>
         </v-main>
     </v-app>
@@ -56,9 +59,9 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "Temperature": "currentTemperature",
-                        "Humidity": "currentHumidity",
-                        "Wind Speed": "currentWindSpeed"
+                        "Temperature": "Temperature",
+                        "Humidity": "Humidity",
+                        "Wind Speed": "WindSpeed"
                     }
                 },
                 render: {
@@ -99,12 +102,9 @@ export default {
 
         this.mqttClient.on('message', (topic, message) => {
             if (topic === 'sensor/temperature') {
-                // console.log(`Message: ${message.toString()}`);
-                console.log(message.toString());
                 const data = JSON.parse(message.toString());
-                console.log(data.fields.temperature);
                 this.currentTemperature = data.fields.temperature;
-                // this.updateTemperature();
+                this.updateTemperature();
             }
         });
     },
@@ -164,8 +164,6 @@ export default {
 
                 const attributeValue2 = [referentialUuid, "geojson", JSON.stringify(newGeoJSON)];
                 this.SetAttribute(attributeValue2);
-                console.log("Mille Says SET ATTRIBUTE VALUE 2222222222!!!\n\n\n" );
-
 
             });
         },
@@ -216,7 +214,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 0, "Temperature": this.currentTemperature, "Humidity": 10, "Wind Speed": 0 },
+                            properties: { "id": 0, "Temperature": this.currentTemperature, "Humidity": 0, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
