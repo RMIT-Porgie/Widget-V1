@@ -22,8 +22,7 @@ import { mapStores } from "pinia";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import geojson from "@/assets/sundial_orchard_tree_information.geojson"; // Import the geojson file
 import { useGlobalStore } from "@/store/global";
-
-// import mqtt from "mqtt";
+import mqtt from "mqtt"; // Import mqtt
 
 export default {
     name: "App",
@@ -87,6 +86,34 @@ export default {
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
+        // Connect to MQTT broker
+        this.mqttClient = mqtt.connect('ws://54.206.8.77:9001');
+        this.mqttClient.on('connect', () => {
+            console.log('Connected to MQTT broker');
+            this.mqttClient.subscribe('sensor/temperature', (err) => {
+                if (!err) {
+                    console.log('Subscribed to sensor/temperature');
+                }
+            });
+        });
+
+        this.mqttClient.on('message', (topic, message) => {
+            if (topic === 'sensor/temperature') {
+                // console.log(`Message: ${message.toString()}`);
+                console.log(message.toString());
+                // {"measurement":"temperature_sensor","fields":{"temperature":22.69},"timestamp":"2025-03-17T03:57:08.465Z"}
+                const data = JSON.parse(message.toString());
+                console.log(data.fields.temperature);
+                this.currentTemperature = data.fields.temperature;
+                this.updateTemperature();
+
+                // const temperature = parseFloat(message.toString());
+                // console.log(`Received temperature: ${temperature}`);
+                // this.currentTemperature = temperature;
+                // this.updateTemperature();
+            }
+        });
+
         // Start the temperature update interval
         this.temperatureInterval = setInterval(this.incrementTemperature, 5000);
     },
@@ -94,6 +121,9 @@ export default {
     beforeUnmount() {
         if (this.temperatureInterval) {
             clearInterval(this.temperatureInterval);
+        }
+        if (this.mqttClient) {
+            this.mqttClient.end();
         }
     },
 
