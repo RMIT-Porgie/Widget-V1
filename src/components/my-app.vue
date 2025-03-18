@@ -58,10 +58,10 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "Temperature": "currentTemperature",
-                        "Humidity": "currentHumidity",
-                        "Wind Speed": "currentWindSpeed",
-                        "Soil Moisture": "currentSoilMoisture"
+                        // "Temperature": "currentTemperature",
+                        // "Humidity": "currentHumidity",
+                        // "Wind Speed": "currentWindSpeed",
+                        // "Soil Moisture": "currentSoilMoisture"
                     }
                 },
                 render: {
