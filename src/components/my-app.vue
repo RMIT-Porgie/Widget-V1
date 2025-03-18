@@ -21,10 +21,14 @@
 </template>
 
 <script>
+// Import mapStores from Pinia to map the global store into the component's computed properties
 import { mapStores } from "pinia";
-import mqtt from "mqtt"; // Import mqtt
+// Importing the widget object to access its ID for uniquely identifying the tree_coordinate widget
 import { widget } from "@widget-lab/3ddashboard-utils";
-import geojson from "@/assets/sundial_orchard_tree_information.geojson"; // Import the geojson file
+import { widget } from "@widget-lab/3ddashboard-utils";
+import geojson from "src/assets/sundial_orchard_tree_object_test.geojson"; // Import the geojson file
+// import geojson from "src\assets\sundial_orchard_object.geojson"; // Import the geojson file
+
 import { useGlobalStore } from "@/store/global";
 
 export default {
@@ -40,24 +44,24 @@ export default {
 
             tree_coordinate: {
                 widgetID: widget.id,
-                // geojson: geojson, // Use the imported geojson file
-                geojson: {
-                    type: "FeatureCollection",
-                    name: "tree_coordinates",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: { "id": 1, "Soil Moisture": 0 },
-                            geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
-                        }
-                    ]
-                },
+                geojson: geojson, // Use the imported geojson file
+                // geojson: {
+                //     type: "FeatureCollection",
+                //     name: "tree_coordinates",
+                //     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                //     features: [
+                //         {
+                //             type: "Feature",
+                //             properties: { "id": 1, "Soil Moisture": 0 },
+                //             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
+                //         }
+                //     ]
+                // },
                 layer: {
                     id: "tree-layer",
                     name: "tree POI",
                     attributeMapping: {
-                        "STRID": "id",
+                        "STRID": "GUID",
                         "Soil Moisture": "Soil Moisture"
                     }
                 },
@@ -188,22 +192,25 @@ export default {
         },
 
         updateAttribute() {
-            const updateContent = {
-                widgetID: widget.id,
-                layerID: "tree-layer",
-                geojson: {
-                    type: "FeatureCollection",
-                    name: "tree_coordinates",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: { "id": 1, "Soil Moisture": this.currentMoisture },
-                            geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
-                        }
-                    ]
-                }
-            };
+            // const updateContent = {
+            //     widgetID: widget.id,
+            //     layerID: "tree-layer",
+            //     geojson: {
+            //         type: "FeatureCollection",
+            //         name: "tree_coordinates",
+            //         crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+            //         features: [
+            //             {
+            //                 type: "Feature",
+            //                 properties: { "id": 1, "Soil Moisture": this.currentMoisture },
+            //                 geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
+            //             }
+            //         ]
+            //     }
+            // };
+
+            // update the geojson file, update the Soil Moisture value to this.currentMoisture
+            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {

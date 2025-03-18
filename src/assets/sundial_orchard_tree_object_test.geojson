@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "sundial_orchard_tree_information",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::7855" } },
+"features": [
+{ "type": "Feature", "properties": { "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329", "Soil Moisture": 0, "fruit_type": "Apple", "row": 1, "plot": 1 }, "geometry": { "type": "Point", "coordinates": [ 344778.227938843192533, 5966176.809605618938804 ] } }
+]
+}
