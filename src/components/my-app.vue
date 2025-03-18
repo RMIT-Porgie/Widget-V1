@@ -101,7 +101,7 @@ export default {
         reconnectPeriod: 1000
         };
 
-        this.mqttClient = mqtt.connect('ws://mqtt-sooft.duckdns.org:9001', options);
+        this.mqttClient = mqtt.connect('wss://mqtt-sooft.duckdns.org:9001', options);
         // this.mqttClient = mqtt.connect('ws://54.206.8.77:9001', options);
 
         this.mqttClient.on('connect', () => {
