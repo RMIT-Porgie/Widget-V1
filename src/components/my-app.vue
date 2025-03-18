@@ -63,7 +63,7 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "Temperature": "Temperature",
+                        "Temperature": this.currentTemperature,
                         "Humidity": "Humidity",
                         "Wind Speed": "WindSpeed"
                     }
