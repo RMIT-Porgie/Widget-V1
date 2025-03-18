@@ -240,7 +240,7 @@ export default {
             this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
             console.log("Soil Mositure Value Updated: ", this.tree_coordinate.geojson.features[0].properties["Soil Moisture"]);
 
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
