@@ -48,7 +48,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: {"id": "millie", "Soil Moisture Content": 0},
+                            properties: {"id": "millie", "soil_moisture_content": 0},
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -58,7 +58,7 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "Soil Moisture Content": "Soil Moisture Content"
+                        "soil_moisture_content": "soil_moisture_content"
                     }
                 },
                 render: {
@@ -198,7 +198,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: {"Soil Moisture Content": this.currentMoisture},
+                            properties: {"soil_moisture_content": this.currentMoisture},
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
