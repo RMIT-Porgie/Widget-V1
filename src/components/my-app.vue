@@ -93,15 +93,26 @@ export default {
         // this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
+        
+        // Connect to MQTT broker
+        // const options = {
+            // protocol: "wss",
+            // hostname: "test.mosquitto.org",
+            // port: 8081,
+            // clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
+        // };
+
         // Connect to MQTT broker
         const options = {
-        clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),
-        keepalive: 60,
-        clean: true,
-        reconnectPeriod: 1000
+            protocol: "wss",
+            hostname: "mqtt-sooft.duckdns.org",
+            port: 443,
+            clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
         };
+        this.mqttClient = mqtt.connect(options);
 
-        this.mqttClient = mqtt.connect('wss://mqtt-sooft.duckdns.org:9001', options);
+        // this.mqttClient = mqtt.connect('ws://mqtt-sooft.duckdns.org:9001', options);
+
         // this.mqttClient = mqtt.connect('ws://54.206.8.77:9001', options);
 
         this.mqttClient.on('connect', () => {
@@ -117,7 +128,7 @@ export default {
         if (topic === 'sensor/temperature') {
             const data = JSON.parse(message.toString());
             console.log(`📩 MQTT Message Received:`, data);
-            this.currentTemperature = data.fields.temperature;
+            // this.currentTemperature = data.fields.temperature;
         }
         });
 
