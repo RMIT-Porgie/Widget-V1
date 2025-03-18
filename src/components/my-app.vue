@@ -15,6 +15,35 @@
                 <div class="temperature-display">
                     <p>Current Moisture: {{ currentMoisture }}%</p>
                 </div>
+                <div class="geojson-display">
+                    <h2>GeoJSON Data</h2>
+                    <v-card>
+                        <v-card-title>Features</v-card-title>
+                        <v-card-text>
+                            <div v-for="(feature, index) in geojsonFeatures" :key="index" class="feature-item">
+                                <h3>Feature {{ index + 1 }}</h3>
+                                <v-simple-table>
+                                    <template v-slot:default>
+                                        <tbody>
+                                            <tr>
+                                                <td>Type:</td>
+                                                <td>{{ feature.type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Coordinates:</td>
+                                                <td>{{ formatCoordinates(feature.geometry.coordinates) }}</td>
+                                            </tr>
+                                            <tr v-for="(value, key) in feature.properties" :key="key">
+                                                <td>{{ key }}:</td>
+                                                <td>{{ value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
+                            </div>
+                        </v-card-text>
+                    </v-card>
+                </div>
             </v-container>
         </v-main>
     </v-app>
@@ -22,7 +51,9 @@
 
 <script>
 import { mapStores } from "pinia";
-import geojson from "src/assets/sundial_orchard_tree_object_test.geojson";
+// import geojson from C:\Users\E116239\Projects\Widget Development\Widget V1\src\assets\sundial_orchard_tree_object_test.geojson
+import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
+import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import { useGlobalStore } from "@/store/global";
 
@@ -76,7 +107,10 @@ export default {
         };
     },
     computed: {
-        ...mapStores(useGlobalStore)
+        ...mapStores(useGlobalStore),
+        geojsonFeatures() {
+            return this.tree_coordinate.geojson.features;
+        }
     },
 
     async mounted() {
@@ -127,17 +161,13 @@ export default {
 
     methods: {
         handleWorldClick(res) {
-            // console.log("World Clicked Millie Says", res);
             this.x = res.x;
             this.y = res.y;
             this.z = res.z;
         },
 
         handleOnItemSelect(res) {
-            // console.log("Item Selected Millie Says WOWOWOOWOWOWO", res);
             this.GetSelectedItems(res);
-            // this.GetListAttributes(res);
-            // this.GetAttribute(res);
         },
 
         GetSelectedItems(res) {
@@ -211,6 +241,10 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
+        },
+
+        formatCoordinates(coords) {
+            return coords.map(c => Number(c).toFixed(2)).join(', ');
         }
     }
 };
@@ -224,5 +258,22 @@ export default {
 .temperature-display {
     max-width: 300px;
     margin: 20px auto;
+}
+
+.geojson-display {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.feature-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.feature-item h3 {
+    margin-bottom: 10px;
+    color: #2196F3;
 }
 </style>
