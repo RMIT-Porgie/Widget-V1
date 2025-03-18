@@ -140,10 +140,10 @@ export default {
         },
 
         handleOnItemSelect(res) {
-            console.log("Item Selected Millie Says WOWOWOOWOWOWO", res);
+            // console.log("Item Selected Millie Says WOWOWOOWOWOWO", res);
             this.GetSelectedItems(res);
-            this.GetListAttributes(res);
-            this.GetAttribute(res);
+            // this.GetListAttributes(res);
+            // this.GetAttribute(res);
         },
 
         GetSelectedItems(res) {
@@ -156,27 +156,30 @@ export default {
                 const datasetUuid = res.data[0].userData.datasetUuid;
                 const referentialUuid = res.data[0].userData.referentialUuid;
 
+                console.log("ID: ", res.data[0]);
+
                 // create a constant array with the values
 
-                const attributeValue = [referentialUuid, "selectable", "false"];
-                this.SetAttribute(attributeValue);
                 console.log("Mille Says SET ATTRIBUTE VALUE !!!\n\n\n" );
+                
+                // const attributeValue = [referentialUuid, "selectable", "false"];
+                // this.SetAttribute(attributeValue);
+                
+                // const newGeoJSON = {
+                //     type: "FeatureCollection",
+                //     name: "sundial_orchard_tree_information",
+                //     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                //     features: [
+                //         {
+                //             type: "Feature",
+                //             properties: { GUID: "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329", soil_moisture_content: 1, fruit_type: "Apple", row: 1, plot: 1 },
+                //             geometry: { type: "Point", coordinates: [344778.227938843192533, 5966176.809605618938804] }
+                //         }
+                //     ]
+                // };
 
-                const newGeoJSON = {
-                    type: "FeatureCollection",
-                    name: "sundial_orchard_tree_information",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: { GUID: "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329", soil_moisture_content: 1, fruit_type: "Apple", row: 1, plot: 1 },
-                            geometry: { type: "Point", coordinates: [344778.227938843192533, 5966176.809605618938804] }
-                        }
-                    ]
-                };
-
-                const attributeValue2 = [referentialUuid, "geojson", JSON.stringify(newGeoJSON)];
-                this.SetAttribute(attributeValue2);
+                // const attributeValue2 = [referentialUuid, "geojson", JSON.stringify(newGeoJSON)];
+                // this.SetAttribute(attributeValue2);
 
             });
         },
