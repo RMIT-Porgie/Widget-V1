@@ -13,7 +13,7 @@
                     <v-btn color="info" class="ml-2" @click="updateAttribute" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
                 </div>
                 <div class="temperature-display">
-                    <p>Current Temperature: {{ currentMoisture }}°C</p>
+                    <p>Current Moisture: {{ currentMoisture }}%</p>
                 </div>
             </v-container>
         </v-main>
@@ -48,7 +48,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: {"id": "millie", "soil_moisture_content": 0},
+                            properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0, "Soil Moisture": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -58,7 +58,10 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "soil_moisture_content": "soil_moisture_content"
+                        "Temperature": "currentTemperature",
+                        "Humidity": "currentHumidity",
+                        "Wind Speed": "currentWindSpeed",
+                        "Soil Moisture": "currentSoilMoisture"
                     }
                 },
                 render: {
@@ -97,7 +100,7 @@ export default {
 
         this.mqttClient.on("connect", () => {
             console.log("✅ Connected to MQTT broker");
-            this.mqttClient.subscribe("sensor/soil_mositure", err => {
+            this.mqttClient.subscribe("sensor/soil_moisture", err => {
                 if (!err) {
                     console.log("✅ Subscribed to sensor/soil_mositure");
                 }
@@ -105,7 +108,7 @@ export default {
         });
 
         this.mqttClient.on("message", (topic, message) => {
-            if (topic === "sensor/soil_mositure") {
+            if (topic === "sensor/soil_moisture") {
                 const data = JSON.parse(message.toString());
                 console.log(`📩 MQTT Message Received:`, data);
                 this.currentMoisture = data.fields.soil_moisture_content;
@@ -198,7 +201,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: {"soil_moisture_content": this.currentMoisture},
+                            properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0, "Soil Moisture": this.currentMoisture },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
