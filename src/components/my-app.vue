@@ -235,7 +235,10 @@ export default {
             // };
 
             // update the geojson file, update the Soil Moisture value to this.currentMoisture
+            console.log("Updating Attribute");
+            console.log("Soil Mositure Value: ", this.tree_coordinate.geojson.features[0].properties["Soil Moisture"]);
             this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
+            console.log("Soil Mositure Value Updated: ", this.tree_coordinate.geojson.features[0].properties["Soil Moisture"]);
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", updateContent);
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
