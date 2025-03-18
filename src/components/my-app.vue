@@ -63,6 +63,10 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
+                        "Altitude": 150,
+                        "Temperature": "Temperature",
+                        "Name": "Humidity",
+
                     }
                 },
                 render: {
@@ -112,7 +116,7 @@ export default {
         this.mqttClient.on('message', (topic, message) => {
         if (topic === 'sensor/temperature') {
             const data = JSON.parse(message.toString());
-            console.log(`📩 MQTT Message Received:`, data);
+            // console.log(`📩 MQTT Message Received:`, data);
             this.currentTemperature = data.fields.temperature;
         }
         });
@@ -156,7 +160,7 @@ export default {
                 const datasetUuid = res.data[0].userData.datasetUuid;
                 const referentialUuid = res.data[0].userData.referentialUuid;
 
-                console.log("ID: ", res.data[0]);
+                console.log("RESTUL ITEM SELECT", res.data[0]);
 
                 // create a constant array with the values
 
