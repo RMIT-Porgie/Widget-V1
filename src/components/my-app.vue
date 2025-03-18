@@ -31,6 +31,10 @@ export default {
     name: "App",
     data() {
         return {
+
+            mqttClient: null,
+            currentTemperature: null,
+
             x: null,
             y: null,
             z: null,
@@ -85,27 +89,40 @@ export default {
 
     async mounted() {
         console.log("App mounted");
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         // Connect to MQTT broker
-        this.mqttClient = mqtt.connect('ws://mqtt-sooft.duckdns.org:9001');
+        const options = {
+        clientId: 'mqtt_client_' + Math.random().toString(16).substr(2, 8),
+        keepalive: 60,
+        clean: true,
+        reconnectPeriod: 1000
+        };
+
+        this.mqttClient = mqtt.connect('ws://mqtt-sooft.duckdns.org:9001', options);
+        // this.mqttClient = mqtt.connect('ws://54.206.8.77:9001', options);
+
         this.mqttClient.on('connect', () => {
-            console.log('Connected to MQTT broker');
-            this.mqttClient.subscribe('sensor/temperature', (err) => {
-                if (!err) {
-                    console.log('Subscribed to sensor/temperature');
-                }
-            });
+        console.log('✅ Connected to MQTT broker');
+        this.mqttClient.subscribe('sensor/temperature', (err) => {
+            if (!err) {
+            console.log('✅ Subscribed to sensor/temperature');
+            }
+        });
         });
 
         this.mqttClient.on('message', (topic, message) => {
-            if (topic === 'sensor/temperature') {
-                const data = JSON.parse(message.toString());
-                this.currentTemperature = data.fields.temperature;
-                this.updateTemperature();
-            }
+        if (topic === 'sensor/temperature') {
+            const data = JSON.parse(message.toString());
+            console.log(`📩 MQTT Message Received:`, data);
+            this.currentTemperature = data.fields.temperature;
+        }
+        });
+
+        this.mqttClient.on('error', (error) => {
+        console.error('❌ MQTT Error:', error);
         });
     },
 
