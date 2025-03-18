@@ -21,14 +21,9 @@
 </template>
 
 <script>
-// Import mapStores from Pinia to map the global store into the component's computed properties
 import { mapStores } from "pinia";
-// Importing the widget object to access its ID for uniquely identifying the tree_coordinate widget
+import geojson from "src/assets/sundial_orchard_tree_object_test.geojson";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import { widget } from "@widget-lab/3ddashboard-utils";
-import geojson from "src/assets/sundial_orchard_tree_object_test.geojson"; // Import the geojson file
-// import geojson from "src\assets\sundial_orchard_object.geojson"; // Import the geojson file
-
 import { useGlobalStore } from "@/store/global";
 
 export default {
