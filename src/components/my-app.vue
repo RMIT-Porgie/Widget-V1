@@ -10,10 +10,10 @@
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
 
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
-                    <v-btn color="info" class="ml-2" @click="updateTemperature" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
+                    <v-btn color="info" class="ml-2" @click="updateAttribute" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
                 </div>
                 <div class="temperature-display">
-                    <p>Current Temperature: {{ currentTemperature }}°C</p>
+                    <p>Current Temperature: {{ currentMoisture }}°C</p>
                 </div>
             </v-container>
         </v-main>
@@ -22,18 +22,17 @@
 
 <script>
 import { mapStores } from "pinia";
+import mqtt from "mqtt"; // Import mqtt
 import { widget } from "@widget-lab/3ddashboard-utils";
 import geojson from "@/assets/sundial_orchard_tree_information.geojson"; // Import the geojson file
 import { useGlobalStore } from "@/store/global";
-import mqtt from "mqtt"; // Import mqtt
 
 export default {
     name: "App",
     data() {
         return {
-
             mqttClient: null,
-            currentTemperature: null,
+            currentMoisture: null,
 
             x: null,
             y: null,
@@ -49,7 +48,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id":"milliethecute", "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
+                            properties: {"Soil Moisture Content": 0},
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -60,14 +59,14 @@ export default {
                 },
                 layer: {
                     id: "tree-layer",
-                    name: "tree POI",
-                    attributeMapping: {
-                        "STRID": "id",
-                        "Altitude": 150,
-                        "Temperature": "Temperature",
-                        "Name": "Humidity",
+                    name: "tree POI"
+                    // attributeMapping: {
+                    //     "STRID": "id",
+                    //     "Altitude": 150,
+                    //     "Temperature": "Temperature",
+                    //     "Name": "Humidity",
 
-                    }
+                    // }
                 },
                 render: {
                     anchor: true,
@@ -80,7 +79,7 @@ export default {
             },
             pointExists: false,
             mqttClient: null,
-            currentTemperature: 0,
+            currentMoisture: 0,
             temperatureInterval: null
         };
     },
@@ -94,7 +93,6 @@ export default {
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
-    
         // Connect to MQTT broker
         const options = {
             protocol: "wss",
@@ -104,25 +102,25 @@ export default {
         };
         this.mqttClient = mqtt.connect(options);
 
-        this.mqttClient.on('connect', () => {
-        console.log('✅ Connected to MQTT broker');
-        this.mqttClient.subscribe('sensor/temperature', (err) => {
-            if (!err) {
-            console.log('✅ Subscribed to sensor/temperature');
+        this.mqttClient.on("connect", () => {
+            console.log("✅ Connected to MQTT broker");
+            this.mqttClient.subscribe("sensor/soil_mositure", err => {
+                if (!err) {
+                    console.log("✅ Subscribed to sensor/soil_mositure");
+                }
+            });
+        });
+
+        this.mqttClient.on("message", (topic, message) => {
+            if (topic === "sensor/soil_mositure") {
+                const data = JSON.parse(message.toString());
+                console.log(`📩 MQTT Message Received:`, data);
+                this.currentMoisture = data.fields.soil_moisture_content;
             }
         });
-        });
 
-        this.mqttClient.on('message', (topic, message) => {
-        if (topic === 'sensor/temperature') {
-            const data = JSON.parse(message.toString());
-            // console.log(`📩 MQTT Message Received:`, data);
-            this.currentTemperature = data.fields.temperature;
-        }
-        });
-
-        this.mqttClient.on('error', (error) => {
-        console.error('❌ MQTT Error:', error);
+        this.mqttClient.on("error", error => {
+            console.error("❌ MQTT Error:", error);
         });
     },
 
@@ -159,32 +157,6 @@ export default {
                 const geoItemUuid = res.data[0].userData.geoItemUuid;
                 const datasetUuid = res.data[0].userData.datasetUuid;
                 const referentialUuid = res.data[0].userData.referentialUuid;
-
-                console.log("RESTUL ITEM SELECT", res.data[0]);
-
-                // create a constant array with the values
-
-                console.log("Mille Says SET ATTRIBUTE VALUE !!!\n\n\n" );
-                
-                // const attributeValue = [referentialUuid, "selectable", "false"];
-                // this.SetAttribute(attributeValue);
-                
-                // const newGeoJSON = {
-                //     type: "FeatureCollection",
-                //     name: "sundial_orchard_tree_information",
-                //     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                //     features: [
-                //         {
-                //             type: "Feature",
-                //             properties: { GUID: "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329", soil_moisture_content: 1, fruit_type: "Apple", row: 1, plot: 1 },
-                //             geometry: { type: "Point", coordinates: [344778.227938843192533, 5966176.809605618938804] }
-                //         }
-                //     ]
-                // };
-
-                // const attributeValue2 = [referentialUuid, "geojson", JSON.stringify(newGeoJSON)];
-                // this.SetAttribute(attributeValue2);
-
             });
         },
 
@@ -222,8 +194,7 @@ export default {
             this.pointExists = false;
         },
 
-
-        updateTemperature() {
+        updateAttribute() {
             const updateContent = {
                 widgetID: widget.id,
                 layerID: "tree-layer",
@@ -234,7 +205,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 0, "Temperature": this.currentTemperature, "Humidity": 0, "Wind Speed": 0 },
+                            properties: {"Soil Moisture Content": this.currentMoisture},
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
