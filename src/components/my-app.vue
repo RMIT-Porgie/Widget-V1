@@ -49,7 +49,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 0, "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
+                            properties: { "id":"milliethecute", "Temperature": 0, "Humidity": 0, "Wind Speed": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -63,9 +63,6 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "Temperature": this.currentTemperature,
-                        "Humidity": "Humidity",
-                        "Wind Speed": "WindSpeed"
                     }
                 },
                 render: {
