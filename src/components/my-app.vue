@@ -48,23 +48,16 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: {"Soil Moisture Content": 0},
+                            properties: {"id": "millie", "Soil Moisture Content": 0},
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
-                },
-                folder: {
-                    id: "tree-folder",
-                    name: "tree folder"
                 },
                 layer: {
                     id: "tree-layer",
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        "Altitude": 150,
-                        "Temperature": "Temperature",
-                        "Name": "Humidity",
                         "Soil Moisture Content": "Soil Moisture Content"
                     }
                 },
