@@ -59,14 +59,14 @@ export default {
                 },
                 layer: {
                     id: "tree-layer",
-                    name: "tree POI"
-                    // attributeMapping: {
-                    //     "STRID": "id",
-                    //     "Altitude": 150,
-                    //     "Temperature": "Temperature",
-                    //     "Name": "Humidity",
-
-                    // }
+                    name: "tree POI",
+                    attributeMapping: {
+                        "STRID": "id",
+                        "Altitude": 150,
+                        "Temperature": "Temperature",
+                        "Name": "Humidity",
+                        "Soil Moisture Content": "Soil Moisture Content"
+                    }
                 },
                 render: {
                     anchor: true,
