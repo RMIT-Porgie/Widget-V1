@@ -48,7 +48,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0, "Soil Moisture": 0 },
+                            properties: { "id": 1, "Soil Moisture": 0 },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
@@ -58,10 +58,7 @@ export default {
                     name: "tree POI",
                     attributeMapping: {
                         "STRID": "id",
-                        // "Temperature": "currentTemperature",
-                        // "Humidity": "currentHumidity",
-                        // "Wind Speed": "currentWindSpeed",
-                        // "Soil Moisture": "currentSoilMoisture"
+                        "Soil Moisture": "Soil Moisture"
                     }
                 },
                 render: {
@@ -201,7 +198,7 @@ export default {
                     features: [
                         {
                             type: "Feature",
-                            properties: { "id": 1, "Temperature": 0, "Humidity": 0, "Wind Speed": 0, "Soil Moisture": this.currentMoisture },
+                            properties: { "id": 1, "Soil Moisture": this.currentMoisture },
                             geometry: { type: "Point", coordinates: [344743.73853630596, 5966167.156872547, 120.72197453345325] }
                         }
                     ]
