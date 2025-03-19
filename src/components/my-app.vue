@@ -42,7 +42,6 @@ export default {
             pointExists: false,
             mqttClient: null,
             currentMoisture: 0,
-            temperatureInterval: null,
             selectedItem: null,
             mqtt_data: null,
             x: null,
@@ -104,7 +103,16 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
-                console.log("🌧️ Moisture Content:", this.mqtt_data[0].fields.soil_moisture_content);
+                
+                // Update selected item moisture if it exists
+                if (this.selectedItem) {
+                    const matchingMoistureData = this.mqtt_data.find(
+                        sensor => sensor.guid === this.selectedItem.guid
+                    );
+                    if (matchingMoistureData) {
+                        this.selectedItem.moisture = matchingMoistureData.fields.soil_moisture_content;
+                    }
+                }
             }
         });
 
@@ -114,9 +122,6 @@ export default {
     },
 
     beforeUnmount() {
-        if (this.temperatureInterval) {
-            clearInterval(this.temperatureInterval);
-        }
         if (this.mqttClient) {
             this.mqttClient.end();
         }
@@ -137,7 +142,7 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
-                    const selectedGuid = res.data[0].userData.GUID
+                    const selectedGuid = res.data[0].userData.GUID;
                     console.log("Selected GUID:", selectedGuid);
 
                     // Find matching moisture data from MQTT data
@@ -150,6 +155,8 @@ export default {
                         guid: selectedGuid,
                         moisture: matchingMoistureData ? matchingMoistureData.fields.soil_moisture_content : 'No data'
                     };
+                } else {
+                    this.selectedItem = null;
                 }
             });
         },
