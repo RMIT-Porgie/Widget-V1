@@ -10,16 +10,18 @@
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
 
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
-                    <v-btn color="info" class="ml-2" @click="updateAttribute" :disabled="!pointExists"> Update Temperature to 10 </v-btn>
                 </div>
-                <div class="temperature-display">
-                    <p>Current Moisture: {{ currentMoisture }}%</p>
-                    <div v-if="selectedItem" class="selected-item-info">
-                        <h3>Selected Item</h3>
-                        <p>ID: {{ selectedItem.id }}</p>
-                        <p>Moisture: {{ selectedItem.moisture }}%</p>
-                    </div>
-                </div>
+
+                <!-- Add selected item info display -->
+                <v-card ] class="mt-4 selected-item-card">
+                    <v-card-title>Selected Tree Information</v-card-title>
+                    <v-card-text>
+                        <div class="selected-item-info">
+                            <p><strong>GUID:</strong> {{ selectedItem.guid }}</p>
+                            <p><strong>Soil Moisture:</strong> {{ selectedItem.moisture }}%</p>
+                        </div>
+                    </v-card-text>
+                </v-card>
             </v-container>
         </v-main>
     </v-app>
@@ -27,10 +29,9 @@
 
 <script>
 import { mapStores } from "pinia";
+import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-// import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
-import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
 
 export default {
@@ -38,17 +39,17 @@ export default {
     data() {
         return {
             mqttClient: null,
-            selectedItem: null,
             pointExists: false,
-            currentMoisture: null,
             mqttClient: null,
             currentMoisture: 0,
-
+            temperatureInterval: null,
+            selectedItem: null,
+            mqtt_data: null,
             x: null,
             y: null,
             z: null,
 
-            tree_objects: {
+            tree_coordinate: {
                 widgetID: widget.id,
                 geojson: geojson, // Use the imported geojson file
                 layer: {
@@ -62,19 +63,18 @@ export default {
                 render: {
                     anchor: true,
                     color: "green",
-                    scale: [1, 1, 5],
+                    scale: [1, 1, 3],
                     shape: "tube",
                     switchDistance: 500,
                     opacity: 1
                 }
             },
-            updateInterval: null,
         };
     },
     computed: {
         ...mapStores(useGlobalStore),
         geojsonFeatures() {
-            return this.tree_objects.geojson.features;
+            return this.tree_coordinate.geojson.features;
         }
     },
 
@@ -104,30 +104,22 @@ export default {
 
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
-                const data = JSON.parse(message.toString());
-                console.log(`📩 MQTT Message Received:`, data);
-                this.currentMoisture = data.fields.soil_moisture_content;
+                this.mqtt_data = JSON.parse(message.toString());
+                console.log("🌧️ Moisture Content:", this.mqtt_data[0].fields.soil_moisture_content);
             }
         });
 
         this.mqttClient.on("error", error => {
             console.error("❌ MQTT Error:", error);
         });
-
-        // Start automatic updates every 5 seconds
-        this.updateInterval = setInterval(() => {
-            if (this.pointExists) {
-                this.autoUpdateAttribute();
-            }
-        }, 5000);
     },
 
     beforeUnmount() {
+        if (this.temperatureInterval) {
+            clearInterval(this.temperatureInterval);
+        }
         if (this.mqttClient) {
             this.mqttClient.end();
-        }
-        if (this.updateInterval) {
-            clearInterval(this.updateInterval);
         }
     },
 
@@ -146,14 +138,19 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
-                    const item = res.data[0];
+                    const selectedGuid = res.data[0].userData.GUID
+                    console.log("Selected GUID:", selectedGuid);
+
+                    // Find matching moisture data from MQTT data
+                    const matchingMoistureData = this.mqtt_data?.find(
+                        sensor => sensor.guid === selectedGuid
+                    );
+
                     this.selectedItem = {
-                        id: item.id,
-                        geoItemUuid: item.userData.geoItemUuid,
-                        moisture: this.currentMoisture
+                        id: res.data[0].id,
+                        guid: selectedGuid,
+                        moisture: matchingMoistureData ? matchingMoistureData.fields.soil_moisture_content : 'No data'
                     };
-                } else {
-                    this.selectedItem = null;
                 }
             });
         },
@@ -178,7 +175,7 @@ export default {
 
         create3DPOI() {
             console.log("Creating Point");
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_objects);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
             this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
                 console.log("MIlle Says Add3DPOIReturn", res);
             });
@@ -193,22 +190,15 @@ export default {
         },
 
         updateAttribute() {
-            this.tree_objects.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_objects);
+            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
         },
 
-        autoUpdateAttribute() {
-            this.tree_objects.geojson.features.forEach(feature => {
-            feature.properties["Soil Moisture"] = this.currentMoisture;
-            });
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_objects);
-        },
-
         formatCoordinates(coords) {
-            return coords.map(c => Number(c).toFixed(2)).join(", ");
+            return coords.map(c => Number(c).toFixed(2)).join(', ');
         }
     }
 };
@@ -238,14 +228,20 @@ export default {
 
 .feature-item h3 {
     margin-bottom: 10px;
-    color: #2196f3;
+    color: #2196F3;
+}
+
+.selected-item-card {
+    max-width: 600px;
+    margin: 20px auto;
 }
 
 .selected-item-info {
-    margin-top: 15px;
     padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    background-color: #f5f5f5;
+}
+
+.selected-item-info p {
+    margin-bottom: 8px;
+    font-size: 16px;
 }
 </style>
