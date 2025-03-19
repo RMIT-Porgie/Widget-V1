@@ -13,7 +13,7 @@
                 </div>
 
                 <!-- Add selected item info display -->
-                <v-card ] class="mt-4 selected-item-card">
+                <v-card v-if="selectedItem" class="mt-4 selected-item-card">
                     <v-card-title>Selected Tree Information</v-card-title>
                     <v-card-text>
                         <div class="selected-item-info">
@@ -84,7 +84,6 @@ export default {
         this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
-        // Connect to MQTT broker
         const options = {
             protocol: "wss",
             hostname: "mqtt-sooft.duckdns.org",
