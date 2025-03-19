@@ -29,7 +29,7 @@
 
 <script>
 import { mapStores } from "pinia";
-import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
+import geojson from "@/assets/sundial_orchard_tree_object_V2.geojson";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import { useGlobalStore } from "@/store/global";
