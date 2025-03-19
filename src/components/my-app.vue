@@ -29,7 +29,8 @@
 import { mapStores } from "pinia";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
+// import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
+import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
 
 export default {
@@ -60,8 +61,8 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "blue",
-                    scale: [5, 5, 20],
+                    color: "green",
+                    scale: [1, 1, 5],
                     shape: "tube",
                     switchDistance: 500,
                     opacity: 1
@@ -200,7 +201,9 @@ export default {
         },
 
         autoUpdateAttribute() {
-            this.tree_objects.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
+            this.tree_objects.geojson.features.forEach(feature => {
+            feature.properties["Soil Moisture"] = this.currentMoisture;
+            });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_objects);
         },
 
