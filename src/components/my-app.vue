@@ -134,37 +134,18 @@ export default {
         GetUpdateSelectedItemsAttribute(){
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", input_object);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                // get the 
+                const selectedGuid = res.data[0].userData.GUID;
+                const selectedID = res.data[0].id;
+                console.log("Selected GUID:", selectedGuid);
+                console.log("Selected ID:", selectedID);
             });
-            // PublicAPI.Set(array)
-            // Set an object or layer attribute value
-            // Publish: 3DEXPERIENCity.Set
 
-            // Kind: static method of PublicAPI
 
-            // Param	Type	Description
-            // array	Array	Array containing UUID, attribute and attribute value, i.e. [ID, attribute, value]
-            input = [
-                [this.selectedItem.id, "Soil Moisture", this.currentMoisture]
-            ];
-            this.platformAPI.publish("3DEXPERIENCity.Set", input);
-
-            // PublicAPI.Get(array)
-            // Get value of an object or layer attribute
-            // Publish: 3DEXPERIENCity.Get
-            // Subscribe: 3DEXPERIENCity.GetReturn
-
-            // Kind: static method of PublicAPI
-
-            // Param	Type	Description
-            // array	Array	Array containing ID and its object attribute, i.e. [ID, attribute]
-            input = [this.selectedItem.id, "Soil Moisture"];
+            const input = [selectedID, "Soil Moisture"];
             this.platformAPI.publish("3DEXPERIENCity.Get", input);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 console.log("MIlle Says GetReturn", res);
             });
-
-
 
         },
 

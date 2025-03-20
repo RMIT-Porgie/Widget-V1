@@ -1,0 +1,326 @@
+{
+    "impl": {
+        "name": "sundial_orchard_tree_POI_test",
+        "description": "",
+        "tags": [],
+        "visible": true,
+        "selectable": true,
+        "selected": true,
+        "hoverable": false,
+        "hovered": false,
+        "PointOfView": null,
+        "Content": {
+            "pickable": true,
+            "renderID": "",
+            "objectId": "40a75442-8f3d-45de-9056-33de6c016f16",
+            "loadInfo": {
+                "loaded": 12,
+                "total": 12
+            },
+            "levelMin": 7,
+            "levelMax": 9,
+            "priority": 3,
+            "priorityOffset": 1,
+            "cache": 0,
+            "lodBias": 0,
+            "AABBox": {
+                "min": [
+                    344778.227939,
+                    5966176.809606
+                ],
+                "max": [
+                    344778.227939,
+                    5966176.809606
+                ]
+            },
+            "Clustering": {
+                "enable": false
+            },
+            "type": "json",
+            "url": "%globe%/datasupplier/dataset/40a75442-8f3d-45de-9056-33de6c016f16/%l/%x/%y?tenant=R1132100907295",
+            "listenToDateUpdate": false,
+            "upTime": "",
+            "downTime": "",
+            "invertY": true,
+            "alternUrl": "",
+            "alternDict": [],
+            "geolocalized": true,
+            "interactionBehaviours": {
+                "onSelect": {
+                    "label": true
+                },
+                "onHover": {
+                    "label": true
+                }
+            },
+            "id": "0cb717d4-83ba-49b1-ab0c-f038a8c44c73",
+            "userData": {
+                "datasetType": "SimpleFeature",
+                "cache": {
+                    "dataset": {
+                        "uuid": "40a75442-8f3d-45de-9056-33de6c016f16",
+                        "name": "sundial_orchard_tree_POI_test",
+                        "referentialUuid": "010d0b08-d31b-4df0-9f07-2af66917c369",
+                        "enoviaPhysicalId": "A7CC7B834ECF300067DB87EB000048C2",
+                        "geometry": "POLYGON((344778.2279390000 5966176.8096060000, 344778.2279390000 5966176.8096060000, 344778.2279390000 5966176.8096060000, 344778.2279390000 5966176.8096060000, 344778.2279390000 5966176.8096060000))",
+                        "state": "Ready",
+                        "published": false,
+                        "query": {
+                            "filterList": [
+                                [
+                                    {
+                                        "operator": "equals",
+                                        "attribute": "geoItemSourceUuid",
+                                        "value": "d175c6b5-5cc8-4b49-a5bf-5731c1473913"
+                                    }
+                                ]
+                            ]
+                        },
+                        "outputFormat": "Json",
+                        "customization": {
+                            "startLevel": 7,
+                            "endLevel": 9,
+                            "maxElementByTile": 200,
+                            "pushedToSGI": false,
+                            "byGeoItemTypeCustomizationMap": {
+                                "SimpleFeature": {
+                                    "exposedAttributeList": [
+                                        {
+                                            "name": "StreamPriority",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "STRID",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "NAME",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "LifespanStart",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "LifespanEnd",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "Soil Moisture",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "fruit_type",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "plot",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        },
+                                        {
+                                            "name": "row",
+                                            "returnWithoutPrefix": false,
+                                            "ignoreGeoItemIfNull": false
+                                        }
+                                    ],
+                                    "exposeAllAttributes": false
+                                }
+                            },
+                            "storedInIndex": true,
+                            "automaticUpdate": false
+                        },
+                        "analytics": {
+                            "count": 1,
+                            "sourceOriginList": {
+                                "d175c6b5-5cc8-4b49-a5bf-5731c1473913": {
+                                    "count": 1,
+                                    "requestedGeoItemCount": 1
+                                }
+                            },
+                            "geoItemTypeList": {
+                                "SimpleFeature": {
+                                    "count": 1
+                                }
+                            },
+                            "geometryTypeList": {
+                                "Point3D": {
+                                    "count": 1
+                                }
+                            },
+                            "attributeList": [
+                                {
+                                    "name": "fruit_type",
+                                    "count": 1,
+                                    "type": "String",
+                                    "min": "Apple",
+                                    "max": "Apple",
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "StreamPriority",
+                                    "count": 1,
+                                    "type": "Real",
+                                    "min": 1,
+                                    "max": 1,
+                                    "sum": 1,
+                                    "average": 1,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "STRID",
+                                    "count": 1,
+                                    "type": "String",
+                                    "min": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
+                                    "max": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "plot",
+                                    "count": 1,
+                                    "type": "Integer",
+                                    "min": 1,
+                                    "max": 1,
+                                    "sum": 1,
+                                    "average": 1,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "row",
+                                    "count": 1,
+                                    "type": "Integer",
+                                    "min": 1,
+                                    "max": 1,
+                                    "sum": 1,
+                                    "average": 1,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "Soil Moisture",
+                                    "count": 1,
+                                    "type": "Integer",
+                                    "min": 0,
+                                    "max": 0,
+                                    "sum": 0,
+                                    "average": 0,
+                                    "sortable": true
+                                },
+                                {
+                                    "name": "sourceFilename",
+                                    "count": 1,
+                                    "type": "String",
+                                    "min": "sundial_orchard_tree_object_test.geojson",
+                                    "max": "sundial_orchard_tree_object_test.geojson",
+                                    "sortable": false
+                                },
+                                {
+                                    "name": "ORIENT",
+                                    "count": 1,
+                                    "type": "String",
+                                    "min": "0.0 0.0 0.0",
+                                    "max": "0.0 0.0 0.0",
+                                    "sortable": false
+                                },
+                                {
+                                    "name": "SCALE",
+                                    "count": 1,
+                                    "type": "String",
+                                    "min": "1.0 1.0 1.0",
+                                    "max": "1.0 1.0 1.0",
+                                    "sortable": false
+                                },
+                                {
+                                    "name": "TRANS",
+                                    "count": 1,
+                                    "type": "String",
+                                    "min": "344778.227939 5966176.809606 0.0",
+                                    "max": "344778.227939 5966176.809606 0.0",
+                                    "sortable": false
+                                }
+                            ],
+                            "storageInMB": 0.000948
+                        },
+                        "createdBy": "georgewurmit",
+                        "lastModifiedBy": "georgewurmit",
+                        "creationDate": "2025-03-20T03:13:55.148Z",
+                        "lastModificationDate": "2025-03-20T03:20:07.192Z",
+                        "lastReadinessTimestamp": "1742440807192",
+                        "style": {
+                            "insource": false,
+                            "customized": false
+                        },
+                        "revision": 0,
+                        "revisionList": [],
+                        "outdatedOriginList": [],
+                        "pnOAccessModel": {
+                            "showAccess": true,
+                            "downloadAccess": true,
+                            "modifyAccess": true,
+                            "deleteAccess": true
+                        },
+                        "type": "SimpleFeature",
+                        "bbox": {
+                            "height": 0,
+                            "width": 0,
+                            "xmax": 344778.227939,
+                            "xmin": 344778.227939,
+                            "ymax": 5966176.809606,
+                            "ymin": 5966176.809606
+                        },
+                        "startLevel": 7,
+                        "endLevel": 9,
+                        "geoItemCount": 1,
+                        "geometryTypeList": {
+                            "Point3D": {
+                                "count": 1
+                            }
+                        },
+                        "exposedAttributeList": [
+                            "StreamPriority",
+                            "STRID",
+                            "NAME",
+                            "LifespanStart",
+                            "LifespanEnd",
+                            "StreamPriority",
+                            "STRID",
+                            "NAME",
+                            "LifespanStart",
+                            "LifespanEnd",
+                            "Soil Moisture",
+                            "fruit_type",
+                            "plot",
+                            "row"
+                        ]
+                    }
+                }
+            },
+            "className": "RdbLink",
+            "Factory": {
+                "className": "Pointofinterest3d",
+                "shapeType": "sphere",
+                "nameAttribute": "NAME",
+                "heightAttribute": 0,
+                "renderAnchor": true,
+                "switchDistance": 500,
+                "alwaysDisplayText": false
+            }
+        },
+        "Credits": null,
+        "loadInfo": {
+            "loaded": 12,
+            "total": 12
+        },
+        "children": [],
+        "exclusive": false,
+        "opened": true,
+        "id": "7c112f4e-c1d1-4818-8c20-8775ea11308c",
+        "className": "Folder"
+    }
+}
