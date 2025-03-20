@@ -129,10 +129,11 @@ export default {
     methods: {
         handleOnItemSelect(res) {
             // this.GetSelectedItemsGUID(res);
+            this.GetUpdateSelectedItemsAttribute(res);
         },
 
-        GetUpdateSelectedItemsAttribute(){
-            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", input_object);
+        GetUpdateSelectedItemsAttribute(res){
+            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 const selectedGuid = res.data[0].userData.GUID;
                 const selectedID = res.data[0].id;
