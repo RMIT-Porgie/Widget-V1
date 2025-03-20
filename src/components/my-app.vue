@@ -33,11 +33,13 @@ import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import { useGlobalStore } from "@/store/global";
+import { th } from "vuetify/locale";
 
 export default {
     name: "App",
     data() {
         return {
+            selectedID: null,
             mqttClient: null,
             pointExists: false,
             mqttClient: null,
@@ -136,17 +138,18 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 // const selectedGuid = res.data[0].userData.GUID;
-                const selectedID = res.data[0].id;
+                this.selectedID = res.data[0].id;
                 // console.log("Selected GUID:", selectedGuid);
-                console.log("Selected ID:", selectedID);
+                console.log("Selected ID:", this.selectedID);
             });
 
-
-            const input = [selectedID, "Content"];
-            this.platformAPI.publish("3DEXPERIENCity.Get", input);
+       
+            this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedID, "Content"]);
+            console.log("Published Get\n\n");
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 console.log("MIlle Says GetReturn", res);
             });
+            console.log("Subscribed Get\n\n");
 
         },
 
