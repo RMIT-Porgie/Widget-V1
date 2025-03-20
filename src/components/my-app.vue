@@ -196,14 +196,15 @@ export default {
         },
 
         create3DPOISinglePoint() {
-            console.log("Creating Points");
+            console.log("Creating up to 10 Points");
+            let count = 0;
             createTreeCoordinates((treeCoordinate) => {
-                this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", treeCoordinate);
-                // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", (res) => {
-                //     console.log("Mille Says Add3DPOIReturn", res);
-                // });
+                if (count < 10) {
+                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", treeCoordinate);
+                    count++;
+                }
             });
-            console.log("MILLE say Points Created\n\n\n");
+            console.log("MILLE says up to 10 Points Created\n\n\n");
         },
 
         removePoint() {
