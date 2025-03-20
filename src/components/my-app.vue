@@ -199,10 +199,11 @@ export default {
             console.log("Creating Points");
             createTreeCoordinates((treeCoordinate) => {
                 this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", treeCoordinate);
-                this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", (res) => {
-                    console.log("Mille Says Add3DPOIReturn", res);
-                });
+                // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", (res) => {
+                //     console.log("Mille Says Add3DPOIReturn", res);
+                // });
             });
+            console.log("MILLE say Points Created\n\n\n");
         },
 
         removePoint() {
