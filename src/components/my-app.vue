@@ -135,7 +135,8 @@ export default {
         },
 
         handleOnItemSelect(res) {
-            this.GetSelectedItems(res);
+            // this.GetSelectedItems(res);
+            this.GetSetSelectedItems(res);
         },
 
         GetSelectedItems(res) {
@@ -161,23 +162,24 @@ export default {
             });
         },
 
-        GetListAttributes(res) {
-            this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                console.log("MIlle Says GetListAttributesReturn", res);
-            });
-        },
+        // GetListAttributes(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
+        //         console.log("MIlle Says GetListAttributesReturn", res);
+        //     });
+        // },
 
-        GetAttribute(res) {
-            this.platformAPI.publish("3DEXPERIENCity.Get", res);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-                console.log("MIlle Says GetReturn", res);
-            });
-        },
+        // GetAttribute(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.Get", res);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+        //         console.log("MIlle Says GetReturn", res);
+        //     });
+        // },
 
-        SetAttribute(res) {
-            this.platformAPI.publish("3DEXPERIENCity.Set", res);
-        },
+        // SetAttribute(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.Set", res);
+
+        // },
 
         create3DPOI() {
             console.log("Creating Point");
@@ -203,9 +205,6 @@ export default {
             });
         },
 
-        formatCoordinates(coords) {
-            return coords.map(c => Number(c).toFixed(2)).join(', ');
-        }
     }
 };
 </script>
