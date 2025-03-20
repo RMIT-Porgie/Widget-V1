@@ -135,14 +135,14 @@ export default {
         GetUpdateSelectedItemsAttribute(res){
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                const selectedGuid = res.data[0].userData.GUID;
+                // const selectedGuid = res.data[0].userData.GUID;
                 const selectedID = res.data[0].id;
-                console.log("Selected GUID:", selectedGuid);
+                // console.log("Selected GUID:", selectedGuid);
                 console.log("Selected ID:", selectedID);
             });
 
 
-            const input = [selectedID, "Soil Moisture"];
+            const input = [selectedID, "Content"];
             this.platformAPI.publish("3DEXPERIENCity.Get", input);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 console.log("MIlle Says GetReturn", res);
@@ -150,65 +150,65 @@ export default {
 
         },
 
-        // GetSelectedItemsGUID(res) {
-        //     this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-        //         if (res.data && res.data.length > 0) {
-        //             const selectedGuid = res.data[0].userData.GUID;
-        //             console.log("Selected GUID:", selectedGuid);
+        GetSelectedItemsGUID(res) {
+            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
+                if (res.data && res.data.length > 0) {
+                    const selectedGuid = res.data[0].userData.GUID;
+                    console.log("Selected GUID:", selectedGuid);
 
-        //             // Find matching moisture data from MQTT data
-        //             const matchingMoistureData = this.mqtt_data?.find(
-        //                 sensor => sensor.guid === selectedGuid
-        //             );
+                    // Find matching moisture data from MQTT data
+                    const matchingMoistureData = this.mqtt_data?.find(
+                        sensor => sensor.guid === selectedGuid
+                    );
 
-        //             this.selectedItem = {
-        //                 id: res.data[0].id,
-        //                 guid: selectedGuid,
-        //             };
-        //         } else {
-        //             this.selectedItem = null;
-        //         }
-        //     });
-        // },
+                    this.selectedItem = {
+                        id: res.data[0].id,
+                        guid: selectedGuid,
+                    };
+                } else {
+                    this.selectedItem = null;
+                }
+            });
+        },
 
-        // GetListAttributes(res) {
-        //     this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-        //         console.log("MIlle Says GetListAttributesReturn", res);
-        //     });
-        // },
+        GetListAttributes(res) {
+            this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
+                console.log("MIlle Says GetListAttributesReturn", res);
+            });
+        },
 
-        // GetAttribute(res) {
-        //     this.platformAPI.publish("3DEXPERIENCity.Get", res);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-        //         console.log("MIlle Says GetReturn", res);
-        //     });
-        // },
+        GetAttribute(res) {
+            this.platformAPI.publish("3DEXPERIENCity.Get", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+                console.log("MIlle Says GetReturn", res);
+            });
+        },
 
-        // create3DPOI() {
-        //     console.log("Creating Point");
-        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-        //         console.log("MIlle Says Add3DPOIReturn", res);
-        //     });
+        create3DPOI() {
+            console.log("Creating Point");
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
+            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+                console.log("MIlle Says Add3DPOIReturn", res);
+            });
 
-        //     this.pointExists = true;
-        // },
+            this.pointExists = true;
+        },
 
-        // removePoint() {
-        //     console.log("Removing Point");
-        //     this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
-        //     this.pointExists = false;
-        // },
+        removePoint() {
+            console.log("Removing Point");
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
+            this.pointExists = false;
+        },
 
-        // updateAttribute() {
-        //     this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
-        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-        //         console.log("Mille Says Update3DPOIContentReturn", res);
-        //     });
-        // },
+        updateAttribute() {
+            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+                console.log("Mille Says Update3DPOIContentReturn", res);
+            });
+        },
     }
 };
 </script>
