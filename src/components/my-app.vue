@@ -136,8 +136,14 @@ export default {
 
         handleOnItemSelect(res) {
             // this.GetSelectedItems(res);
-            this.GetSetSelectedItems(res);
+            this.GetSetGetSelectedItems(res);
         },
+
+        GetSetGetSelectedItems(input_object){
+            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", input_object);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
+                console.log("MIlle Says GetSelectedItemsReturn", res);
+            })},   
 
         GetSelectedItems(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
