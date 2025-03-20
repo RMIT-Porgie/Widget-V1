@@ -80,7 +80,6 @@ export default {
     async mounted() {
         console.log("App mounted");
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnWorldClick", this.handleWorldClick);
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         const options = {
@@ -128,84 +127,106 @@ export default {
     },
 
     methods: {
-        handleWorldClick(res) {
-            this.x = res.x;
-            this.y = res.y;
-            this.z = res.z;
-        },
-
         handleOnItemSelect(res) {
-            this.GetSelectedItems(res);
+            // this.GetSelectedItemsGUID(res);
         },
 
-        GetSelectedItems(res) {
-            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
+        GetUpdateSelectedItemsAttribute(){
+            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", input_object);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                if (res.data && res.data.length > 0) {
-                    const selectedGuid = res.data[0].userData.GUID;
-                    console.log("Selected GUID:", selectedGuid);
-
-                    // Find matching moisture data from MQTT data
-                    const matchingMoistureData = this.mqtt_data?.find(
-                        sensor => sensor.guid === selectedGuid
-                    );
-
-                    this.selectedItem = {
-                        id: res.data[0].id,
-                        guid: selectedGuid,
-                        moisture: matchingMoistureData ? matchingMoistureData.fields.soil_moisture_content : 'No data'
-                    };
-                } else {
-                    this.selectedItem = null;
-                }
+                // get the 
             });
-        },
+            // PublicAPI.Set(array)
+            // Set an object or layer attribute value
+            // Publish: 3DEXPERIENCity.Set
 
-        GetListAttributes(res) {
-            this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                console.log("MIlle Says GetListAttributesReturn", res);
-            });
-        },
+            // Kind: static method of PublicAPI
 
-        GetAttribute(res) {
-            this.platformAPI.publish("3DEXPERIENCity.Get", res);
+            // Param	Type	Description
+            // array	Array	Array containing UUID, attribute and attribute value, i.e. [ID, attribute, value]
+            input = [
+                [this.selectedItem.id, "Soil Moisture", this.currentMoisture]
+            ];
+            this.platformAPI.publish("3DEXPERIENCity.Set", input);
+
+            // PublicAPI.Get(array)
+            // Get value of an object or layer attribute
+            // Publish: 3DEXPERIENCity.Get
+            // Subscribe: 3DEXPERIENCity.GetReturn
+
+            // Kind: static method of PublicAPI
+
+            // Param	Type	Description
+            // array	Array	Array containing ID and its object attribute, i.e. [ID, attribute]
+            input = [this.selectedItem.id, "Soil Moisture"];
+            this.platformAPI.publish("3DEXPERIENCity.Get", input);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 console.log("MIlle Says GetReturn", res);
             });
+
+
+
         },
 
-        SetAttribute(res) {
-            this.platformAPI.publish("3DEXPERIENCity.Set", res);
-        },
+        // GetSelectedItemsGUID(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
+        //         if (res.data && res.data.length > 0) {
+        //             const selectedGuid = res.data[0].userData.GUID;
+        //             console.log("Selected GUID:", selectedGuid);
 
-        create3DPOI() {
-            console.log("Creating Point");
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("MIlle Says Add3DPOIReturn", res);
-            });
+        //             // Find matching moisture data from MQTT data
+        //             const matchingMoistureData = this.mqtt_data?.find(
+        //                 sensor => sensor.guid === selectedGuid
+        //             );
 
-            this.pointExists = true;
-        },
+        //             this.selectedItem = {
+        //                 id: res.data[0].id,
+        //                 guid: selectedGuid,
+        //             };
+        //         } else {
+        //             this.selectedItem = null;
+        //         }
+        //     });
+        // },
 
-        removePoint() {
-            console.log("Removing Point");
-            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
-            this.pointExists = false;
-        },
+        // GetListAttributes(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
+        //         console.log("MIlle Says GetListAttributesReturn", res);
+        //     });
+        // },
 
-        updateAttribute() {
-            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
-            });
-        },
+        // GetAttribute(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.Get", res);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+        //         console.log("MIlle Says GetReturn", res);
+        //     });
+        // },
 
-        formatCoordinates(coords) {
-            return coords.map(c => Number(c).toFixed(2)).join(', ');
-        }
+        // create3DPOI() {
+        //     console.log("Creating Point");
+        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+        //         console.log("MIlle Says Add3DPOIReturn", res);
+        //     });
+
+        //     this.pointExists = true;
+        // },
+
+        // removePoint() {
+        //     console.log("Removing Point");
+        //     this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
+        //     this.pointExists = false;
+        // },
+
+        // updateAttribute() {
+        //     this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
+        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+        //         console.log("Mille Says Update3DPOIContentReturn", res);
+        //     });
+        // },
     }
 };
 </script>
