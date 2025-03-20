@@ -8,6 +8,8 @@
                     <p>Y: {{ y }}</p>
                     <p>Z: {{ z }}</p>
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
+                    <v-btn color="primary" class="mr-2" @click="create3DPOISinglePoint"> Create Points from Single POI </v-btn>
+
 
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
                 </div>
@@ -29,11 +31,12 @@
 
 <script>
 import { mapStores } from "pinia";
-import geojson from "@/assets/sundial_orchard_object_V2.geojson";
+import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
+import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
-import { th } from "vuetify/locale";
+import { createTreeCoordinates } from "@/components/create-tree-coordinates";
 
 export default {
     name: "App",
@@ -69,7 +72,7 @@ export default {
                     switchDistance: 500,
                     opacity: 1
                 }
-            },
+            }
         };
     },
     computed: {
@@ -104,12 +107,10 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
-                
+
                 // Update selected item moisture if it exists
                 if (this.selectedItem) {
-                    const matchingMoistureData = this.mqtt_data.find(
-                        sensor => sensor.guid === this.selectedItem.guid
-                    );
+                    const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
                     if (matchingMoistureData) {
                         this.selectedItem.moisture = matchingMoistureData.fields.soil_moisture_content;
                     }
@@ -134,24 +135,22 @@ export default {
             this.GetUpdateSelectedItemsAttribute(res);
         },
 
-        GetUpdateSelectedItemsAttribute(res){
-            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                // const selectedGuid = res.data[0].userData.GUID;
-                this.selectedID = res.data[0].id;
-                // console.log("Selected GUID:", selectedGuid);
-                console.log("Selected ID:", this.selectedID);
-            });
+        // GetUpdateSelectedItemsAttribute(res) {
+        //     this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
+        //         // const selectedGuid = res.data[0].userData.GUID;
+        //         this.selectedID = res.data[0].id;
+        //         // console.log("Selected GUID:", selectedGuid);
+        //         console.log("Selected ID:", this.selectedID);
+        //     });
 
-       
-            this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedID, "Content"]);
-            console.log("Published Get\n\n");
-            this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-                console.log("MIlle Says GetReturn", res);
-            });
-            console.log("Subscribed Get\n\n");
-
-        },
+        //     this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedID, "Content"]);
+        //     console.log("Published Get\n\n");
+        //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+        //         console.log("MIlle Says GetReturn", res);
+        //     });
+        //     console.log("Subscribed Get\n\n");
+        // },
 
         GetSelectedItemsGUID(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
@@ -161,13 +160,11 @@ export default {
                     console.log("Selected GUID:", selectedGuid);
 
                     // Find matching moisture data from MQTT data
-                    const matchingMoistureData = this.mqtt_data?.find(
-                        sensor => sensor.guid === selectedGuid
-                    );
+                    const matchingMoistureData = this.mqtt_data?.find(sensor => sensor.guid === selectedGuid);
 
                     this.selectedItem = {
                         id: res.data[0].id,
-                        guid: selectedGuid,
+                        guid: selectedGuid
                     };
                 } else {
                     this.selectedItem = null;
@@ -190,13 +187,22 @@ export default {
         },
 
         create3DPOI() {
-            console.log("Creating Point");
+            console.log("Creating Points");
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
             this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("MIlle Says Add3DPOIReturn", res);
+                console.log("Mille Says Add3DPOIReturn", res);
             });
-
             this.pointExists = true;
+        },
+
+        create3DPOISinglePoint() {
+            console.log("Creating Points");
+            createTreeCoordinates((treeCoordinate) => {
+                this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", treeCoordinate);
+                this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", (res) => {
+                    console.log("Mille Says Add3DPOIReturn", res);
+                });
+            });
         },
 
         removePoint() {
@@ -211,7 +217,7 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
-        },
+        }
     }
 };
 </script>
@@ -240,7 +246,7 @@ export default {
 
 .feature-item h3 {
     margin-bottom: 10px;
-    color: #2196F3;
+    color: #2196f3;
 }
 
 .selected-item-card {
