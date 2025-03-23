@@ -3,23 +3,7 @@
         <v-main>
             <v-container style="background: white; min-height: 100vh">
                 <h1>Hello World From RMIT</h1>
-                <div>
-                    <p>X: {{ x }}</p>
-                    <p>Y: {{ y }}</p>
-                    <p>Z: {{ z }}</p>
-                    <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
-                    <v-btn color="primary" class="mr-2" @click="Update3DPOIContent"> Update Point </v-btn>
-                    <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!layerExists"> Remove Point </v-btn>
-                </div>
 
-                <!-- Display current moisture data -->
-                <v-card v-if="mqtt_data && mqtt_data.length > 0" class="mt-4">
-                    <v-card-title>Current Moisture Data</v-card-title>
-                    <v-card-text>
-                        <p><strong>GUID:</strong> {{ mqtt_data[0].guid }}</p>
-                        <p><strong>Soil Moisture:</strong> {{ mqtt_data[0].fields.soil_moisture_content }}%</p>
-                    </v-card-text>
-                </v-card>
 
                 <!-- Add selected item info display -->
                 <v-card v-if="selectedItem" class="mt-4 selected-item-card">
@@ -207,13 +191,12 @@ export default {
 
 
 
-                // Update selected item moisture if it exists
-                // if (this.selectedItem) {
-                //     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
-                //     if (matchingMoistureData) {
-                //         this.selectedItem.moisture = matchingMoistureData.fields.soil_moisture_content;
-                //     }
-                // }
+                if (this.selectedItem) {
+                    const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
+                    if (matchingMoistureData) {
+                        this.selectedItem.moisture = matchingMoistureData.fields.soil_moisture_content;
+                    }
+                }
             }
         });
 
