@@ -108,7 +108,7 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "red",
+                    color: "blue",
                     scale: [1, 1, 5],
                     shape: "tube",
                     switchDistance: 500,
@@ -176,8 +176,9 @@ export default {
                     }
                 });
 
-                // console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
-                // console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
+                console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
+                console.log("📊 Medium moisture features:", this.mositure_content_medium.geojson.features.length);
+                console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
                 if (this.layerExists) {
                     this.UpdateLayerWith3DPOI();
@@ -212,43 +213,44 @@ export default {
 
         CreateLayerWith3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("Mille Says Add3DPOIReturn", res);
-            });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+            //     console.log("Mille Says Add3DPOIReturn", res);
+            // });
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_medium);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("Mille Says Add3DPOIReturn", res);
-            });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+            //     console.log("Mille Says Add3DPOIReturn", res);
+            // });
             this.layerExists = true;
         },
 
         UpdateLayerWith3DPOI() {
-            console.log("Widget ID: ", widget.id);
+            // console.log("Widget ID: ", widget.id);
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_low.widgetID,
                 layerID: "mositure_content_low",
                 geojson: this.mositure_content_low.geojson
             });
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
-            });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+            //     console.log("Mille Says Update3DPOIContentReturn", res);
+            // });
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_medium.widgetID,
                 layerID: "mositure_content_medium",
                 geojson: this.mositure_content_medium.geojson
             });
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
-            });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+            //     console.log("Mille Says Update3DPOIContentReturn", res);
+            // });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_high.widgetID,
                 layerID: "mositure_content_high",
                 geojson: this.mositure_content_high.geojson
             });
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
-            });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+            //     console.log("Mille Says Update3DPOIContentReturn", res);
+            // });
         },
 
         removeContentLayers() {
