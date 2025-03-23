@@ -32,16 +32,10 @@ export default {
     name: "App",
     data() {
         return {
-            selectedID: null,
-            mqttClient: null,
             layerExists: false,
             mqttClient: null,
-            currentMoisture: 0,
             selectedItem: null,
             mqtt_data: null,
-            x: null,
-            y: null,
-            z: null,
 
             mositure_content_low: {
                 widgetID: widget.id,
@@ -49,22 +43,7 @@ export default {
                     type: "FeatureCollection",
                     name: "mositure_content_low",
                     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: {
-                                "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
-                                "fruit_type": "Apple",
-                                "row": 1,
-                                "plot": 1,
-                                "Soil Moisture": 0
-                            },
-                            geometry: {
-                                type: "Point",
-                                coordinates: [344778.2279388432, 5966176.809605619, 120.8]
-                            }
-                        }
-                    ]
+                    features: []
                 },
                 layer: {
                     id: "mositure_content_low",
@@ -90,22 +69,7 @@ export default {
                     type: "FeatureCollection",
                     name: "mositure_content_high",
                     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: {
-                                "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
-                                "fruit_type": "Apple",
-                                "row": 1,
-                                "plot": 1,
-                                "Soil Moisture": 0
-                            },
-                            geometry: {
-                                type: "Point",
-                                coordinates: [344778.2279388432, 5966176.809605619, 120.8]
-                            }
-                        }
-                    ]
+                    features: []
                 },
                 layer: {
                     id: "mositure_content_high",
@@ -118,27 +82,6 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [1, 1, 3],
-                    shape: "tube",
-                    switchDistance: 500,
-                    opacity: 1
-                }
-            },
-
-            tree_coordinate: {
-                widgetID: widget.id,
-                geojson: geojson_template, // Use the imported geojson file
-                layer: {
-                    id: "tree-layer",
-                    name: "tree POI",
-                    attributeMapping: {
-                        "STRID": "GUID",
-                        "Soil Moisture": "Soil Moisture"
-                    }
-                },
-                render: {
-                    anchor: true,
-                    color: "green",
                     scale: [1, 1, 3],
                     shape: "tube",
                     switchDistance: 500,
@@ -179,11 +122,11 @@ export default {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
 
-                // Ensure geojson and its features are initialized
-                if (!geojson_template || !geojson_template.features) {
-                    console.error("GeoJSON or its features are not properly initialized.");
-                    return;
-                }
+                // // Ensure geojson and its features are initialized
+                // if (!geojson_template || !geojson_template.features) {
+                //     console.error("GeoJSON or its features are not properly initialized.");
+                //     return;
+                // }
 
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
@@ -244,7 +187,6 @@ export default {
     methods: {
         handleOnItemSelect(res) {
             this.GetSelectedItemsGUID(res);
-            // this.GetUpdateSelectedItemsAttribute(res);
         },
 
         // use add 3dpoi create differnt layers with different rendering options, layer name mositure_content_low render to blue, layer name mositure_content_high render to red
@@ -308,40 +250,6 @@ export default {
                 } else {
                     this.selectedItem = null;
                 }
-            });
-        },
-
-        // create3DPOI() {
-        //     console.log("Creating Points");
-        //     // response_mositureContent
-        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", response_mositureContent);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-        //         console.log("Mille Says Add3DPOIReturn", res);
-        //     });
-        //     this.layerExists = true;
-        // },
-
-        // Update3DPOIContent() {
-        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", response_mositureContent);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-        //         console.log("Mille Says Update3DPOIContentReturn", res);
-        //     });
-        // },
-
-        create3DPOI() {
-            console.log("Creating Points");
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("Mille Says Add3DPOIReturn", res);
-            });
-            this.pointExists = true;
-        },
-
-        Update3DPOIContent() {
-            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = 1000;
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
             });
         }
     }
