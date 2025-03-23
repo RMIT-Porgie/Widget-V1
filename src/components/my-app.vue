@@ -11,7 +11,6 @@
                     <v-btn color="primary" class="mr-2" @click="Update3DPOIContent"> Update Point </v-btn>
                     <v-btn color="primary" class="mr-2" @click="create3DPOISinglePoint"> Create Points from Single POI </v-btn>
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!layerExists"> Remove Point </v-btn>
-
                 </div>
 
                 <!-- Display current moisture data -->
@@ -39,6 +38,8 @@
 </template>
 
 <script>
+// import src/assets/response_mositureContent
+import response_mositureContent from "@/assets/response_mositureContent.json";
 import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
@@ -47,14 +48,11 @@ import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import { createTreeCoordinates } from "@/components/create-tree-coordinates";
 import { useGlobalStore } from "@/store/global";
 
-// import src/assets/response_mositureContent
-import response_mositureContent from "@/assets/response_mositureContent.json";
-
 export default {
     name: "App",
     data() {
         return {
-        selectedID: null,
+            selectedID: null,
             mqttClient: null,
             layerExists: false,
             mqttClient: null,
@@ -74,12 +72,11 @@ export default {
             mositure_content_low: {
                 widgetID: widget.id,
                 geojson: {
-                type: "FeatureCollection",
-                name: "mositure_content_low",
-                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                features: []
-            }, // Use the imported geojson file
-                
+                    type: "FeatureCollection",
+                    name: "mositure_content_low",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: []
+                }, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_low",
                     name: "mositure_content_low",
@@ -101,11 +98,11 @@ export default {
             mositure_content_high: {
                 widgetID: widget.id,
                 geojson: {
-                type: "FeatureCollection",
-                name: "mositure_content_high",
-                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                features: []
-            }, // Use the imported geojson file
+                    type: "FeatureCollection",
+                    name: "mositure_content_high",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: []
+                }, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_high",
                     name: "mositure_content_high",
@@ -309,11 +306,11 @@ export default {
         //     this.pointExists = true;
         // },
 
-        // removePoint() {
-        //     console.log("Removing Point");
-        //     this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
-        //     this.pointExists = false;
-        // },
+        removePoint() {
+            console.log("Removing Point");
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_low");
+            this.pointExists = false;
+        },
 
         // updateAttribute() {
         //     this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
@@ -323,48 +320,7 @@ export default {
         //     });
         // }
 
-        // GetUpdateSelectedItemsAttribute(res) {
-        //     this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-        //         // const selectedGuid = res.data[0].userData.GUID;
-        //         this.selectedID = res.data[0].id;
-        //         // console.log("Selected GUID:", selectedGuid);
-        //         console.log("Selected ID:", this.selectedID);
-        //     });
 
-        //     this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedID, "Content"]);
-        //     console.log("Published Get\n\n");
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-        //         console.log("MIlle Says GetReturn", res);
-        //     });
-        //     console.log("Subscribed Get\n\n");
-        // },
-
-        // GetListAttributes(res) {
-        //     this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-        //         console.log("MIlle Says GetListAttributesReturn", res);
-        //     });
-        // },
-
-        // GetAttribute(res) {
-        //     this.platformAPI.publish("3DEXPERIENCity.Get", res);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-        //         console.log("MIlle Says GetReturn", res);
-        //     });
-        // },
-
-        // create3DPOISinglePoint() {
-        //     console.log("Creating up to 10 Points");
-        //     let count = 0;
-        //     createTreeCoordinates((treeCoordinate) => {
-        //         if (count < 10) {
-        //             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", treeCoordinate);
-        //             count++;
-        //         }
-        //     });
-        //     console.log("MILLE says up to 10 Points Created\n\n\n");
-        // },
     }
 };
 </script>
