@@ -21,11 +21,10 @@
 
 <script>
 // import src/assets/response_mositureContent
-import response_mositureContent from "@/assets/response_mositureContent.json";
 import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
-import { widget } from "@widget-lab/3ddashboard-utils";
+import { Widget, widget } from "@widget-lab/3ddashboard-utils";
 import geojson_template from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
 
@@ -210,17 +209,16 @@ export default {
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                // if layer exist, remove content, then add3dpoi
-                // if (this.layerExists) {
-                //     this.UpdateLayerWith3DPOI();
-                //     console.log("Layer Exists, updating content");
-                // }
                 if (this.layerExists) {
-                    this.removeContentLayers();
-                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-                    this.layerExists = true;
+                    this.UpdateLayerWith3DPOI();
+                    console.log("Layer Exists, updating content");
                 }
+                // if (this.layerExists) {
+                //     this.removeContentLayers();
+                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
+                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
+                //     this.layerExists = true;
+                // }
 
                 if (this.selectedItem) {
                     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
@@ -269,11 +267,19 @@ export default {
         },
 
         UpdateLayerWith3DPOI() {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_low);
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                WidgetID: widget.id,
+                layerID: "mositure_content_low",
+                geojson: this.mositure_content_low.geojson
+            });
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_high);
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                WidgetID: widget.id,
+                layerID: "mositure_content_high",
+                geojson: this.mositure_content_high.geojson
+            });
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
