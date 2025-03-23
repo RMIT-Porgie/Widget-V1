@@ -272,7 +272,8 @@ export default {
 
                     this.selectedItem = {
                         id: res.data[0].id,
-                        guid: selectedGuid
+                        guid: selectedGuid,
+                        moisture: matchingMoistureData.fields.soil_moisture_content
                     };
                 } else {
                     this.selectedItem = null;
