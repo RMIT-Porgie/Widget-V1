@@ -47,12 +47,7 @@ export default {
 
             mositure_content_low: {
                 widgetID: widget.id,
-                geojson: {
-                    type: "FeatureCollection",
-                    name: "mositure_content_low",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: []
-                }, // Use the imported geojson file
+                geojson: geojson, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_low",
                     name: "mositure_content_low",
@@ -73,12 +68,7 @@ export default {
 
             mositure_content_high: {
                 widgetID: widget.id,
-                geojson: {
-                    type: "FeatureCollection",
-                    name: "mositure_content_high",
-                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: []
-                }, // Use the imported geojson file
+                geojson: geojson, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_high",
                     name: "mositure_content_high",
@@ -183,11 +173,14 @@ export default {
 
                 // if layer exist, remove content, then add3dpoi
                 if (this.layerExists) {
-                    this.removeContentLayers();
-                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-                    this.layerExists = true;
+                    this.UpdateLayerWith3DPOI();
                 }
+                // if (this.layerExists) {
+                //     this.removeContentLayers();
+                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
+                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
+                //     this.layerExists = true;
+                // }
 
 
 
@@ -236,6 +229,17 @@ export default {
                 console.log("Mille Says Add3DPOIReturn", res);
             });
             this.layerExists = true;
+        },
+
+        UpdateLayerWith3DPOI() {
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_low);
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+                console.log("Mille Says Update3DPOIContentReturn", res);
+            });
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_high);
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+                console.log("Mille Says Update3DPOIContentReturn", res);
+            });
         },
 
         removeContentLayers() {
