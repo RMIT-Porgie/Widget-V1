@@ -4,7 +4,6 @@
             <v-container style="background: white; min-height: 100vh">
                 <h1>Hello World From RMIT</h1>
 
-
                 <!-- Add selected item info display -->
                 <v-card v-if="selectedItem" class="mt-4 selected-item-card">
                     <v-card-title>Selected Tree Information</v-card-title>
@@ -47,7 +46,27 @@ export default {
 
             mositure_content_low: {
                 widgetID: widget.id,
-                geojson: geojson_template, // Use the imported geojson file
+                geojson: {
+                    type: "FeatureCollection",
+                    name: "mositure_content_low",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: {
+                                "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
+                                "fruit_type": "Apple",
+                                "row": 1,
+                                "plot": 1,
+                                "Soil Moisture": 0
+                            },
+                            geometry: {
+                                type: "Point",
+                                coordinates: [344778.2279388432, 5966176.809605619, 120.8]
+                            }
+                        }
+                    ]
+                },
                 layer: {
                     id: "mositure_content_low",
                     name: "mositure_content_low",
@@ -68,7 +87,27 @@ export default {
 
             mositure_content_high: {
                 widgetID: widget.id,
-                geojson: geojson_template, // Use the imported geojson file
+                geojson: {
+                    type: "FeatureCollection",
+                    name: "mositure_content_high",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: {
+                                "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
+                                "fruit_type": "Apple",
+                                "row": 1,
+                                "plot": 1,
+                                "Soil Moisture": 0
+                            },
+                            geometry: {
+                                type: "Point",
+                                coordinates: [344778.2279388432, 5966176.809605619, 120.8]
+                            }
+                        }
+                    ]
+                },
                 layer: {
                     id: "mositure_content_high",
                     name: "mositure_content_high",
@@ -115,10 +154,10 @@ export default {
 
     async mounted() {
         console.log("App mounted");
+        // CONSOLE LOG GEOJSON TEMPLATE
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
         this.CreateLayerWith3DPOI();
-        
 
         const options = {
             protocol: "wss",
@@ -140,7 +179,6 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
-                console.log("📡 MQTT Data:", this.mqtt_data);
 
                 // Ensure geojson and its features are initialized
                 if (!geojson_template || !geojson_template.features) {
@@ -184,8 +222,6 @@ export default {
                 //     this.layerExists = true;
                 // }
 
-
-
                 if (this.selectedItem) {
                     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
                     if (matchingMoistureData) {
@@ -219,7 +255,6 @@ export default {
         // if the moisture content is less than 50%, append to a GeoJSON, if more than 50% append to another geojson
         // use update3dpoi with the layer name mositure_content_low with the GeoJSON lessthan 50%, and mosture_content_hihg with the more than 50%
         //
-
 
         CreateLayerWith3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
@@ -296,7 +331,6 @@ export default {
             this.pointExists = true;
         },
 
-
         Update3DPOIContent() {
             this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = 1000;
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
@@ -304,8 +338,6 @@ export default {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
         }
-
-
     }
 };
 </script>
