@@ -124,27 +124,6 @@ export default {
                     opacity: 1
                 }
             },
-
-            tree_coordinate: {
-                widgetID: widget.id,
-                geojson: geojson_template, // Use the imported geojson file
-                layer: {
-                    id: "tree-layer",
-                    name: "tree POI",
-                    attributeMapping: {
-                        "STRID": "GUID",
-                        "Soil Moisture": "Soil Moisture"
-                    }
-                },
-                render: {
-                    anchor: true,
-                    color: "green",
-                    scale: [1, 1, 3],
-                    shape: "tube",
-                    switchDistance: 500,
-                    opacity: 1
-                }
-            }
         };
     },
     computed: {
@@ -209,16 +188,16 @@ export default {
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                // if (this.layerExists) {
-                //     this.UpdateLayerWith3DPOI();
-                //     console.log("Layer Exists, updating content");
-                // }
                 if (this.layerExists) {
-                    this.removeContentLayers();
-                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-                    this.layerExists = true;
+                    this.UpdateLayerWith3DPOI();
+                    console.log("Layer Exists, updating content");
                 }
+                // if (this.layerExists) {
+                //     this.removeContentLayers();
+                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
+                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
+                //     this.layerExists = true;
+                // }
 
                 if (this.selectedItem) {
                     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
@@ -269,7 +248,7 @@ export default {
         UpdateLayerWith3DPOI() {
             console.log("Widget ID: ", widget.id);
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                WidgetID: widget.id,
+                WidgetID: this.mositure_content_low.widgetID,
                 layerID: "mositure_content_low",
                 geojson: this.mositure_content_low.geojson
             });
@@ -277,7 +256,7 @@ export default {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                WidgetID: widget.id,
+                WidgetID: this.mositure_content_high.widgetID,
                 layerID: "mositure_content_high",
                 geojson: this.mositure_content_high.geojson
             });
@@ -310,7 +289,7 @@ export default {
                     this.selectedItem = null;
                 }
             });
-        },
+        }
 
         // create3DPOI() {
         //     console.log("Creating Points");
