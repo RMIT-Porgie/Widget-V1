@@ -32,16 +32,15 @@ export default {
     name: "App",
     data() {
         return {
-            selectedID: null,
             mqttClient: null,
             layerExists: false,
-            mqttClient: null,
-            currentMoisture: 0,
             selectedItem: null,
             mqtt_data: null,
-            x: null,
-            y: null,
-            z: null,
+            // selectedID: null,
+            // currentMoisture: 0,
+            // x: null,
+            // y: null,
+            // z: null,
 
             mositure_content_low: {
                 widgetID: widget.id,
@@ -49,22 +48,7 @@ export default {
                     type: "FeatureCollection",
                     name: "mositure_content_low",
                     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: {
-                                "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
-                                "fruit_type": "Apple",
-                                "row": 1,
-                                "plot": 1,
-                                "Soil Moisture": 0
-                            },
-                            geometry: {
-                                type: "Point",
-                                coordinates: [344778.2279388432, 5966176.809605619, 120.8]
-                            }
-                        }
-                    ]
+                    features: []
                 },
                 layer: {
                     id: "mositure_content_low",
@@ -90,22 +74,7 @@ export default {
                     type: "FeatureCollection",
                     name: "mositure_content_high",
                     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: {
-                                "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
-                                "fruit_type": "Apple",
-                                "row": 1,
-                                "plot": 1,
-                                "Soil Moisture": 0
-                            },
-                            geometry: {
-                                type: "Point",
-                                coordinates: [344778.2279388432, 5966176.809605619, 120.8]
-                            }
-                        }
-                    ]
+                    features: []
                 },
                 layer: {
                     id: "mositure_content_high",
@@ -123,7 +92,7 @@ export default {
                     switchDistance: 500,
                     opacity: 1
                 }
-            },
+            }
         };
     },
     computed: {
@@ -159,10 +128,10 @@ export default {
                 this.mqtt_data = JSON.parse(message.toString());
 
                 // Ensure geojson and its features are initialized
-                if (!geojson_template || !geojson_template.features) {
-                    console.error("GeoJSON or its features are not properly initialized.");
-                    return;
-                }
+                // if (!geojson_template || !geojson_template.features) {
+                //     console.error("GeoJSON or its features are not properly initialized.");
+                //     return;
+                // }
 
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
@@ -181,9 +150,9 @@ export default {
                 });
 
                 // Add this console log to show the first feature
-                if (this.mositure_content_low.geojson.features.length > 0) {
-                    console.log("First low moisture:", this.mositure_content_low);
-                }
+                // if (this.mositure_content_low.geojson.features.length > 0) {
+                //     console.log("First low moisture:", this.mositure_content_low);
+                // }
 
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
