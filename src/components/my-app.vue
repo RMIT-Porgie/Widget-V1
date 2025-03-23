@@ -43,7 +43,7 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
+import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
 
 export default {
@@ -143,7 +143,7 @@ export default {
         console.log("App mounted");
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-        // this.CreateLayerWith3DPOI();
+        this.CreateLayerWith3DPOI();
         
 
         const options = {
@@ -206,6 +206,7 @@ export default {
                 }
 
 
+
                 // Update selected item moisture if it exists
                 // if (this.selectedItem) {
                 //     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
@@ -225,7 +226,7 @@ export default {
         if (this.mqttClient) {
             this.mqttClient.end();
         }
-        this.removeContentLayers();
+        // this.removeContentLayers();
     },
 
     methods: {
