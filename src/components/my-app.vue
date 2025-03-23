@@ -143,7 +143,7 @@ export default {
         console.log("App mounted");
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-        this.CreateLayerWith3DPOI();
+        // this.CreateLayerWith3DPOI();
         
 
         const options = {
@@ -197,7 +197,14 @@ export default {
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                // this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_low);
+                // if layer exist, remove content, then add3dpoi
+                if (this.layerExists) {
+                    this.removeContentLayers();
+                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
+                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
+                    this.layerExists = true;
+                }
+
 
                 // Update selected item moisture if it exists
                 // if (this.selectedItem) {
@@ -234,6 +241,7 @@ export default {
         // use update3dpoi with the layer name mositure_content_low with the GeoJSON lessthan 50%, and mosture_content_hihg with the more than 50%
         //
 
+
         CreateLayerWith3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
             this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
@@ -249,7 +257,6 @@ export default {
         removeContentLayers() {
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_low");
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_high");
-            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
             this.layerExists = false;
         },
 
