@@ -59,7 +59,7 @@ export default {
                     scale: [1, 1, 1],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: .5
                 }
             },
 
@@ -85,7 +85,7 @@ export default {
                     scale: [1, 1, 3],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: .5
                 }
             },
 
@@ -112,7 +112,7 @@ export default {
                     scale: [1, 1, 5],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: .5
                 }
             }
         };
