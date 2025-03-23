@@ -9,9 +9,18 @@
                     <p>Z: {{ z }}</p>
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
                     <v-btn color="primary" class="mr-2" @click="create3DPOISinglePoint"> Create Points from Single POI </v-btn>
-
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!pointExists"> Remove Point </v-btn>
+
                 </div>
+
+                <!-- Display current moisture data -->
+                <v-card v-if="mqtt_data && mqtt_data.length > 0" class="mt-4">
+                    <v-card-title>Current Moisture Data</v-card-title>
+                    <v-card-text>
+                        <p><strong>GUID:</strong> {{ mqtt_data[0].guid }}</p>
+                        <p><strong>Soil Moisture:</strong> {{ mqtt_data[0].fields.soil_moisture_content }}%</p>
+                    </v-card-text>
+                </v-card>
 
                 <!-- Add selected item info display -->
                 <v-card v-if="selectedItem" class="mt-4 selected-item-card">
@@ -60,7 +69,13 @@ export default {
 
             mositure_content_low: {
                 widgetID: widget.id,
-                geojson: geojson_empty, // Use the imported geojson file
+                geojson: {
+                type: "FeatureCollection",
+                name: "empty_layer",
+                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                features: []
+            }, // Use the imported geojson file
+                
                 layer: {
                     id: "mositure_content_low",
                     name: "mositure_content_low",
@@ -81,7 +96,12 @@ export default {
 
             mositure_content_high: {
                 widgetID: widget.id,
-                geojson: geojson_empty, // Use the imported geojson file
+                geojson: {
+                type: "FeatureCollection",
+                name: "empty_layer",
+                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                features: []
+            }, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_high",
                     name: "mositure_content_high",
@@ -131,11 +151,9 @@ export default {
 
     async mounted() {
         console.log("App mounted");
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-
-        // Create layers immediately after platformAPI is initialized
-        this.CreateLayerWith3DPOI();
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        // this.CreateLayerWith3DPOI();
 
         const options = {
             protocol: "wss",
@@ -158,12 +176,16 @@ export default {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
 
-                // Clear existing features before processing new data
+                // Ensure geojson and its features are initialized
+                if (!geojson || !geojson.features) {
+                    console.error("GeoJSON or its features are not properly initialized.");
+                    return;
+                }
+
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
 
-                // match the mqtt data with the geojson data from "@/assets/sundial_orchard_object_V2.geojson"; with the GUID, extract the geoson data content and update the the moiosture content and if the moisture content is less than 50%, append to the mositure_content_low geojson, if more than 50% append to mositure_content_high geojson, update the "Soil Moisture" Value in Properties
-
+                // Match the MQTT data with the geojson data
                 this.mqtt_data.forEach(sensor => {
                     const matchingFeature = geojson.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
@@ -176,11 +198,16 @@ export default {
                     }
                 });
 
+                // Add this console log to show the first feature
+                if (this.mositure_content_low.geojson.features.length > 0) {
+                    console.log("First low moisture feature:", this.mositure_content_low.geojson.features[0]);
+                }
+
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_low);
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_high);
+                // this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_low);
+                // this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_high);
 
                 // Update selected item moisture if it exists
                 // if (this.selectedItem) {
@@ -202,7 +229,7 @@ export default {
             this.mqttClient.end();
         }
         // Remove layers before unmounting
-        this.removeContentLayers();
+        // this.removeContentLayers();
     },
 
     methods: {
