@@ -46,6 +46,9 @@ import geojson from "@/assets/sundial_orchard_object_V2.geojson";
 import { createTreeCoordinates } from "@/components/create-tree-coordinates";
 import { useGlobalStore } from "@/store/global";
 
+// import src/assets/response_mositureContent
+import response_mositureContent from "@/assets/response_mositureContent.json";
+
 export default {
     name: "App",
     data() {
@@ -71,7 +74,7 @@ export default {
                 widgetID: widget.id,
                 geojson: {
                 type: "FeatureCollection",
-                name: "empty_layer",
+                name: "mositure_content_low",
                 crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
                 features: []
             }, // Use the imported geojson file
@@ -98,7 +101,7 @@ export default {
                 widgetID: widget.id,
                 geojson: {
                 type: "FeatureCollection",
-                name: "empty_layer",
+                name: "mositure_content_high",
                 crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
                 features: []
             }, // Use the imported geojson file
@@ -118,28 +121,28 @@ export default {
                     switchDistance: 500,
                     opacity: 1
                 }
-            }
+            },
 
-            // tree_coordinate: {
-            //     widgetID: widget.id,
-            //     geojson: geojson, // Use the imported geojson file
-            //     layer: {
-            //         id: "tree-layer",
-            //         name: "tree POI",
-            //         attributeMapping: {
-            //             "STRID": "GUID",
-            //             "Soil Moisture": "Soil Moisture"
-            //         }
-            //     },
-            //     render: {
-            //         anchor: true,
-            //         color: "green",
-            //         scale: [1, 1, 3],
-            //         shape: "tube",
-            //         switchDistance: 500,
-            //         opacity: 1
-            //     }
-            // }
+            tree_coordinate: {
+                widgetID: widget.id,
+                geojson: geojson, // Use the imported geojson file
+                layer: {
+                    id: "tree-layer",
+                    name: "tree POI",
+                    attributeMapping: {
+                        "STRID": "GUID",
+                        "Soil Moisture": "Soil Moisture"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "green",
+                    scale: [1, 1, 3],
+                    shape: "tube",
+                    switchDistance: 500,
+                    opacity: 1
+                }
+            }
         };
     },
     computed: {
@@ -203,7 +206,7 @@ export default {
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_low);
+                // this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_low);
 
                 // Update selected item moisture if it exists
                 // if (this.selectedItem) {
@@ -277,7 +280,17 @@ export default {
                     this.selectedItem = null;
                 }
             });
-        }
+        },
+
+        create3DPOI() {
+            console.log("Creating Points");
+            // response_mositureContent
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", response_mositureContent);
+            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+                console.log("Mille Says Add3DPOIReturn", res);
+            });
+            this.layerExists = true;
+        },
 
         // create3DPOI() {
         //     console.log("Creating Points");
