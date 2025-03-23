@@ -50,7 +50,7 @@ export default {
     name: "App",
     data() {
         return {
-            selectedID: null,
+        selectedID: null,
             mqttClient: null,
             pointExists: false,
             mqttClient: null,
@@ -197,14 +197,14 @@ export default {
 
                 // Add this console log to show the first feature
                 if (this.mositure_content_low.geojson.features.length > 0) {
-                    console.log("First low moisture feature:", this.mositure_content_low.geojson.features[0]);
+                    console.log("First low moisture feature:", this.mositure_content_low.geojson.features);
                 }
 
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_low);
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_high);
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_low);
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.mositure_content_high);
 
                 // Update selected item moisture if it exists
                 // if (this.selectedItem) {
