@@ -211,16 +211,16 @@ export default {
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
                 // if layer exist, remove content, then add3dpoi
-                if (this.layerExists) {
-                    this.UpdateLayerWith3DPOI();
-                    console.log("Layer Exists, updating content");
-                }
                 // if (this.layerExists) {
-                //     this.removeContentLayers();
-                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-                //     this.layerExists = true;
+                //     this.UpdateLayerWith3DPOI();
+                //     console.log("Layer Exists, updating content");
                 // }
+                if (this.layerExists) {
+                    this.removeContentLayers();
+                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
+                    this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
+                    this.layerExists = true;
+                }
 
                 if (this.selectedItem) {
                     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
