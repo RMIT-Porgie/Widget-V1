@@ -56,12 +56,39 @@ export default {
                 render: {
                     anchor: true,
                     color: "blue",
+                    scale: [1, 1, 1],
+                    shape: "tube",
+                    switchDistance: 500,
+                    opacity: 1
+                }
+            },
+
+            mositure_content_medium: {
+                widgetID: widget.id,
+                geojson: {
+                    type: "FeatureCollection",
+                    name: "mositure_content_medium",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: []
+                },
+                layer: {
+                    id: "mositure_content_medium",
+                    name: "mositure_content_medium",
+                    attributeMapping: {
+                        "STRID": "GUID",
+                        "Soil Moisture": "Soil Moisture"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "blue",
                     scale: [1, 1, 3],
                     shape: "tube",
                     switchDistance: 500,
                     opacity: 1
                 }
             },
+
 
             mositure_content_high: {
                 widgetID: widget.id,
@@ -82,7 +109,7 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [1, 1, 3],
+                    scale: [1, 1, 5],
                     shape: "tube",
                     switchDistance: 500,
                     opacity: 1
@@ -123,6 +150,7 @@ export default {
                 this.mqtt_data = JSON.parse(message.toString());
 
                 this.mositure_content_low.geojson.features = [];
+                this.mositure_content_medium.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
 
                 // Match the MQTT data with the geojson data
@@ -130,16 +158,26 @@ export default {
                     const matchingFeature = geojson_template.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
                         matchingFeature.properties["Soil Moisture"] = sensor.fields.soil_moisture_content;
-                        if (sensor.fields.soil_moisture_content < 70) {
+                        // below 50 is low moisture
+                        // 50 to 70 is medium moisture
+                        // above 70 is high moisture
+                        if (sensor.fields.soil_moisture_content < 50) {
                             this.mositure_content_low.geojson.features.push(matchingFeature);
+                        } else if (sensor.fields.soil_moisture_content >= 50 && sensor.fields.soil_moisture_content < 70) {
+                            this.mositure_content_medium.geojson.features.push(matchingFeature);
                         } else {
                             this.mositure_content_high.geojson.features.push(matchingFeature);
                         }
+                        // if (sensor.fields.soil_moisture_content < 70) {
+                        //     this.mositure_content_low.geojson.features.push(matchingFeature);
+                        // } else {
+                        //     this.mositure_content_high.geojson.features.push(matchingFeature);
+                        // }
                     }
                 });
 
-                console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
-                console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
+                // console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
+                // console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
                 if (this.layerExists) {
                     this.UpdateLayerWith3DPOI();
@@ -194,6 +232,15 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
+
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                widgetID: this.mositure_content_medium.widgetID,
+                layerID: "mositure_content_medium",
+                geojson: this.mositure_content_medium.geojson
+            });
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+                console.log("Mille Says Update3DPOIContentReturn", res);
+            });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_high.widgetID,
                 layerID: "mositure_content_high",
@@ -206,6 +253,7 @@ export default {
 
         removeContentLayers() {
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_low");
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_medium");
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_high");
             this.layerExists = false;
         },
