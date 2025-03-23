@@ -144,16 +144,13 @@ export default {
     },
     computed: {
         ...mapStores(useGlobalStore)
-        // geojsonFeatures() {
-        //     return this.tree_coordinate.geojson.features;
-        // }
     },
 
     async mounted() {
         console.log("App mounted");
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-        // this.CreateLayerWith3DPOI();
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        this.CreateLayerWith3DPOI();
 
         const options = {
             protocol: "wss",
@@ -206,8 +203,8 @@ export default {
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                // this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_low);
-                // this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_high);
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_low);
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOI", this.mositure_content_high);
 
                 // Update selected item moisture if it exists
                 // if (this.selectedItem) {
@@ -228,8 +225,7 @@ export default {
         if (this.mqttClient) {
             this.mqttClient.end();
         }
-        // Remove layers before unmounting
-        // this.removeContentLayers();
+        this.removeContentLayers();
     },
 
     methods: {
