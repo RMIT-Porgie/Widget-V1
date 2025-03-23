@@ -248,7 +248,7 @@ export default {
         UpdateLayerWith3DPOI() {
             console.log("Widget ID: ", widget.id);
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                WidgetID: this.mositure_content_low.widgetID,
+                widgetID: this.mositure_content_low.widgetID,
                 layerID: "mositure_content_low",
                 geojson: this.mositure_content_low.geojson
             });
@@ -256,7 +256,7 @@ export default {
                 console.log("Mille Says Update3DPOIContentReturn", res);
             });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                WidgetID: this.mositure_content_high.widgetID,
+                widgetID: this.mositure_content_high.widgetID,
                 layerID: "mositure_content_high",
                 geojson: this.mositure_content_high.geojson
             });
