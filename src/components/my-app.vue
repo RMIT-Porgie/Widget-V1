@@ -2,7 +2,11 @@
     <v-app>
         <v-main>
             <v-container style="background: white; min-height: 100vh">
-                <h1>Hello World From RMIT</h1>
+                <h1>Soil Mositure Content Visualisation</h1>
+                <!-- create a button to toggle startVisualisation to True and False -->
+                <v-btn @click="startVisualisation = !startVisualisation" color="primary">
+                    {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
+                </v-btn>
 
                 <!-- Add selected item info display -->
                 <v-card v-if="selectedItem" class="mt-4 selected-item-card">
@@ -33,6 +37,7 @@ export default {
     data() {
         return {
             mqttClient: null,
+            startVisualisation: false,
             layerExists: false,
             selectedItem: null,
             mqtt_data: null,
@@ -180,10 +185,15 @@ export default {
                 console.log("📊 Medium moisture features:", this.mositure_content_medium.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
-                if (this.layerExists) {
+                // if layerExists and startVisualisation is true, update the layer with 3DPOI
+                if (this.layerExists && this.startVisualisation) {
                     this.UpdateLayerWith3DPOI();
                     console.log("Layer Exists, updating content");
                 }
+                // if (this.layerExists) {
+                //     this.UpdateLayerWith3DPOI();
+                //     console.log("Layer Exists, updating content");
+                // }
 
                 if (this.selectedItem) {
                     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
