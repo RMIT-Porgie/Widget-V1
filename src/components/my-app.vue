@@ -267,6 +267,8 @@ export default {
         },
 
         UpdateLayerWith3DPOI() {
+            console.log("Widget ID: ", widget.id);
+
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 WidgetID: widget.id,
                 layerID: "mositure_content_low",
@@ -328,22 +330,22 @@ export default {
         //     });
         // },
 
-        create3DPOI() {
-            console.log("Creating Points");
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("Mille Says Add3DPOIReturn", res);
-            });
-            this.pointExists = true;
-        },
+        // create3DPOI() {
+        //     console.log("Creating Points");
+        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+        //         console.log("Mille Says Add3DPOIReturn", res);
+        //     });
+        //     this.pointExists = true;
+        // },
 
-        Update3DPOIContent() {
-            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = 1000;
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
-            });
-        }
+        // Update3DPOIContent() {
+        //     this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = 1000;
+        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
+        //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+        //         console.log("Mille Says Update3DPOIContentReturn", res);
+        //     });
+        // }
     }
 };
 </script>
