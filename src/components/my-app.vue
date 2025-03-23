@@ -62,12 +62,13 @@ export default {
             x: null,
             y: null,
             z: null,
-            geojson_empty: {
-                type: "FeatureCollection",
-                name: "empty_layer",
-                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                features: []
-            },
+
+            // geojson_empty: {
+            //     type: "FeatureCollection",
+            //     name: "empty_layer",
+            //     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+            //     features: []
+            // },
 
             mositure_content_low: {
                 widgetID: widget.id,
