@@ -43,8 +43,7 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import geojson from "@/assets/sundial_orchard_object_V2.geojson";
-import { createTreeCoordinates } from "@/components/create-tree-coordinates";
+import geojson from "@/assets/sundial_orchard_tree_object_test.geojson";
 import { useGlobalStore } from "@/store/global";
 
 export default {
