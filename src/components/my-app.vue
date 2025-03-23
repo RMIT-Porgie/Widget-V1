@@ -27,7 +27,7 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import geojson from "@/assets/sundial_orchard_object_V2.geojson";
+import geojson_template from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
 
 export default {
@@ -47,7 +47,7 @@ export default {
 
             mositure_content_low: {
                 widgetID: widget.id,
-                geojson: geojson, // Use the imported geojson file
+                geojson: geojson_template, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_low",
                     name: "mositure_content_low",
@@ -68,7 +68,7 @@ export default {
 
             mositure_content_high: {
                 widgetID: widget.id,
-                geojson: geojson, // Use the imported geojson file
+                geojson: geojson_template, // Use the imported geojson file
                 layer: {
                     id: "mositure_content_high",
                     name: "mositure_content_high",
@@ -89,7 +89,7 @@ export default {
 
             tree_coordinate: {
                 widgetID: widget.id,
-                geojson: geojson, // Use the imported geojson file
+                geojson: geojson_template, // Use the imported geojson file
                 layer: {
                     id: "tree-layer",
                     name: "tree POI",
@@ -140,9 +140,10 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
+                console.log("📡 MQTT Data:", this.mqtt_data);
 
                 // Ensure geojson and its features are initialized
-                if (!geojson || !geojson.features) {
+                if (!geojson_template || !geojson_template.features) {
                     console.error("GeoJSON or its features are not properly initialized.");
                     return;
                 }
@@ -152,7 +153,7 @@ export default {
 
                 // Match the MQTT data with the geojson data
                 this.mqtt_data.forEach(sensor => {
-                    const matchingFeature = geojson.features.find(feature => feature.properties.GUID === sensor.guid);
+                    const matchingFeature = geojson_template.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
                         matchingFeature.properties["Soil Moisture"] = sensor.fields.soil_moisture_content;
                         if (sensor.fields.soil_moisture_content < 50) {
@@ -174,6 +175,7 @@ export default {
                 // if layer exist, remove content, then add3dpoi
                 if (this.layerExists) {
                     this.UpdateLayerWith3DPOI();
+                    console.log("Layer Exists, updating content");
                 }
                 // if (this.layerExists) {
                 //     this.removeContentLayers();
@@ -202,7 +204,7 @@ export default {
         if (this.mqttClient) {
             this.mqttClient.end();
         }
-        // this.removeContentLayers();
+        this.removeContentLayers();
     },
 
     methods: {
