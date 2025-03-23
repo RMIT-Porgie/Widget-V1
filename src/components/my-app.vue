@@ -9,7 +9,6 @@
                     <p>Z: {{ z }}</p>
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
                     <v-btn color="primary" class="mr-2" @click="Update3DPOIContent"> Update Point </v-btn>
-                    <v-btn color="primary" class="mr-2" @click="create3DPOISinglePoint"> Create Points from Single POI </v-btn>
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!layerExists"> Remove Point </v-btn>
                 </div>
 
@@ -62,13 +61,6 @@ export default {
             x: null,
             y: null,
             z: null,
-
-            // geojson_empty: {
-            //     type: "FeatureCollection",
-            //     name: "empty_layer",
-            //     crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-            //     features: []
-            // },
 
             mositure_content_low: {
                 widgetID: widget.id,
@@ -153,6 +145,7 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
         this.CreateLayerWith3DPOI();
+        
 
         const options = {
             protocol: "wss",
@@ -257,7 +250,7 @@ export default {
         removeContentLayers() {
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_low");
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_high");
-            // this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "tree-layer");
             this.layerExists = false;
         },
 
@@ -281,45 +274,40 @@ export default {
             });
         },
 
-        create3DPOI() {
-            console.log("Creating Points");
-            // response_mositureContent
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", response_mositureContent);
-            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-                console.log("Mille Says Add3DPOIReturn", res);
-            });
-            this.layerExists = true;
-        },
-
-        Update3DPOIContent() {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", response_mositureContent);
-            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-                console.log("Mille Says Update3DPOIContentReturn", res);
-            });
-        },
-
         // create3DPOI() {
         //     console.log("Creating Points");
-        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
+        //     // response_mositureContent
+        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", response_mositureContent);
         //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
         //         console.log("Mille Says Add3DPOIReturn", res);
         //     });
-        //     this.pointExists = true;
+        //     this.layerExists = true;
         // },
 
-        removePoint() {
-            console.log("Removing Point");
-            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", "mositure_content_low");
-            this.pointExists = false;
-        },
-
-        // updateAttribute() {
-        //     this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = this.currentMoisture;
-        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
+        // Update3DPOIContent() {
+        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", response_mositureContent);
         //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
         //         console.log("Mille Says Update3DPOIContentReturn", res);
         //     });
-        // }
+        // },
+
+        create3DPOI() {
+            console.log("Creating Points");
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
+            this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+                console.log("Mille Says Add3DPOIReturn", res);
+            });
+            this.pointExists = true;
+        },
+
+
+        Update3DPOIContent() {
+            this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = 1000;
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+                console.log("Mille Says Update3DPOIContentReturn", res);
+            });
+        }
 
 
     }
