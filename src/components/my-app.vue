@@ -8,6 +8,7 @@
                     <p>Y: {{ y }}</p>
                     <p>Z: {{ z }}</p>
                     <v-btn color="primary" class="mr-2" @click="create3DPOI"> Create Point </v-btn>
+                    <v-btn color="primary" class="mr-2" @click="Update3DPOIContent"> Update Point </v-btn>
                     <v-btn color="primary" class="mr-2" @click="create3DPOISinglePoint"> Create Points from Single POI </v-btn>
                     <v-btn color="error" class="ml-2" @click="removePoint" :disabled="!layerExists"> Remove Point </v-btn>
 
@@ -290,6 +291,13 @@ export default {
                 console.log("Mille Says Add3DPOIReturn", res);
             });
             this.layerExists = true;
+        },
+
+        Update3DPOIContent() {
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", response_mositureContent);
+            this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+                console.log("Mille Says Update3DPOIContentReturn", res);
+            });
         },
 
         // create3DPOI() {
