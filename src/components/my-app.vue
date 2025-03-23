@@ -36,11 +36,6 @@ export default {
             layerExists: false,
             selectedItem: null,
             mqtt_data: null,
-            // selectedID: null,
-            // currentMoisture: 0,
-            // x: null,
-            // y: null,
-            // z: null,
 
             mositure_content_low: {
                 widgetID: widget.id,
@@ -127,12 +122,6 @@ export default {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_data = JSON.parse(message.toString());
 
-                // Ensure geojson and its features are initialized
-                // if (!geojson_template || !geojson_template.features) {
-                //     console.error("GeoJSON or its features are not properly initialized.");
-                //     return;
-                // }
-
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
 
@@ -141,18 +130,13 @@ export default {
                     const matchingFeature = geojson_template.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
                         matchingFeature.properties["Soil Moisture"] = sensor.fields.soil_moisture_content;
-                        if (sensor.fields.soil_moisture_content < 50) {
+                        if (sensor.fields.soil_moisture_content < 70) {
                             this.mositure_content_low.geojson.features.push(matchingFeature);
                         } else {
                             this.mositure_content_high.geojson.features.push(matchingFeature);
                         }
                     }
                 });
-
-                // Add this console log to show the first feature
-                // if (this.mositure_content_low.geojson.features.length > 0) {
-                //     console.log("First low moisture:", this.mositure_content_low);
-                // }
 
                 console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
@@ -161,12 +145,6 @@ export default {
                     this.UpdateLayerWith3DPOI();
                     console.log("Layer Exists, updating content");
                 }
-                // if (this.layerExists) {
-                //     this.removeContentLayers();
-                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-                //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-                //     this.layerExists = true;
-                // }
 
                 if (this.selectedItem) {
                     const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
@@ -192,15 +170,7 @@ export default {
     methods: {
         handleOnItemSelect(res) {
             this.GetSelectedItemsGUID(res);
-            // this.GetUpdateSelectedItemsAttribute(res);
         },
-
-        // use add 3dpoi create differnt layers with different rendering options, layer name mositure_content_low render to blue, layer name mositure_content_high render to red
-        // create two GEOJSON, one for mostiture contetn_low, and one for higg
-        // read the mqtt data and append the GEOJSON with the GUID and moiture_content
-        // if the moisture content is less than 50%, append to a GeoJSON, if more than 50% append to another geojson
-        // use update3dpoi with the layer name mositure_content_low with the GeoJSON lessthan 50%, and mosture_content_hihg with the more than 50%
-        //
 
         CreateLayerWith3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
@@ -259,40 +229,6 @@ export default {
                 }
             });
         }
-
-        // create3DPOI() {
-        //     console.log("Creating Points");
-        //     // response_mositureContent
-        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", response_mositureContent);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-        //         console.log("Mille Says Add3DPOIReturn", res);
-        //     });
-        //     this.layerExists = true;
-        // },
-
-        // Update3DPOIContent() {
-        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", response_mositureContent);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-        //         console.log("Mille Says Update3DPOIContentReturn", res);
-        //     });
-        // },
-
-        // create3DPOI() {
-        //     console.log("Creating Points");
-        //     this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.tree_coordinate);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-        //         console.log("Mille Says Add3DPOIReturn", res);
-        //     });
-        //     this.pointExists = true;
-        // },
-
-        // Update3DPOIContent() {
-        //     this.tree_coordinate.geojson.features[0].properties["Soil Moisture"] = 1000;
-        //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.tree_coordinate);
-        //     this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-        //         console.log("Mille Says Update3DPOIContentReturn", res);
-        //     });
-        // }
     }
 };
 </script>
