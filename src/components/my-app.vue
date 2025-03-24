@@ -5,7 +5,7 @@
                 <h1>Soil Mositure Content Visualisation</h1>
                 <!-- create a button to toggle startVisualisation to True and False -->
                  <!-- also trigger the clearcontent -->
-                <v-btn @click="startVisualisation = !startVisualisation; removeContentLayers()" color="primary">
+                <v-btn @click="startVisualisation = !startVisualisation" color="primary">
                     {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
                 </v-btn>
 
@@ -187,6 +187,8 @@ export default {
                 console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
 
                 // if layerExists and startVisualisation is true, update the layer with 3DPOI
+                // if layer does not exist, create the layer with 3DPOI
+                
                 if (this.layerExists && this.startVisualisation) {
                     this.UpdateLayerWith3DPOI();
                     console.log("Layer Exists, updating content");
