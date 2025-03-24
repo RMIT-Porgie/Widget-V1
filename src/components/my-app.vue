@@ -4,7 +4,8 @@
             <v-container style="background: white; min-height: 100vh">
                 <h1>Soil Mositure Content Visualisation</h1>
                 <!-- create a button to toggle startVisualisation to True and False -->
-                <v-btn @click="startVisualisation = !startVisualisation" color="primary">
+                 <!-- also trigger the clearcontent -->
+                <v-btn @click="startVisualisation = !startVisualisation; removeContentLayers()" color="primary">
                     {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
                 </v-btn>
 
@@ -57,7 +58,7 @@ export default {
                         "STRID": "GUID",
                         "Soil Moisture": "Soil Moisture"
                     }
-                },
+                },  
                 render: {
                     anchor: true,
                     color: "blue",
@@ -86,9 +87,9 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "blue",
+                    color: "red",
                     scale: [1, 1, 3],
-                    shape: "tube",
+                    shape: "sphere",
                     switchDistance: 500,
                     opacity: .5
                 }
@@ -113,9 +114,9 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "blue",
+                    color: "green",
                     scale: [1, 1, 5],
-                    shape: "tube",
+                    shape: "pyramid",
                     switchDistance: 500,
                     opacity: .5
                 }
