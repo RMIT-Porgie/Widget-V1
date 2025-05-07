@@ -19,6 +19,14 @@
                         </div>
                     </v-card-text>
                 </v-card>
+
+                <!-- Solar Data Display -->
+                <v-card v-if="solarData" class="mt-4 selected-item-card">
+                    <v-card-title>Solar Data</v-card-title>
+                    <v-card-text>
+                        <pre>{{ solarData }}</pre>
+                    </v-card-text>
+                </v-card>
             </v-container>
         </v-main>
     </v-app>
@@ -41,7 +49,8 @@ export default {
             startVisualisation: false,
             layerExists: false,
             selectedItem: null,
-            mqtt_data: null,
+            mqtt_soil_data: null,
+            solarData: null,
 
             mositure_content_low: {
                 widgetID: widget.id,
@@ -149,24 +158,26 @@ export default {
                     console.log("✅ Subscribed to sensor/soil_mositure");
                 }
             });
+            this.mqttClient.subscribe("solar", err => {
+                if (!err) {
+                    console.log("✅ Subscribed to solar");
+                }
+            });
         });
 
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
-                this.mqtt_data = JSON.parse(message.toString());
+                this.mqtt_soil_data = JSON.parse(message.toString());
 
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_medium.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
 
                 // Match the MQTT data with the geojson data
-                this.mqtt_data.forEach(sensor => {
+                this.mqtt_soil_data.forEach(sensor => {
                     const matchingFeature = geojson_template.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
                         matchingFeature.properties["Soil Moisture"] = sensor.fields.soil_moisture_content;
-                        // below 50 is low moisture
-                        // 50 to 70 is medium moisture
-                        // above 70 is high moisture
                         if (sensor.fields.soil_moisture_content < 50) {
                             this.mositure_content_low.geojson.features.push(matchingFeature);
                         } else if (sensor.fields.soil_moisture_content >= 50 && sensor.fields.soil_moisture_content < 70) {
@@ -174,35 +185,25 @@ export default {
                         } else {
                             this.mositure_content_high.geojson.features.push(matchingFeature);
                         }
-                        // if (sensor.fields.soil_moisture_content < 70) {
-                        //     this.mositure_content_low.geojson.features.push(matchingFeature);
-                        // } else {
-                        //     this.mositure_content_high.geojson.features.push(matchingFeature);
-                        // }
                     }
                 });
 
-                console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
-                console.log("📊 Medium moisture features:", this.mositure_content_medium.geojson.features.length);
-                console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
-
-                // if layerExists and startVisualisation is true, update the layer with 3DPOI
-                // if layer does not exist, create the layer with 3DPOI
-                
                 if (this.layerExists && this.startVisualisation) {
                     this.UpdateLayerWith3DPOI();
                     console.log("Layer Exists, updating content");
                 }
-                // if (this.layerExists) {
-                //     this.UpdateLayerWith3DPOI();
-                //     console.log("Layer Exists, updating content");
-                // }
 
                 if (this.selectedItem) {
-                    const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
+                    const matchingMoistureData = this.mqtt_soil_data.find(sensor => sensor.guid === this.selectedItem.guid);
                     if (matchingMoistureData) {
                         this.selectedItem.moisture = matchingMoistureData.fields.soil_moisture_content;
                     }
+                }
+            } else if (topic === "solar") {
+                try {
+                    this.solarData = JSON.parse(message.toString());
+                } catch (e) {
+                    this.solarData = message.toString();
                 }
             }
         });
@@ -281,7 +282,7 @@ export default {
                     console.log("Selected GUID:", selectedGuid);
 
                     // Find matching moisture data from MQTT data
-                    const matchingMoistureData = this.mqtt_data?.find(sensor => sensor.guid === selectedGuid);
+                    const matchingMoistureData = this.mqtt_soil_data?.find(sensor => sensor.guid === selectedGuid);
 
                     this.selectedItem = {
                         id: res.data[0].id,
