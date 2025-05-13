@@ -4,7 +4,7 @@
             <v-container style="background: white; min-height: 100vh">
                 <h1>Soil Mositure Content Visualisation</h1>
                 <!-- create a button to toggle startVisualisation to True and False -->
-                 <!-- also trigger the clearcontent -->
+                <!-- also trigger the clearcontent -->
                 <v-btn @click="startVisualisation = !startVisualisation" color="primary">
                     {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
                 </v-btn>
@@ -67,14 +67,14 @@ export default {
                         "STRID": "GUID",
                         "Soil Moisture": "Soil Moisture"
                     }
-                },  
+                },
                 render: {
                     anchor: true,
                     color: "blue",
                     scale: [1, 1, 1],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
             },
 
@@ -100,10 +100,9 @@ export default {
                     scale: [1, 1, 3],
                     shape: "sphere",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
             },
-
 
             mositure_content_high: {
                 widgetID: widget.id,
@@ -127,7 +126,7 @@ export default {
                     scale: [1, 1, 5],
                     shape: "pyramid",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
             }
         };
@@ -138,10 +137,10 @@ export default {
 
     async mounted() {
         console.log("App mounted");
-        // CONSOLE LOG GEOJSON TEMPLATE
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-        this.CreateLayerWith3DPOI();
+
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        // this.CreateLayerWith3DPOI();
 
         const options = {
             protocol: "wss",
@@ -149,6 +148,7 @@ export default {
             port: 443,
             clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
         };
+
         this.mqttClient = mqtt.connect(options);
 
         this.mqttClient.on("connect", () => {
@@ -168,12 +168,12 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
                 this.mqtt_soil_data = JSON.parse(message.toString());
+                console.log("Received soil moisture data:", this.mqtt_soil_data);
 
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_medium.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
 
-                // Match the MQTT data with the geojson data
                 this.mqtt_soil_data.forEach(sensor => {
                     const matchingFeature = geojson_template.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
@@ -190,7 +190,6 @@ export default {
 
                 if (this.layerExists && this.startVisualisation) {
                     this.UpdateLayerWith3DPOI();
-                    console.log("Layer Exists, updating content");
                 }
 
                 if (this.selectedItem) {
@@ -227,44 +226,28 @@ export default {
 
         CreateLayerWith3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
-            // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-            //     console.log("Mille Says Add3DPOIReturn", res);
-            // });
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_medium);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
-            // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
-            //     console.log("Mille Says Add3DPOIReturn", res);
-            // });
             this.layerExists = true;
         },
 
         UpdateLayerWith3DPOI() {
-            // console.log("Widget ID: ", widget.id);
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_low.widgetID,
                 layerID: "mositure_content_low",
                 geojson: this.mositure_content_low.geojson
             });
-            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-            //     console.log("Mille Says Update3DPOIContentReturn", res);
-            // });
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_medium.widgetID,
                 layerID: "mositure_content_medium",
                 geojson: this.mositure_content_medium.geojson
             });
-            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-            //     console.log("Mille Says Update3DPOIContentReturn", res);
-            // });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_high.widgetID,
                 layerID: "mositure_content_high",
                 geojson: this.mositure_content_high.geojson
             });
-            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
-            //     console.log("Mille Says Update3DPOIContentReturn", res);
-            // });
         },
 
         removeContentLayers() {
@@ -279,11 +262,8 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
                     const selectedGuid = res.data[0].userData.GUID;
-                    console.log("Selected GUID:", selectedGuid);
-
                     // Find matching moisture data from MQTT data
                     const matchingMoistureData = this.mqtt_soil_data?.find(sensor => sensor.guid === selectedGuid);
-
                     this.selectedItem = {
                         id: res.data[0].id,
                         guid: selectedGuid,
