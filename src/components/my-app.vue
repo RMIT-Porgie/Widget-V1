@@ -52,6 +52,29 @@ export default {
             mqtt_soil_data: null,
             solarData: null,
 
+            // create geojson_tempate 
+
+            sundial_orchard_static:{
+                widgetID: widget.id,
+                geojson: geojson_template,
+                layer: {
+                    id: "sundial_orchard_static",
+                    name: "sundial_orchard_static",
+                    attributeMapping: {
+                        "STRID": "GUID",
+                        "Soil Moisture": "Soil Moisture"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "blue",
+                    scale: [1, 1, 1],
+                    shape: "tube",
+                    switchDistance: 500,
+                    opacity: 0.5
+                }
+            },
+
             mositure_content_low: {
                 widgetID: widget.id,
                 geojson: {
@@ -138,9 +161,12 @@ export default {
     async mounted() {
         console.log("App mounted");
 
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-        // this.CreateLayerWith3DPOI();
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+
+        this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.sundial_orchard_static);
+
+        this.CreateLayerWith3DPOI();
 
         const options = {
             protocol: "wss",
