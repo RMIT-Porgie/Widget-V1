@@ -100,19 +100,19 @@ export default {
             });
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                this.layerListAttributes = res;
-                this.layerListAttributes.forEach(attr => {
-                    console.log("ID", this.selectedItem.id);
-                    console.log("attr", attr);
-                    this.platformAPI.publish("3DEXPERIENCity.Get", {
-                        ID: this.selectedItem.id,
-                        attribute: attr
+                if (res && Array.isArray(res)) {
+                    this.layerListAttributes = res;
+                    this.layerAttributes = {};
+                    res.forEach(attr => {
+                        this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
+                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                            console.log("getRes", getRes);
+                            if (getRes && getRes.data !== undefined) {
+                                this.$set(this.layerAttributes, attr, getRes.data);
+                            }
+                        });
                     });
-                    this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                        this.$set(this.layerAttributes, attr, getRes);
-                    });
-                });
-                
+                }
             });
             
         }
