@@ -36,7 +36,7 @@ export default {
             soilData: null,
             selectedItem: null,
             layerListAttributes: null,
-            // layerAttributes: {},
+            layerAttributes: {},
         };
     },
     computed: {
@@ -100,17 +100,17 @@ export default {
             });
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                if (res) {
-                    res.forEach(attr => {
-                        this.platformAPI.publish("3DEXPERIENCity.Get", {
-                            ID: this.selectedItem.id,
-                            attribute: attr
-                        });
-                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                            this.$set(this.layerAttributes, attr, getRes);
-                        });
+                this.layerListAttributes = res;
+                this.layerListAttributes.forEach(attr => {
+                    this.platformAPI.publish("3DEXPERIENCity.Get", {
+                        ID: this.selectedItem.id,
+                        attribute: attr
                     });
-                }
+                    this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                        this.$set(this.layerAttributes, attr, getRes);
+                    });
+                });
+                
             });
             
         }
