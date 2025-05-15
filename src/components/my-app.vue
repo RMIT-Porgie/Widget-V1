@@ -25,6 +25,15 @@
                         <div class="selected-item-info">
                             <p><strong>GUID:</strong> {{ selectedItem.guid }}</p>
                             <p><strong>Soil Moisture:</strong> {{ selectedItem.moisture }}%</p>
+                            <v-btn color="info" @click="fetchSelectedItemDetails">Show Full Info</v-btn>
+                        </div>
+                        <div v-if="selectedItemDetails">
+                            <h3>Attributes</h3>
+                            <ul>
+                                <li v-for="(value, key) in selectedItemDetails" :key="key">
+                                    <strong>{{ key }}:</strong> {{ value }}
+                                </li>
+                            </ul>
                         </div>
                     </v-card-text>
                 </v-card>
@@ -50,6 +59,7 @@ export default {
             startVisualisation: false,
             layerExists: false,
             selectedItem: null,
+            selectedItemDetails: null,
             mqtt_data: null,
 
             mositure_content_low: {
@@ -357,15 +367,52 @@ export default {
                         "COLOR": "color"
                     }
                 },
-                // render: {
-                //     anchor: true,
-                //     // color: "purple",
-                //     scale: [1, 1, 3],
-                //     shape: "tube",
-                //     switchDistance: 500,
-                //     // opacity: 1
-                // }
+                render: {
+                    anchor: true,
+                    // color: "purple",
+                    scale: [1, 1, 3],
+                    shape: "tube",
+                    switchDistance: 500,
+                    // opacity: 1
+                }
             });
+        },
+
+        async fetchSelectedItemDetails() {
+            if (!this.selectedItem) return;
+            // 1. GetSelectedItems (already have GUID)
+            const guid = this.selectedItem.guid;
+            // 2. GetListAttributes for the layer (example: "mositure_content_low")
+            const layerId = this.selectedItem.layerId || "mositure_content_low";
+            let attributes = [];
+            try {
+                attributes = await new Promise(resolve => {
+                    this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", { layerID: layerId });
+                    this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
+                        resolve(res.data || []);
+                    });
+                });
+            } catch (e) {
+                attributes = [];
+            }
+            // 3. Get (fetch full info for the selected item)
+            let details = {};
+            try {
+                details = await new Promise(resolve => {
+                    this.platformAPI.publish("3DEXPERIENCity.Get", { layerID: layerId, GUID: guid });
+                    this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+                        resolve(res.data || {});
+                    });
+                });
+            } catch (e) {
+                details = {};
+            }
+            // Combine attributes and details for display
+            const display = {};
+            attributes.forEach(attr => {
+                display[attr] = details[attr];
+            });
+            this.selectedItemDetails = display;
         }
     }
 };
