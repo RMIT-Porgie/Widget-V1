@@ -12,8 +12,8 @@
                     {{ layerListAttributes }}
                 </div>
                 
-                <h2>Layer Attributes</h2>
-                <div>{{ layerAttributes }}</div>
+                <!-- <h2>Layer Attributes</h2>
+                <div>{{ layerAttributes }}</div> -->
             </v-container>
         </v-main>
     </v-app>
@@ -37,7 +37,7 @@ export default {
             soilData: null,
             selectedItem: null,
             layerListAttributes: null,
-            layerAttributes: {},
+            // layerAttributes: {},
         };
     },
     computed: {
