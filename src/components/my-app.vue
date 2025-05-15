@@ -293,16 +293,19 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
-                    const selectedGuid = res.data[0].userData.GUID;
-                    console.log("Selected GUID:", selectedGuid);
+                    const selected = res.data[0];
+                    const selectedGuid = selected.userData.GUID;
+                    const selectedLayerId = selected.layerId || selected.layerID || selected.layer || null;
+                    console.log("Selected GUID:", selectedGuid, "LayerID:", selectedLayerId);
 
                     // Find matching moisture data from MQTT data
                     const matchingMoistureData = this.mqtt_data?.find(sensor => sensor.guid === selectedGuid);
 
                     this.selectedItem = {
-                        id: res.data[0].id,
+                        id: selected.id,
                         guid: selectedGuid,
-                        moisture: matchingMoistureData.fields.soil_moisture_content
+                        layerId: selectedLayerId,
+                        moisture: matchingMoistureData?.fields?.soil_moisture_content || null
                     };
                 } else {
                     this.selectedItem = null;
@@ -380,10 +383,13 @@ export default {
 
         async fetchSelectedItemDetails() {
             if (!this.selectedItem) return;
-            // 1. GetSelectedItems (already have GUID)
             const guid = this.selectedItem.guid;
-            // 2. GetListAttributes for the layer (example: "mositure_content_low")
             const layerId = this.selectedItem.layerId || "mositure_content_low";
+            if (!layerId) {
+                alert("No valid layerId for selected item.");
+                return;
+            }
+            console.log("Fetching attributes for layerId:", layerId, "GUID:", guid);
             let attributes = [];
             try {
                 attributes = await new Promise(resolve => {
@@ -395,7 +401,6 @@ export default {
             } catch (e) {
                 attributes = [];
             }
-            // 3. Get (fetch full info for the selected item)
             let details = {};
             try {
                 details = await new Promise(resolve => {
@@ -407,7 +412,6 @@ export default {
             } catch (e) {
                 details = {};
             }
-            // Combine attributes and details for display
             const display = {};
             attributes.forEach(attr => {
                 display[attr] = details[attr];
