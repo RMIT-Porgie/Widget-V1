@@ -2,21 +2,22 @@
     <v-app>
         <v-main>
             <v-container>
-                <h2>Selected Item</h2>
+                <!-- <h2>Selected Item</h2>
                 <div>
                     {{ selectedItem }}
                 </div>
                 <h2>Layer List Attributes</h2>
                 <div>
                     {{ layerListAttributes }}
-                </div>
+                </div> -->
+                <h2>Layer Attributes</h2>
+                <div>{{ layerAttributes }}</div>
             </v-container>
         </v-main>
     </v-app>
 </template>
 
 <script>
-
 // import src/assets/response_mositureContent
 import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
@@ -24,6 +25,7 @@ import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import geojson_template from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
+import { get } from "core-js/core/dict";
 
 export default {
     name: "App",
@@ -33,6 +35,7 @@ export default {
             soilData: null,
             selectedItem: null,
             layerListAttributes: null,
+            layerAttributes: {},
         };
     },
     computed: {
@@ -94,14 +97,24 @@ export default {
                     this.selectedItem = null;
                 }
             });
-            // GetListAttributes
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                this.layerListAttributes = res;
+                if (res) {
+                    res.forEach(attr => {
+                        this.platformAPI.publish("3DEXPERIENCity.Get", {
+                            ID: this.selectedItem.id,
+                            attribute: attr
+                        });
+                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                            this.$set(this.layerAttributes, attr, getRes);
+                        });
+                    });
+                }
             });
+            
         }
     }
-}
+};
 </script>
 
 <style></style>
