@@ -12,8 +12,13 @@
                     {{ layerListAttributes }}
                 </div>
                 
+                <h2>Attributes</h2>
+                <div>{{ attribute }}</div>
+
                 <h2>Layer Attributes</h2>
                 <div>{{ layerAttributes }}</div>
+
+
             </v-container>
         </v-main>
     </v-app>
@@ -36,7 +41,8 @@ export default {
             soilData: null,
             selectedItem: null,
             layerListAttributes: null,
-            layerAttributes: {},
+            layerAttributes: null,
+            attribute: null,
         };
     },
     computed: {
@@ -106,10 +112,9 @@ export default {
                     res.forEach(attr => {
                         this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
                         this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                            console.log("getRes", getRes);
-                            if (getRes && getRes.data !== undefined) {
-                                this.$set(this.layerAttributes, attr, getRes.data);
-                            }
+                            // Directly use getRes as the value for the attribute
+                            this.$set(this.layerAttributes, attr, getRes);
+                            this.attribute = getRes;
                         });
                     });
                 }
