@@ -357,14 +357,14 @@ export default {
                         "COLOR": "color"
                     }
                 },
-                render: {
-                    anchor: true,
-                    // color: "purple",
-                    scale: [1, 1, 3],
-                    shape: "tube",
-                    switchDistance: 500,
-                    // opacity: 1
-                }
+                // render: {
+                //     anchor: true,
+                //     // color: "purple",
+                //     scale: [1, 1, 3],
+                //     shape: "tube",
+                //     switchDistance: 500,
+                //     // opacity: 1
+                // }
             });
         }
     }
