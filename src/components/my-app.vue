@@ -4,7 +4,7 @@
             <v-container style="background: white; min-height: 100vh">
                 <h1>Soil Mositure Content Visualisation</h1>
                 <!-- create a button to toggle startVisualisation to True and False -->
-                <!-- also trigger the clearcontent -->
+                 <!-- also trigger the clearcontent -->
                 <v-btn @click="startVisualisation = !startVisualisation" color="primary">
                     {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
                 </v-btn>
@@ -17,14 +17,6 @@
                             <p><strong>GUID:</strong> {{ selectedItem.guid }}</p>
                             <p><strong>Soil Moisture:</strong> {{ selectedItem.moisture }}%</p>
                         </div>
-                    </v-card-text>
-                </v-card>
-
-                <!-- Solar Data Display -->
-                <v-card v-if="solarData" class="mt-4 selected-item-card">
-                    <v-card-title>Solar Data</v-card-title>
-                    <v-card-text>
-                        <pre>{{ solarData }}</pre>
                     </v-card-text>
                 </v-card>
             </v-container>
@@ -49,31 +41,7 @@ export default {
             startVisualisation: false,
             layerExists: false,
             selectedItem: null,
-            mqtt_soil_data: null,
-            solarData: null,
-
-            // create geojson_tempate 
-
-            sundial_orchard_static:{
-                widgetID: widget.id,
-                geojson: geojson_template,
-                layer: {
-                    id: "sundial_orchard_static",
-                    name: "sundial_orchard_static",
-                    attributeMapping: {
-                        "STRID": "GUID",
-                        "Soil Moisture": "Soil Moisture"
-                    }
-                },
-                render: {
-                    anchor: true,
-                    color: "blue",
-                    scale: [1, 1, 1],
-                    shape: "tube",
-                    switchDistance: 500,
-                    opacity: 0.5
-                }
-            },
+            mqtt_data: null,
 
             mositure_content_low: {
                 widgetID: widget.id,
@@ -90,14 +58,14 @@ export default {
                         "STRID": "GUID",
                         "Soil Moisture": "Soil Moisture"
                     }
-                },
+                },  
                 render: {
                     anchor: true,
                     color: "blue",
                     scale: [1, 1, 1],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: 0.5
+                    opacity: .5
                 }
             },
 
@@ -123,9 +91,10 @@ export default {
                     scale: [1, 1, 3],
                     shape: "sphere",
                     switchDistance: 500,
-                    opacity: 0.5
+                    opacity: .5
                 }
             },
+
 
             mositure_content_high: {
                 widgetID: widget.id,
@@ -149,7 +118,7 @@ export default {
                     scale: [1, 1, 5],
                     shape: "pyramid",
                     switchDistance: 500,
-                    opacity: 0.5
+                    opacity: .5
                 }
             }
         };
@@ -160,12 +129,9 @@ export default {
 
     async mounted() {
         console.log("App mounted");
-
+        // CONSOLE LOG GEOJSON TEMPLATE
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-
-        this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.sundial_orchard_static);
-
         this.CreateLayerWith3DPOI();
 
         const options = {
@@ -174,7 +140,6 @@ export default {
             port: 443,
             clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
         };
-
         this.mqttClient = mqtt.connect(options);
 
         this.mqttClient.on("connect", () => {
@@ -184,26 +149,24 @@ export default {
                     console.log("✅ Subscribed to sensor/soil_mositure");
                 }
             });
-            this.mqttClient.subscribe("solar", err => {
-                if (!err) {
-                    console.log("✅ Subscribed to solar");
-                }
-            });
         });
 
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
-                this.mqtt_soil_data = JSON.parse(message.toString());
-                console.log("Received soil moisture data:", this.mqtt_soil_data);
+                this.mqtt_data = JSON.parse(message.toString());
 
                 this.mositure_content_low.geojson.features = [];
                 this.mositure_content_medium.geojson.features = [];
                 this.mositure_content_high.geojson.features = [];
 
-                this.mqtt_soil_data.forEach(sensor => {
+                // Match the MQTT data with the geojson data
+                this.mqtt_data.forEach(sensor => {
                     const matchingFeature = geojson_template.features.find(feature => feature.properties.GUID === sensor.guid);
                     if (matchingFeature) {
                         matchingFeature.properties["Soil Moisture"] = sensor.fields.soil_moisture_content;
+                        // below 50 is low moisture
+                        // 50 to 70 is medium moisture
+                        // above 70 is high moisture
                         if (sensor.fields.soil_moisture_content < 50) {
                             this.mositure_content_low.geojson.features.push(matchingFeature);
                         } else if (sensor.fields.soil_moisture_content >= 50 && sensor.fields.soil_moisture_content < 70) {
@@ -211,24 +174,35 @@ export default {
                         } else {
                             this.mositure_content_high.geojson.features.push(matchingFeature);
                         }
+                        // if (sensor.fields.soil_moisture_content < 70) {
+                        //     this.mositure_content_low.geojson.features.push(matchingFeature);
+                        // } else {
+                        //     this.mositure_content_high.geojson.features.push(matchingFeature);
+                        // }
                     }
                 });
 
+                console.log("📊 Low moisture features:", this.mositure_content_low.geojson.features.length);
+                console.log("📊 Medium moisture features:", this.mositure_content_medium.geojson.features.length);
+                console.log("📊 High moisture features:", this.mositure_content_high.geojson.features.length);
+
+                // if layerExists and startVisualisation is true, update the layer with 3DPOI
+                // if layer does not exist, create the layer with 3DPOI
+                
                 if (this.layerExists && this.startVisualisation) {
                     this.UpdateLayerWith3DPOI();
+                    console.log("Layer Exists, updating content");
                 }
+                // if (this.layerExists) {
+                //     this.UpdateLayerWith3DPOI();
+                //     console.log("Layer Exists, updating content");
+                // }
 
                 if (this.selectedItem) {
-                    const matchingMoistureData = this.mqtt_soil_data.find(sensor => sensor.guid === this.selectedItem.guid);
+                    const matchingMoistureData = this.mqtt_data.find(sensor => sensor.guid === this.selectedItem.guid);
                     if (matchingMoistureData) {
                         this.selectedItem.moisture = matchingMoistureData.fields.soil_moisture_content;
                     }
-                }
-            } else if (topic === "solar") {
-                try {
-                    this.solarData = JSON.parse(message.toString());
-                } catch (e) {
-                    this.solarData = message.toString();
                 }
             }
         });
@@ -252,28 +226,44 @@ export default {
 
         CreateLayerWith3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_low);
+            // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+            //     console.log("Mille Says Add3DPOIReturn", res);
+            // });
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_medium);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.mositure_content_high);
+            // this.platformAPI.subscribe("3DEXPERIENCity.Add3DPOIReturn", res => {
+            //     console.log("Mille Says Add3DPOIReturn", res);
+            // });
             this.layerExists = true;
         },
 
         UpdateLayerWith3DPOI() {
+            // console.log("Widget ID: ", widget.id);
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_low.widgetID,
                 layerID: "mositure_content_low",
                 geojson: this.mositure_content_low.geojson
             });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+            //     console.log("Mille Says Update3DPOIContentReturn", res);
+            // });
 
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_medium.widgetID,
                 layerID: "mositure_content_medium",
                 geojson: this.mositure_content_medium.geojson
             });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+            //     console.log("Mille Says Update3DPOIContentReturn", res);
+            // });
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                 widgetID: this.mositure_content_high.widgetID,
                 layerID: "mositure_content_high",
                 geojson: this.mositure_content_high.geojson
             });
+            // this.platformAPI.subscribe("3DEXPERIENCity.Update3DPOIContentReturn", res => {
+            //     console.log("Mille Says Update3DPOIContentReturn", res);
+            // });
         },
 
         removeContentLayers() {
@@ -288,8 +278,11 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
                     const selectedGuid = res.data[0].userData.GUID;
+                    console.log("Selected GUID:", selectedGuid);
+
                     // Find matching moisture data from MQTT data
-                    const matchingMoistureData = this.mqtt_soil_data?.find(sensor => sensor.guid === selectedGuid);
+                    const matchingMoistureData = this.mqtt_data?.find(sensor => sensor.guid === selectedGuid);
+
                     this.selectedItem = {
                         id: res.data[0].id,
                         guid: selectedGuid,
