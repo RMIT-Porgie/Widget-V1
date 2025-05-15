@@ -318,7 +318,7 @@ export default {
                             "fruit_type": "Apple",
                             "row": 1,
                             "plot": 1,
-                            "Soil Moisture": 0
+                            "Soil Moisture": 1
                         },
                         geometry: {
                             type: "Point",
@@ -332,7 +332,7 @@ export default {
                             "fruit_type": "Apple",
                             "row": 1,
                             "plot": 1,
-                            "Soil Moisture": 0
+                            "Soil Moisture": 0.2
                         },
                         geometry: {
                             type: "Point",
@@ -350,7 +350,8 @@ export default {
                     name: "Test POI Layer",
                     attributeMapping: {
                         "STRID": "GUID",
-                        "NAME": "fruit_type"
+                        "NAME": "fruit_type",
+                        "OPACITY": "Soil Moisture"
                     }
                 },
                 render: {
