@@ -350,7 +350,7 @@ export default {
                     name: "Test POI Layer",
                     attributeMapping: {
                         "STRID": "GUID",
-                        "Soil Moisture": "Soil Moisture"
+                        "NAME": "fruit_type"
                     }
                 },
                 render: {
