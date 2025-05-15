@@ -2,14 +2,16 @@
     <v-app>
         <v-main>
             <v-container>
-                <!-- <h2>Selected Item</h2>
+                <h2>Selected Item</h2>
                 <div>
                     {{ selectedItem }}
                 </div>
+
                 <h2>Layer List Attributes</h2>
                 <div>
                     {{ layerListAttributes }}
-                </div> -->
+                </div>
+                
                 <h2>Layer Attributes</h2>
                 <div>{{ layerAttributes }}</div>
             </v-container>
@@ -99,17 +101,17 @@ export default {
             });
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                if (res) {
-                    res.forEach(attr => {
-                        this.platformAPI.publish("3DEXPERIENCity.Get", {
-                            ID: this.selectedItem.id,
-                            attribute: attr
-                        });
-                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                            this.$set(this.layerAttributes, attr, getRes);
-                        });
-                    });
-                }
+                // if (res) {
+                //     res.forEach(attr => {
+                //         this.platformAPI.publish("3DEXPERIENCity.Get", {
+                //             ID: this.selectedItem.id,
+                //             attribute: attr
+                //         });
+                //         this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                //             this.$set(this.layerAttributes, attr, getRes);
+                //         });
+                //     });
+                // }
             });
             
         }
