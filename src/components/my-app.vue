@@ -3,12 +3,10 @@
         <v-main>
             <v-container>
                 <h2>Selected Item</h2>
-                <div v-if="selectedItem">
-                    <pre>{{ selectedItem }}</pre>
+                <div>
+                    {{ selectedItem }}
                 </div>
-                <div v-else>
-                    <em>No item selected.</em>
-                </div>
+
             </v-container>
         </v-main>
     </v-app>
@@ -77,7 +75,11 @@ export default {
 
     methods: {
         handleOnItemSelect(res) {
-            this.selectedItem = res;
+            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
+                this.selectedItem = res;
+            });
+
         },
 
     },
