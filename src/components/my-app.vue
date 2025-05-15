@@ -112,14 +112,8 @@ export default {
                     res.forEach(attr => {
                         this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
                         this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                            // Directly use getRes as the value for the attribute
-                            this.$set(this.layerAttributeValues, attr, getRes);
                             this.attributeValue = getRes;
-                            // make sure attributeValue is a string
-                            if (typeof this.attributeValue !== "string") {
-                                this.attributeValue = JSON.stringify(this.attributeValue);
-                                console.log("attributeValue", this.attributeValue);
-                            }
+                            console.log("getRes", getRes);
                         });
                     });
                 }
