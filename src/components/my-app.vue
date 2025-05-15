@@ -16,7 +16,7 @@
                 <div>{{ attributeValue }}</div>
 
                 <h2>Layer Attributes</h2>
-                <div>{{ layerAttributeValues }}</div>
+                <pre>{{ JSON.stringify(layerAttributeValues, null, 2) }}</pre>
 
 
             </v-container>
@@ -108,12 +108,13 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
                 if (res && Array.isArray(res)) {
                     this.layerListAttributes = res;
-                    this.layerAttributeValues = {};
                     res.forEach(attr => {
                         this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
                         this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                            // Add each getRes to layerAttributeValues as an array
+                            if (!this.layerAttributeValues) this.layerAttributeValues = [];
+                            this.layerAttributeValues.push(getRes);
                             this.attributeValue = getRes;
-                            console.log("getRes", getRes);
                         });
                     });
                 }
