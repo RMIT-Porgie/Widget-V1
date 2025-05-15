@@ -102,6 +102,8 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
                 this.layerListAttributes = res;
                 this.layerListAttributes.forEach(attr => {
+                    console.log("ID", this.selectedItem.id);
+                    console.log("attr", attr);
                     this.platformAPI.publish("3DEXPERIENCity.Get", {
                         ID: this.selectedItem.id,
                         attribute: attr
