@@ -318,7 +318,8 @@ export default {
                             "fruit_type": "Apple",
                             "row": 1,
                             "plot": 1,
-                            "Soil Moisture": 1
+                            "Soil Moisture": 1,
+                            "color": "red"
                         },
                         geometry: {
                             type: "Point",
@@ -332,7 +333,8 @@ export default {
                             "fruit_type": "Apple",
                             "row": 1,
                             "plot": 1,
-                            "Soil Moisture": 0.2
+                            "Soil Moisture": 0.2,
+                            "color": "blue"
                         },
                         geometry: {
                             type: "Point",
@@ -351,7 +353,8 @@ export default {
                     attributeMapping: {
                         "STRID": "GUID",
                         "NAME": "fruit_type",
-                        "OPACITY": "Soil Moisture"
+                        "OPACITY": "Soil Moisture",
+                        "COLOR": "color"
                     }
                 },
                 render: {
