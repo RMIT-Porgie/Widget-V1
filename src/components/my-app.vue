@@ -9,6 +9,11 @@
                     {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
                 </v-btn>
 
+                <!-- Button to create test 3D POI -->
+                <v-btn class="ml-2" color="success" @click="createTest3DPoi">
+                    Create Test 3D POI
+                </v-btn>
+
                 <!-- Add selected item info display -->
                 <v-card v-if="selectedItem" class="mt-4 selected-item-card">
                     <v-card-title>Selected Tree Information</v-card-title>
@@ -290,49 +295,71 @@ export default {
                     this.selectedItem = null;
                 }
             });
-        }
+        },
+
+        createTest3DPoi() {
+            // Test point GeoJSON as provided
+            const testPoi = {
+                type: "FeatureCollection",
+                crs: {
+                    type: "name",
+                    properties: {
+                        name: "urn:ogc:def:crs:EPSG::7855"
+                    }
+                },
+                features: [
+                    {
+                        type: "Feature",
+                        properties: {
+                            GUID: "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
+                            fruit_type: "Apple",
+                            row: 1,
+                            plot: 1,
+                            "Soil Moisture": 0
+                        },
+                        geometry: {
+                            type: "Point",
+                            coordinates: [344778.2279388432, 5966176.809605619, 120.8]
+                        }
+                    }
+                ]
+            };
+            // Publish the 3D POI using the platform API
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", {
+                widgetID: this.mositure_content_low.widgetID,
+                geojson: testPoi,
+                layer: {
+                    id: "test_poi_layer",
+                    name: "Test POI Layer",
+                    attributeMapping: {
+                        STRID: "GUID",
+                        "Soil Moisture": "Soil Moisture"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "purple",
+                    scale: [1, 1, 3],
+                    shape: "sphere",
+                    switchDistance: 500,
+                    opacity: 1
+                }
+            });
+        },
     }
 };
 </script>
 
 <style>
-.v-application {
-    background: white !important;
-}
-
-.temperature-display {
-    max-width: 300px;
-    margin: 20px auto;
-}
-
-.geojson-display {
-    margin-top: 20px;
-    padding: 20px;
-}
-
-.feature-item {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-}
-
-.feature-item h3 {
-    margin-bottom: 10px;
-    color: #2196f3;
-}
-
 .selected-item-card {
-    max-width: 600px;
-    margin: 20px auto;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
 }
 
 .selected-item-info {
-    padding: 10px;
-}
-
-.selected-item-info p {
-    margin-bottom: 8px;
-    font-size: 16px;
+    font-size: 14px;
+    color: #333;
 }
 </style>
