@@ -6,13 +6,17 @@
                 <div>
                     {{ selectedItem }}
                 </div>
-
+                <h2>Layer List Attributes</h2>
+                <div>
+                    {{ layerListAttributes }}
+                </div>
             </v-container>
         </v-main>
     </v-app>
 </template>
 
 <script>
+
 // import src/assets/response_mositureContent
 import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
@@ -28,6 +32,7 @@ export default {
             mqttClient: null,
             soilData: null,
             selectedItem: null,
+            layerListAttributes: null,
         };
     },
     computed: {
@@ -46,7 +51,7 @@ export default {
             port: 443,
             clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
         };
-        
+
         this.mqttClient = mqtt.connect(options);
 
         this.mqttClient.on("connect", () => {
@@ -61,10 +66,8 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil_moisture") {
                 this.soil_data = JSON.parse(message.toString());
-
             }
         });
-
     },
 
     beforeUnmount() {
@@ -77,15 +80,28 @@ export default {
         handleOnItemSelect(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                this.selectedItem = res;
+                if (res.data && res.data.length > 0) {
+                    const item = res.data[0];
+                    this.selectedItem = {
+                        id: item.id,
+                        name: item.name,
+                        className: item.className,
+                        position: item.position,
+                        visible: item.visible,
+                        userData: item.userData
+                    };
+                } else {
+                    this.selectedItem = null;
+                }
             });
-
-        },
-
-    },
-};
+            // GetListAttributes
+            this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
+                this.layerListAttributes = res;
+            });
+        }
+    }
+}
 </script>
 
-<style>
-
-</style>
+<style></style>
