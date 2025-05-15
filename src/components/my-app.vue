@@ -4,15 +4,19 @@
             <v-container style="background: white; min-height: 100vh">
                 <h1>Soil Mositure Content Visualisation</h1>
                 <!-- create a button to toggle startVisualisation to True and False -->
-                 <!-- also trigger the clearcontent -->
-                <v-btn @click="startVisualisation = !startVisualisation; removeContentLayers()" color="primary">
+                <!-- also trigger the clearcontent -->
+                <v-btn
+                    @click="
+                        startVisualisation = !startVisualisation;
+                        removeContentLayers();
+                    "
+                    color="primary"
+                >
                     {{ startVisualisation ? "Stop Visualisation" : "Start Visualisation" }}
                 </v-btn>
 
                 <!-- Button to create test 3D POI -->
-                <v-btn class="ml-2" color="success" @click="createTest3DPoi">
-                    Create Test 3D POI
-                </v-btn>
+                <v-btn class="ml-2" color="success" @click="createTest3DPoi"> Create Test 3D POI </v-btn>
 
                 <!-- Add selected item info display -->
                 <v-card v-if="selectedItem" class="mt-4 selected-item-card">
@@ -63,14 +67,14 @@ export default {
                         "STRID": "GUID",
                         "Soil Moisture": "Soil Moisture"
                     }
-                },  
+                },
                 render: {
                     anchor: true,
                     color: "blue",
                     scale: [1, 1, 1],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
             },
 
@@ -96,10 +100,9 @@ export default {
                     scale: [1, 1, 3],
                     shape: "sphere",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
             },
-
 
             mositure_content_high: {
                 widgetID: widget.id,
@@ -123,7 +126,7 @@ export default {
                     scale: [1, 1, 5],
                     shape: "pyramid",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
             }
         };
@@ -311,28 +314,42 @@ export default {
                     {
                         type: "Feature",
                         properties: {
-                            GUID: "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
-                            fruit_type: "Apple",
-                            row: 1,
-                            plot: 1,
+                            "GUID": "T_5B1BF197-8B46-4F41-A1D1-F28A26A42329",
+                            "fruit_type": "Apple",
+                            "row": 1,
+                            "plot": 1,
                             "Soil Moisture": 0
                         },
                         geometry: {
                             type: "Point",
                             coordinates: [344778.2279388432, 5966176.809605619, 120.8]
                         }
+                    },
+                    {
+                        type: "Feature",
+                        properties: {
+                            "GUID": "T_A855AB0F-45D5-43C9-9C9B-186B51EC0340",
+                            "fruit_type": "Apple",
+                            "row": 1,
+                            "plot": 1,
+                            "Soil Moisture": 0
+                        },
+                        geometry: {
+                            type: "Point",
+                            coordinates: [344779.2232795422, 5966176.808613814, 120.8]
+                        }
                     }
                 ]
             };
             // Publish the 3D POI using the platform API
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", {
-                widgetID: this.mositure_content_low.widgetID,
+                widgetID: widget.id,
                 geojson: testPoi,
                 layer: {
                     id: "test_poi_layer",
                     name: "Test POI Layer",
                     attributeMapping: {
-                        STRID: "GUID",
+                        "STRID": "GUID",
                         "Soil Moisture": "Soil Moisture"
                     }
                 },
@@ -345,7 +362,7 @@ export default {
                     opacity: 1
                 }
             });
-        },
+        }
     }
 };
 </script>
