@@ -105,21 +105,17 @@ export default {
                 }
             });
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
+            // [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                if (res && Array.isArray(res)) {
-                    this.layerListAttributes = res;
-                    res.forEach(attr => {
-                        this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
-                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                            // Add each getRes to layerAttributeValues as an array
-                            if (!this.layerAttributeValues) this.layerAttributeValues = [];
-                            this.layerAttributeValues.push(getRes);
-                            this.attributeValue = getRes;
-                        });
-                    });
-                }
+                this.layerListAttributes = res;
             });
-            
+            // Specify the attribute to retrieve from the selected item
+            const attr = "geojson";
+            this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+                this.attributeValue = res;
+            });
+
         }
     }
 };
