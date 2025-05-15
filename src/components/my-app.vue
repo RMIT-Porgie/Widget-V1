@@ -12,8 +12,8 @@
                     {{ layerListAttributes }}
                 </div>
                 
-                <!-- <h2>Layer Attributes</h2>
-                <div>{{ layerAttributes }}</div> -->
+                <h2>Layer Attributes</h2>
+                <div>{{ layerAttributes }}</div>
             </v-container>
         </v-main>
     </v-app>
@@ -27,7 +27,6 @@ import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import geojson_template from "@/assets/sundial_orchard_object_V2.geojson";
 import { useGlobalStore } from "@/store/global";
-import { get } from "core-js/core/dict";
 
 export default {
     name: "App",
@@ -101,17 +100,17 @@ export default {
             });
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                // if (res) {
-                //     res.forEach(attr => {
-                //         this.platformAPI.publish("3DEXPERIENCity.Get", {
-                //             ID: this.selectedItem.id,
-                //             attribute: attr
-                //         });
-                //         this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                //             this.$set(this.layerAttributes, attr, getRes);
-                //         });
-                //     });
-                // }
+                if (res) {
+                    res.forEach(attr => {
+                        this.platformAPI.publish("3DEXPERIENCity.Get", {
+                            ID: this.selectedItem.id,
+                            attribute: attr
+                        });
+                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                            this.$set(this.layerAttributes, attr, getRes);
+                        });
+                    });
+                }
             });
             
         }
