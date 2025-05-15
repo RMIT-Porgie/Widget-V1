@@ -13,10 +13,10 @@
                 </div>
                 
                 <h2>Attributes</h2>
-                <div>{{ attribute }}</div>
+                <div>{{ attributeValue }}</div>
 
                 <h2>Layer Attributes</h2>
-                <div>{{ layerAttributes }}</div>
+                <div>{{ layerAttributeValues }}</div>
 
 
             </v-container>
@@ -41,8 +41,8 @@ export default {
             soilData: null,
             selectedItem: null,
             layerListAttributes: null,
-            layerAttributes: null,
-            attribute: null,
+            layerAttributeValues: null,
+            attributeValue: null,
         };
     },
     computed: {
@@ -108,13 +108,18 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
                 if (res && Array.isArray(res)) {
                     this.layerListAttributes = res;
-                    this.layerAttributes = {};
+                    this.layerAttributeValues = {};
                     res.forEach(attr => {
                         this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
                         this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
                             // Directly use getRes as the value for the attribute
-                            this.$set(this.layerAttributes, attr, getRes);
-                            this.attribute = getRes;
+                            this.$set(this.layerAttributeValues, attr, getRes);
+                            this.attributeValue = getRes;
+                            // make sure attributeValue is a string
+                            if (typeof this.attributeValue !== "string") {
+                                this.attributeValue = JSON.stringify(this.attributeValue);
+                                console.log("attributeValue", this.attributeValue);
+                            }
                         });
                     });
                 }
