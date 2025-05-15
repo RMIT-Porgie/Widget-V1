@@ -359,11 +359,11 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "purple",
+                    // color: "purple",
                     scale: [1, 1, 3],
-                    shape: "sphere",
+                    shape: "tube",
                     switchDistance: 500,
-                    opacity: 1
+                    // opacity: 1
                 }
             });
         }
