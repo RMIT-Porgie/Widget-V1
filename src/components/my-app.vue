@@ -3,6 +3,13 @@
         <v-main>
             <v-container>
                 <v-btn color="primary" @click="createSoilSensor3DPOI">Soil Sensor</v-btn>
+                <!-- display solar data -->
+                <h2>Soil Sensor Data</h2>
+                <div>{{ soilData }}</div>
+                <h2>Soil Moisture Low</h2>
+                <div>{{ soilMoistureLowGeoJSON }}</div>
+                <h2>Soil Moisture Normal</h2>
+                <div>{{ soilMoistureNormalGeoJSON }}</div>
             </v-container>
         </v-main>
     </v-app>
@@ -24,9 +31,20 @@ export default {
         return {
             mqttClient: null,
             soilData: null,
-
             soilMoistureLowGeoJSON: null,
             soilMoistureNormalGeoJSON: null,
+            baseGeoJSON: {
+                type: "FeatureCollection",
+                name: "sundial_orchard_soil_data",
+                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                features: [
+                    {
+                        type: "Feature",
+                        properties: null,
+                        geometry: { type: "Point", coordinates: null }
+                    },
+                ]
+            },
 
             soilDataLayer: {
                 widgetID: widget.id,
@@ -35,7 +53,7 @@ export default {
                     id: "soil_sensor_layer",
                     name: "soil_sensor_layer",
                     attributeMapping: {
-                        "STRID": "GUID",
+                        STRID: "GUID"
                     }
                 },
                 render: {
@@ -50,12 +68,12 @@ export default {
 
             soilMoistureLowLayer: {
                 widgetID: widget.id,
-                geojson: null,
+                get geojson() { return this.soilMoistureLowGeoJSON; },
                 layer: {
                     id: "soil_moisture_low_layer",
                     name: "soil_moisture_low_layer",
                     attributeMapping: {
-                        "STRID": "GUID",
+                        STRID: "GUID"
                     }
                 },
                 render: {
@@ -70,12 +88,12 @@ export default {
 
             soilMoistureNormalLayer: {
                 widgetID: widget.id,
-                geojson: null,
+                get geojson() { return this.soilMoistureNormalGeoJSON; },
                 layer: {
                     id: "soil_moisture_normal_layer",
                     name: "soil_moisture_normal_layer",
                     attributeMapping: {
-                        "STRID": "GUID",
+                        STRID: "GUID"
                     }
                 },
                 render: {
@@ -86,7 +104,7 @@ export default {
                     switchDistance: 500,
                     opacity: 1
                 }
-            },
+            }
         };
     },
     computed: {
@@ -94,10 +112,8 @@ export default {
     },
 
     async mounted() {
-        console.log("App mounted");
-        // CONSOLE LOG GEOJSON TEMPLATE
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         const options = {
             protocol: "wss",
@@ -110,16 +126,45 @@ export default {
 
         this.mqttClient.on("connect", () => {
             console.log("✅ Connected to MQTT broker");
-            this.mqttClient.subscribe("sensor/soil_moisture", err => {
+            this.mqttClient.subscribe("sensor/soil", err => {
                 if (!err) {
-                    console.log("✅ Subscribed to sensor/soil_mositure");
+                    console.log("✅ Subscribed ");
                 }
             });
         });
 
         this.mqttClient.on("message", (topic, message) => {
-            if (topic === "sensor/soil_moisture") {
+            if (topic === "sensor/soil") {
                 this.soilData = JSON.parse(message.toString());
+                // Clone baseGeoJSON for low and normal
+                this.soilMoistureLowGeoJSON = JSON.parse(JSON.stringify(this.baseGeoJSON));
+                this.soilMoistureLowGeoJSON.features = [];
+                this.soilMoistureNormalGeoJSON = JSON.parse(JSON.stringify(this.baseGeoJSON));
+                this.soilMoistureNormalGeoJSON.features = [];
+
+                if (Array.isArray(this.soilData) && soilGeoJSON && Array.isArray(soilGeoJSON.features)) {
+                    this.soilData.forEach(sensor => {
+                        const guid = sensor.guid;
+                        const moisture = sensor.fields?.soil_moisture_content;
+                        const temperature = sensor.fields?.temperature_celsius;
+                        // Find matching feature by guid
+                        const feature = soilGeoJSON.features.find(f => f.properties && (f.properties.guid === guid));
+                        if (feature) {
+                            // Clone the feature and update soil_moisture_content
+                            const updatedFeature = JSON.parse(JSON.stringify(feature));
+                            if (!updatedFeature.properties) updatedFeature.properties = {};
+                            updatedFeature.properties.soil_moisture_content = moisture;
+                            updatedFeature.properties.temperature_celsius = temperature;
+                            updatedFeature.properties.timestamp = sensor.timestamp;
+                            if (moisture < 20) {
+                                this.soilMoistureLowGeoJSON.features.push(updatedFeature);
+                            } else {
+                                this.soilMoistureNormalGeoJSON.features.push(updatedFeature);
+                            }
+                        }
+                    });
+                }
+                // this.updateSensor3DPOI();
             }
         });
     },
@@ -133,8 +178,11 @@ export default {
     methods: {
         createSoilSensor3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilDataLayer);
-        }
-
+        },
+        updateSensor3DPOI() {
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureLowLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureNormalLayer);
+        },
     }
 };
 </script>
