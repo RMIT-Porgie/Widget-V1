@@ -10,6 +10,8 @@
                 <div>{{ soilMoistureLowLayer }}</div>
                 <h2>Soil Moisture Normal</h2>
                 <div>{{ soilMoistureNormalLayer }}</div>
+                <!-- update button -->
+                <v-btn color="primary" @click="updateSensor3DPOI"> Update Soil Data</v-btn>
             </v-container>
         </v-main>
     </v-app>
@@ -155,7 +157,7 @@ export default {
                         }
                     }
                 });
-                this.updateSensor3DPOI();
+                // this.updateSensor3DPOI();
             }
         });
     },
@@ -173,6 +175,7 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
+
         updateSensor3DPOI() {
             if (
                 Array.isArray(this.soilMoistureLowLayer.geojson.features) &&
