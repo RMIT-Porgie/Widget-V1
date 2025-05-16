@@ -7,7 +7,6 @@
                 <!-- create a button to update layer -->
                 <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
                 <!-- soil Data -->
-                 
             </v-container>
         </v-main>
     </v-app>
@@ -44,6 +43,26 @@ export default {
                     anchor: true,
                     color: "green",
                     scale: [0.5, 0.5, 2],
+                    shape: "tube",
+                    switchDistance: 500,
+                    opacity: 0.5
+                }
+            },
+
+            soilLayer: {
+                widgetID: widget.id,
+                geojson: soilGeoJSON,
+                layer: {
+                    id: "soilLayer",
+                    name: "soilLayer",
+                    attributeMapping: {
+                        STRID: "guid"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "blue",
+                    scale: [1, 1, 1],
                     shape: "tube",
                     switchDistance: 500,
                     opacity: 0.5
@@ -163,6 +182,7 @@ export default {
     methods: {
         createLayers() {
             // this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
