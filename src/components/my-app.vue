@@ -15,8 +15,11 @@
                 <h2>Attributes</h2>
                 <div>{{ attributeValue }}</div>
 
+                <h2>Attributes_2</h2>
+                <div>{{ attributeValue2 }}</div>
+
                 <h2>Layer Attributes</h2>
-                <pre>{{ JSON.stringify(layerAttributeValues, null, 2) }}</pre>
+                <div>{{ layerAttributeValues }}</div>
 
 
             </v-container>
@@ -43,6 +46,7 @@ export default {
             layerListAttributes: null,
             layerAttributeValues: null,
             attributeValue: null,
+            attributeValue2: null,
         };
     },
     computed: {
@@ -105,17 +109,30 @@ export default {
                 }
             });
             this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
-            // [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                this.layerListAttributes = res;
-            });
-            // Specify the attribute to retrieve from the selected item
-            const attr = "geojson";
-            this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-                this.attributeValue = res;
+                if (res && Array.isArray(res)) {
+                    this.layerListAttributes = res;
+                    res.forEach(attr => {
+                        this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
+                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
+                            // Add each getRes to layerAttributeValues as an array
+                            if (!this.layerAttributeValues) this.layerAttributeValues = [];
+                            this.layerAttributeValues.push(getRes);
+                            this.attributeValue = getRes;
+                        });
+                    });
+                }
             });
 
+            // [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
+            const attribute = "position"
+            this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attribute]);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+                if (res) {
+                    this.attributeValue2 = res;
+                }
+            });
+            
         }
     }
 };
