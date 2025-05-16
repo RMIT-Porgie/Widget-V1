@@ -2,8 +2,6 @@
     <v-app>
         <v-main>
             <v-container>
-                <v-btn color="primary" @click="createLayers">Create Layers</v-btn>
-                <v-btn color="primary" @click="updateSensor3DPOI"> Update Sensor Layers</v-btn>
             </v-container>
         </v-main>
     </v-app>
@@ -15,9 +13,8 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
-// import treeGeoJSON from "@/assets/sundial_orchard_object_V2.geojson";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
+import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
 import { useGlobalStore } from "@/store/global";
 
 export default {
@@ -47,26 +44,6 @@ export default {
                 }
             },
 
-            soilLayer: {
-                widgetID: widget.id,
-                geojson: soilGeoJSON,
-                layer: {
-                    id: "soilLayer",
-                    name: "soilLayer",
-                    attributeMapping: {
-                        STRID: "guid"
-                    }
-                },
-                render: {
-                    anchor: true,
-                    color: "blue",
-                    scale: [1, 1, 1],
-                    shape: "tube",
-                    switchDistance: 500,
-                    opacity: 0.5
-                }
-            },
-
             soilMoistureLowLayer: {
                 widgetID: widget.id,
                 geojson: {
@@ -85,8 +62,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [1, 1, 1],
-                    shape: "tube",
+                    scale: [5, 5, 1],
+                    shape: "sphere",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -110,8 +87,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "green",
-                    scale: [1, 1, 1],
-                    shape: "tube",
+                    scale: [5, 5, 1],
+                    shape: "sphere",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -125,6 +102,9 @@ export default {
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+
+        // Create layers as soon as the component is mounted
+        this.createLayers();
 
         const options = {
             protocol: "wss",
@@ -148,18 +128,15 @@ export default {
             if (topic === "sensor/soil") {
                 this.soilMoistureLowLayer.geojson.features = [];
                 this.soilMoistureNormalLayer.geojson.features = [];
-
                 this.soilData = JSON.parse(message.toString());
                 this.soilData.forEach(data => {
                     const soilMoistureContent = data.fields.soil_moisture_content;
                     const temperature = data.fields.temperature_celsius;
-
                     const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
                     if (matchingFeature) {
                         const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
                         featureCopy.properties.soilMoisture = soilMoistureContent;
                         featureCopy.properties.soilTemperature = temperature;
-
                         if (soilMoistureContent < 20) {
                             this.soilMoistureLowLayer.geojson.features.push(featureCopy);
                         } else {
@@ -167,7 +144,7 @@ export default {
                         }
                     }
                 });
-                // this.updateSensor3DPOI();
+                this.updateSensor3DPOI();
             }
         });
     },
@@ -181,22 +158,21 @@ export default {
     methods: {
         createLayers() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
 
         updateSensor3DPOI() {
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                    widgetID: this.soilMoistureLowLayer.widgetID,
-                    layerID: this.soilMoistureLowLayer.layer.id,
-                    geojson: this.soilMoistureLowLayer.geojson
-                });
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                    widgetID: this.soilMoistureNormalLayer.widgetID,
-                    layerID: this.soilMoistureNormalLayer.layer.id,
-                    geojson: this.soilMoistureNormalLayer.geojson
-                });
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                widgetID: this.soilMoistureLowLayer.widgetID,
+                layerID: this.soilMoistureLowLayer.layer.id,
+                geojson: this.soilMoistureLowLayer.geojson
+            });
+            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                widgetID: this.soilMoistureNormalLayer.widgetID,
+                layerID: this.soilMoistureNormalLayer.layer.id,
+                geojson: this.soilMoistureNormalLayer.geojson
+            });
         }
     }
 };
