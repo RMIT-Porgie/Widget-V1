@@ -2,6 +2,8 @@
     <v-app>
         <v-main>
             <v-container>
+                <!-- create a button to create layer -->
+                <v-btn @click="createLayers">Create Layers</v-btn>
             </v-container>
         </v-main>
     </v-app>
