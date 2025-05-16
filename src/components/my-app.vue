@@ -112,8 +112,8 @@ export default {
     },
 
     async mounted() {
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         const options = {
             protocol: "wss",
@@ -164,7 +164,7 @@ export default {
                         }
                     });
                 }
-                // this.updateSensor3DPOI();
+                this.updateSensor3DPOI();
             }
         });
     },
