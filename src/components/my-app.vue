@@ -181,13 +181,21 @@ export default {
                 Array.isArray(this.soilMoistureLowLayer.geojson.features) &&
                 this.soilMoistureLowLayer.geojson.features.length > 0
             ) {
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureLowLayer);
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.soilMoistureLowLayer.widgetID,
+                    layerID: this.soilMoistureLowLayer.layer,
+                    geojson: this.soilMoistureLowLayer.geojson,
+                });
             }
             if (
                 Array.isArray(this.soilMoistureNormalLayer.geojson.features) &&
                 this.soilMoistureNormalLayer.geojson.features.length > 0
             ) {
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureNormalLayer);
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.soilMoistureNormalLayer.widgetID,
+                    layerID: this.soilMoistureNormalLayer.layer,
+                    geojson: this.soilMoistureNormalLayer.geojson,
+                });
             }
         }
     }
