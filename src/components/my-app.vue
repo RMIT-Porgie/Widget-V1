@@ -104,8 +104,6 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
                 if (res && Array.isArray(res)) {
                     this.layerListAttributes = res;
-                    this.updatedAttributeValue = structuredClone(this.attributeValue);  
-
                 }
             });
 
@@ -120,6 +118,7 @@ export default {
                 console.log("Get Return: ", res);
                 if (res) {
                     this.attributeValue = res;
+                    this.updatedAttributeValue = structuredClone(this.attributeValue);  
                 }
             });
 
