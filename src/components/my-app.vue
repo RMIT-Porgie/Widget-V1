@@ -104,7 +104,7 @@ export default {
                 }
             });
 
-            // [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
+            // layerListAttributes = [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
             // "geojson", "userData"
 
             const attribute = "userData"
@@ -115,6 +115,8 @@ export default {
                     this.attributeValue = res;
                 }
             });
+
+            // geojson = { "type": "FeatureCollection", "features": [ { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ 344809.226423, 5966176.809116, 120.8 ] }, "properties": { "geoItemUuid": "5156da3b-e997-4bc4-b90c-e085e6b24c61", "sourceFilename": "sundial_orchard_object_V2.geojson", "geoItemType": "SimpleFeature", "TRANS": "344809.226423 5966176.809116 0.0", "NAME": null, "readerVersion": null, "ORIENT": "0.0 0.0 0.0", "fruit_type": "Apple", "referentialUuid": "010d0b08-d31b-4df0-9f07-2af66917c369", "STRID": "T_0169ADE4-ECFF-488D-A6B5-67FC10C72BB5", "plot": "3", "row": "1", "SCALE": "1.0 1.0 1.0", "datasetUuid": "099487bd-e9ba-415a-b956-d594b941dfa2", "Soil Moisture": "0" } } ] }
 
 
 
