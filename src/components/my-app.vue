@@ -4,6 +4,10 @@
             <v-container>
                 <!-- create a button to create layer -->
                 <v-btn @click="createLayers">Create Layers</v-btn>
+                <!-- create a button to update layer -->
+                <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
+                <!-- soil Data -->
+                 
             </v-container>
         </v-main>
     </v-app>
@@ -105,8 +109,7 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
-        // Create layers as soon as the component is mounted
-        this.createLayers();
+        // this.createLayers();
 
         const options = {
             protocol: "wss",
@@ -146,7 +149,7 @@ export default {
                         }
                     }
                 });
-                this.updateSensor3DPOI();
+                // this.updateSensor3DPOI();
             }
         });
     },
@@ -159,7 +162,7 @@ export default {
 
     methods: {
         createLayers() {
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
+            // this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
