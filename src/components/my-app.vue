@@ -122,17 +122,17 @@ export default {
             this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
                 if (res && Array.isArray(res)) {
                     this.layerListAttributes = res;
-                    res.forEach(attr => {
-                        console.log("Layer Attribute: ", attr);
-                        this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
-                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
-                            console.log("Layer Attribute Value: ", res);
-                            // Add each getRes to layerAttributeValues as an array  
-                            if (!this.layerAttributeValues) this.layerAttributeValues = [];
-                            this.layerAttributeValues.push(res);
-                            this.attributeValue = res;
-                        });
-                    });
+                    // res.forEach(attr => {
+                    //     console.log("Layer Attribute: ", attr);
+                    //     this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
+                    //     this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+                    //         console.log("Layer Attribute Value: ", res);
+                    //         // Add each getRes to layerAttributeValues as an array  
+                    //         if (!this.layerAttributeValues) this.layerAttributeValues = [];
+                    //         this.layerAttributeValues.push(res);
+                    //         this.attributeValue = res;
+                    //     });
+                    // });
                 }
             });
 
