@@ -144,7 +144,7 @@ export default {
                         // Clone the feature to avoid mutating the original
                         const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
                         // Always add or update soilMoisture and soilTemperature keys in properties
-                        featureCopy.properties = featureCopy.properties || {};
+                        // featureCopy.properties = featureCopy.properties || {};
                         featureCopy.properties.soilMoisture = soilMoistureContent;
                         featureCopy.properties.soilTemperature = temperature;
 
@@ -171,8 +171,18 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
         },
         updateSensor3DPOI() {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureLowLayer);
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureNormalLayer);
+            if (
+                Array.isArray(this.soilMoistureLowLayer.geojson.features) &&
+                this.soilMoistureLowLayer.geojson.features.length > 0
+            ) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureLowLayer);
+            }
+            if (
+                Array.isArray(this.soilMoistureNormalLayer.geojson.features) &&
+                this.soilMoistureNormalLayer.geojson.features.length > 0
+            ) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureNormalLayer);
+            }
         }
     }
 };
