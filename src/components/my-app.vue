@@ -2,8 +2,8 @@
     <v-app>
         <v-main>
             <v-container>
-                <v-btn color="primary" @click="createLayers">Soil Sensor</v-btn>
-                <v-btn color="primary" @click="updateSensor3DPOI"> Update Soil Data</v-btn>
+                <v-btn color="primary" @click="createLayers">Create Layers</v-btn>
+                <v-btn color="primary" @click="updateSensor3DPOI"> Update Sensor Layers</v-btn>
             </v-container>
         </v-main>
     </v-app>
