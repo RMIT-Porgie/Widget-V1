@@ -37,7 +37,6 @@ export default {
             layerListAttributes: null,
             attributeValue: null,
             updatedAttributeValue: null,
-            updatedAttributeValue2: null,
 
         };
     },
@@ -119,11 +118,10 @@ export default {
                 console.log("Get Return: ", res);
                 if (res) {
                     this.attributeValue = res;
-                    this.updatedAttributeValue = res;
-                    // update the attribute value with the fruit type
+
+                    this.updatedAttributeValue = JSON.parse(JSON.stringify(this.attributeValue));
                     this.updatedAttributeValue.features[0].properties.fruit_type = "banana"
-                    this.updatedAttributeValue2 = JSON.parse(JSON.stringify(res));;
-                    console.log("Updated Attribute Value: ", this.updatedAttributeValue);   
+
                 }
             });
 
