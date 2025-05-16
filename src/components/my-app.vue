@@ -108,21 +108,6 @@ export default {
                     this.selectedItem = null;
                 }
             });
-            this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
-                if (res && Array.isArray(res)) {
-                    this.layerListAttributes = res;
-                    res.forEach(attr => {
-                        this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
-                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", getRes => {
-                            // Add each getRes to layerAttributeValues as an array
-                            if (!this.layerAttributeValues) this.layerAttributeValues = [];
-                            this.layerAttributeValues.push(getRes);
-                            this.attributeValue = getRes;
-                        });
-                    });
-                }
-            });
 
             // [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
             const attribute = "position"
@@ -132,6 +117,26 @@ export default {
                     this.attributeValue2 = res;
                 }
             });
+
+            this.platformAPI.publish("3DEXPERIENCity.GetListAttributes", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetListAttributesReturn", res => {
+                if (res && Array.isArray(res)) {
+                    this.layerListAttributes = res;
+                    res.forEach(attr => {
+                        console.log("Layer Attribute: ", attr);
+                        this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attr]);
+                        this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
+                            console.log("Layer Attribute Value: ", res);
+                            // Add each getRes to layerAttributeValues as an array  
+                            if (!this.layerAttributeValues) this.layerAttributeValues = [];
+                            this.layerAttributeValues.push(res);
+                            this.attributeValue = res;
+                        });
+                    });
+                }
+            });
+
+
             
         }
     }
