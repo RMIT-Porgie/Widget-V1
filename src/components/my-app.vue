@@ -110,7 +110,8 @@ export default {
             });
 
             // [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
-            const attribute = "position"
+            // "geojson", "userData"
+            const attribute = "geojson"
             this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attribute]);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 if (res) {
