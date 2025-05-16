@@ -167,8 +167,11 @@ export default {
     },
 
     methods: {
+
         createSoilSensor3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
         updateSensor3DPOI() {
             if (
