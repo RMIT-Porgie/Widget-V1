@@ -15,7 +15,8 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
+// import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
+import treeGeoJSON from "@/assets/sundial_orchard_object_V2.geojson";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import { useGlobalStore } from "@/store/global";
 
