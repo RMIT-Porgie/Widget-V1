@@ -5,12 +5,12 @@
     "features": [
         {
             "type": "Feature",
-            "properties": { "guid": "s01", "soilMoisture": null},
+            "properties": { "guid": "s01"},
             "geometry": { "type": "Point", "coordinates": [344778.227938843192533, 5966176.809605618938804, 120.8] }
         },
         {
             "type": "Feature",
-            "properties": { "guid": "s02", "soilMoisture": null},
+            "properties": { "guid": "s02"},
             "geometry": { "type": "Point", "coordinates": [344786.2264006437, 5966176.808968086, 120.8] }
         }
     ]

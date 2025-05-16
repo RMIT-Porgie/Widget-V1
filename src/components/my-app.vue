@@ -7,9 +7,9 @@
                 <h2>Soil Sensor Data</h2>
                 <div>{{ soilData }}</div>
                 <h2>Soil Moisture Low</h2>
-                <div>{{ soilMoistureLowGeoJSON }}</div>
+                <div>{{ soilMoistureLowLayer }}</div>
                 <h2>Soil Moisture Normal</h2>
-                <div>{{ soilMoistureNormalGeoJSON }}</div>
+                <div>{{ soilMoistureNormalLayer }}</div>
             </v-container>
         </v-main>
     </v-app>
@@ -31,29 +31,15 @@ export default {
         return {
             mqttClient: null,
             soilData: null,
-            soilMoistureLowGeoJSON: null,
-            soilMoistureNormalGeoJSON: null,
-            baseGeoJSON: {
-                type: "FeatureCollection",
-                name: "sundial_orchard_soil_data",
-                crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
-                features: [
-                    {
-                        type: "Feature",
-                        properties: null,
-                        geometry: { type: "Point", coordinates: null }
-                    },
-                ]
-            },
 
-            soilDataLayer: {
+            soilLayer: {
                 widgetID: widget.id,
                 geojson: soilGeoJSON,
                 layer: {
-                    id: "soil_sensor_layer",
-                    name: "soil_sensor_layer",
+                    id: "soilLayer",
+                    name: "soilLayer",
                     attributeMapping: {
-                        STRID: "GUID"
+                        STRID: "guid"
                     }
                 },
                 render: {
@@ -68,12 +54,17 @@ export default {
 
             soilMoistureLowLayer: {
                 widgetID: widget.id,
-                get geojson() { return this.soilMoistureLowGeoJSON; },
+                geojson: {
+                    type: "FeatureCollection",
+                    name: "soil_moisture_low_data",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: []
+                },
                 layer: {
-                    id: "soil_moisture_low_layer",
-                    name: "soil_moisture_low_layer",
+                    id: "soilMoistureLowLayer",
+                    name: "soilMoistureLowLayer",
                     attributeMapping: {
-                        STRID: "GUID"
+                        STRID: "guid"
                     }
                 },
                 render: {
@@ -88,12 +79,17 @@ export default {
 
             soilMoistureNormalLayer: {
                 widgetID: widget.id,
-                get geojson() { return this.soilMoistureNormalGeoJSON; },
+                geojson: {
+                    type: "FeatureCollection",
+                    name: "soilMoistureNormalData",
+                    crs: { type: "name", properties: { name: "urn:ogc:def:crs:EPSG::7855" } },
+                    features: []
+                },
                 layer: {
-                    id: "soil_moisture_normal_layer",
-                    name: "soil_moisture_normal_layer",
+                    id: "soilMoistureNormalLayer",
+                    name: "soilMoistureNormalLayer",
                     attributeMapping: {
-                        STRID: "GUID"
+                        STRID: "guid"
                     }
                 },
                 render: {
@@ -112,8 +108,8 @@ export default {
     },
 
     async mounted() {
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         const options = {
             protocol: "wss",
@@ -136,35 +132,29 @@ export default {
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil") {
                 this.soilData = JSON.parse(message.toString());
-                // Clone baseGeoJSON for low and normal
-                this.soilMoistureLowGeoJSON = JSON.parse(JSON.stringify(this.baseGeoJSON));
-                this.soilMoistureLowGeoJSON.features = [];
-                this.soilMoistureNormalGeoJSON = JSON.parse(JSON.stringify(this.baseGeoJSON));
-                this.soilMoistureNormalGeoJSON.features = [];
+                this.soilMoistureLowLayer.geojson.features = [];
+                this.soilMoistureNormalLayer.geojson.features = [];
+                this.soilData.forEach(data => {
+                    const soilMoistureContent = data.fields.soil_moisture_content;
+                    const temperature = data.fields.temperature_celsius;
 
-                if (Array.isArray(this.soilData) && soilGeoJSON && Array.isArray(soilGeoJSON.features)) {
-                    this.soilData.forEach(sensor => {
-                        const guid = sensor.guid;
-                        const moisture = sensor.fields?.soil_moisture_content;
-                        const temperature = sensor.fields?.temperature_celsius;
-                        // Find matching feature by guid
-                        const feature = soilGeoJSON.features.find(f => f.properties && (f.properties.guid === guid));
-                        if (feature) {
-                            // Clone the feature and update soil_moisture_content
-                            const updatedFeature = JSON.parse(JSON.stringify(feature));
-                            if (!updatedFeature.properties) updatedFeature.properties = {};
-                            updatedFeature.properties.soil_moisture_content = moisture;
-                            updatedFeature.properties.temperature_celsius = temperature;
-                            updatedFeature.properties.timestamp = sensor.timestamp;
-                            if (moisture < 20) {
-                                this.soilMoistureLowGeoJSON.features.push(updatedFeature);
-                            } else {
-                                this.soilMoistureNormalGeoJSON.features.push(updatedFeature);
-                            }
+                    const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
+                    if (matchingFeature) {
+                        // Clone the feature to avoid mutating the original
+                        const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
+                        // Always add or update soilMoisture and soilTemperature keys in properties
+                        featureCopy.properties = featureCopy.properties || {};
+                        featureCopy.properties.soilMoisture = soilMoistureContent;
+                        featureCopy.properties.soilTemperature = temperature;
+
+                        if (soilMoistureContent < 20) {
+                            this.soilMoistureLowLayer.geojson.features.push(featureCopy);
+                        } else {
+                            this.soilMoistureNormalLayer.geojson.features.push(featureCopy);
                         }
-                    });
-                }
-                this.updateSensor3DPOI();
+                    }
+                });
+                // this.updateSensor3DPOI();
             }
         });
     },
@@ -177,12 +167,12 @@ export default {
 
     methods: {
         createSoilSensor3DPOI() {
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilDataLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
         },
         updateSensor3DPOI() {
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", this.soilMoistureNormalLayer);
-        },
+        }
     }
 };
 </script>
