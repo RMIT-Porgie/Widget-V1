@@ -2,19 +2,10 @@
     <v-app>
         <v-main>
             <v-container>
-                                
                 <!-- create a button to create layer -->
                 <v-btn @click="createLayers">Create Layers</v-btn>
                 <!-- create a button to update layer -->
                 <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
-                <!-- soil Data -->
-                <h2>Soil Sensor Data</h2>
-                <div>{{ soilData }}</div>
-                <h2>Soil Moisture Low</h2>
-                <div>{{ soilMoistureLowLayer }}</div>
-                <h2>Soil Moisture Normal</h2>
-                <div>{{ soilMoistureNormalLayer }}</div>
-
             </v-container>
         </v-main>
     </v-app>
@@ -57,25 +48,6 @@ export default {
                 }
             },
 
-             soilLayer: {
-                widgetID: widget.id,
-                geojson: soilGeoJSON,
-                layer: {
-                    id: "soilLayer",
-                    name: "soilLayer",
-                    attributeMapping: {
-                        STRID: "guid"
-                    }
-                },
-                render: {
-                    anchor: true,
-                    color: "blue",
-                    scale: [1, 1, 1],
-                    shape: "tube",
-                    switchDistance: 500,
-                    opacity: 0.5
-                }
-            },
 
             soilMoistureLowLayer: {
                 widgetID: widget.id,
@@ -95,8 +67,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [1, 1, 1],
-                    shape: "tube",
+                    scale: [5, 5, 1],
+                    shape: "sphere",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -120,8 +92,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "green",
-                    scale: [1, 1, 1],
-                    shape: "tube",
+                    scale: [5, 5, 1],
+                    shape: "sphere",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -167,10 +139,7 @@ export default {
                     const temperature = data.fields.temperature_celsius;
                     const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
                     if (matchingFeature) {
-                        // Clone the feature to avoid mutating the original
                         const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
-                        // Always add or update soilMoisture and soilTemperature keys in properties
-                        // featureCopy.properties = featureCopy.properties || {};
                         featureCopy.properties.soilMoisture = soilMoistureContent;
                         featureCopy.properties.soilTemperature = temperature;
 
@@ -181,7 +150,7 @@ export default {
                         }
                     }
                 });
-                // this.updateSensor3DPOI();
+                this.updateSensor3DPOI();
             }
         });
     },
@@ -194,8 +163,7 @@ export default {
 
     methods: {
         createLayers() {
-            // this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
