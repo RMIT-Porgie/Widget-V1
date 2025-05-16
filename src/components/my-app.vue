@@ -2,7 +2,7 @@
     <v-app>
         <v-main>
             <v-container>
-                <v-btn color="primary" @click="createSoilSensor3DPOI">Soil Sensor</v-btn>
+                <v-btn color="primary" @click="createLayers">Soil Sensor</v-btn>
                 <v-btn color="primary" @click="updateSensor3DPOI"> Update Soil Data</v-btn>
             </v-container>
         </v-main>
@@ -15,7 +15,7 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-import treeGeoJSON from "@/assets/sundial_orchard_object_V2.geojson";
+import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import { useGlobalStore } from "@/store/global";
 
@@ -25,6 +25,26 @@ export default {
         return {
             mqttClient: null,
             soilData: null,
+
+            treeLayer: {
+                widgetID: widget.id,
+                geojson: treeGeoJSON,
+                layer: {
+                    id: "treeLayer",
+                    name: "treeLayer",
+                    attributeMapping: {
+                        STRID: "guid"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "green",
+                    scale: [2, 0.5, 0.5],
+                    shape: "tube",
+                    switchDistance: 500,
+                    opacity: 1
+                }
+            },
 
             soilLayer: {
                 widgetID: widget.id,
@@ -158,7 +178,8 @@ export default {
     },
 
     methods: {
-        createSoilSensor3DPOI() {
+        createLayers() {
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
