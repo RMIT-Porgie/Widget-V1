@@ -110,21 +110,26 @@ export default {
             // layerListAttributes = [ "position", "factory", "layer", "className", "boundingSphere", "strid", "geojson", "name", "instanceId", "dataSourceId", "geoItemUuid", "geoItemType", "userData", "STRID", "name", "id", "description", "tags", "selectable", "selected", "hoverable", "hovered", "PointOfView", "Credits", "loadInfo" ]
             // "geojson", "userData"
 
-            const attribute = "geojson";
+            const attribute = "userData";
             this.platformAPI.publish("3DEXPERIENCity.Get", [this.selectedItem.id, attribute]);
             this.platformAPI.subscribe("3DEXPERIENCity.GetReturn", res => {
                 console.log("Get Return: ", res);
                 if (res) {
                     this.attributeValue = res;
                     this.updatedAttributeValue = JSON.parse(JSON.stringify(this.attributeValue));
-                    this.updatedAttributeValue.features[0].properties.fruit_type = "Kiwi";
+                    // this.updatedAttributeValue.features[0].properties.fruit_type = "Kiwi";
+                    this.updatedAttributeValue.fruit_type = "Kiwi";
                 }
             });
 
             // geojson = { "type": "FeatureCollection", "features": [ { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ 344809.226423, 5966176.809116, 120.8 ] }, "properties": { "geoItemUuid": "5156da3b-e997-4bc4-b90c-e085e6b24c61", "sourceFilename": "sundial_orchard_object_V2.geojson", "geoItemType": "SimpleFeature", "TRANS": "344809.226423 5966176.809116 0.0", "NAME": null, "readerVersion": null, "ORIENT": "0.0 0.0 0.0", "fruit_type": "Apple", "referentialUuid": "010d0b08-d31b-4df0-9f07-2af66917c369", "STRID": "T_0169ADE4-ECFF-488D-A6B5-67FC10C72BB5", "plot": "3", "row": "1", "SCALE": "1.0 1.0 1.0", "datasetUuid": "099487bd-e9ba-415a-b956-d594b941dfa2", "Soil Moisture": "0" } } ] }
+
+            // userData = { "Soil Moisture": "0", "datasetUuid": "099487bd-e9ba-415a-b956-d594b941dfa2", "SCALE": "1.0 1.0 1.0", "row": "1", "plot": "3", "STRID": "T_5185530F-D4C4-422F-AA77-CCB618E1F308", "referentialUuid": "010d0b08-d31b-4df0-9f07-2af66917c369", "StreamPriority": 1, "fruit_type": "Apple", "ORIENT": "0.0 0.0 0.0", "readerVersion": null, "NAME": null, "TRANS": "344806.222514 5966176.809561 0.0", "geoItemType": "SimpleFeature", "sourceFilename": "sundial_orchard_object_V2.geojson", "geoItemUuid": "b15099be-0feb-4f0f-8250-e43626d80345", "LifespanStart": null, "LifespanEnd": null }
+
         },
         updateGeoJSONFruitTypeBanana() {
-            this.updatedAttributeValue.features[0].properties.fruit_type = "Banana";
+            // this.updatedAttributeValue.features[0].properties.fruit_type = "Banana";
+            this.updatedAttributeValue.fruit_type = "Banana";
             this.platformAPI.publish("3DEXPERIENCity.Set", [this.selectedItem.id, "geojson", this.updatedAttributeValue]);
         }
     }
