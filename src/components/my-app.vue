@@ -2,11 +2,19 @@
     <v-app>
         <v-main>
             <v-container>
+                                
                 <!-- create a button to create layer -->
                 <v-btn @click="createLayers">Create Layers</v-btn>
                 <!-- create a button to update layer -->
                 <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
                 <!-- soil Data -->
+                <h2>Soil Sensor Data</h2>
+                <div>{{ soilData }}</div>
+                <h2>Soil Moisture Low</h2>
+                <div>{{ soilMoistureLowLayer }}</div>
+                <h2>Soil Moisture Normal</h2>
+                <div>{{ soilMoistureNormalLayer }}</div>
+
             </v-container>
         </v-main>
     </v-app>
@@ -49,7 +57,7 @@ export default {
                 }
             },
 
-            soilLayer: {
+             soilLayer: {
                 widgetID: widget.id,
                 geojson: soilGeoJSON,
                 layer: {
@@ -87,8 +95,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [5, 5, 1],
-                    shape: "sphere",
+                    scale: [1, 1, 1],
+                    shape: "tube",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -112,8 +120,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "green",
-                    scale: [5, 5, 1],
-                    shape: "sphere",
+                    scale: [1, 1, 1],
+                    shape: "tube",
                     switchDistance: 500,
                     opacity: 1
                 }
@@ -152,15 +160,20 @@ export default {
             if (topic === "sensor/soil") {
                 this.soilMoistureLowLayer.geojson.features = [];
                 this.soilMoistureNormalLayer.geojson.features = [];
+
                 this.soilData = JSON.parse(message.toString());
                 this.soilData.forEach(data => {
                     const soilMoistureContent = data.fields.soil_moisture_content;
                     const temperature = data.fields.temperature_celsius;
                     const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
                     if (matchingFeature) {
+                        // Clone the feature to avoid mutating the original
                         const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
+                        // Always add or update soilMoisture and soilTemperature keys in properties
+                        // featureCopy.properties = featureCopy.properties || {};
                         featureCopy.properties.soilMoisture = soilMoistureContent;
                         featureCopy.properties.soilTemperature = temperature;
+
                         if (soilMoistureContent < 20) {
                             this.soilMoistureLowLayer.geojson.features.push(featureCopy);
                         } else {
@@ -188,16 +201,20 @@ export default {
         },
 
         updateSensor3DPOI() {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                widgetID: this.soilMoistureLowLayer.widgetID,
-                layerID: this.soilMoistureLowLayer.layer.id,
-                geojson: this.soilMoistureLowLayer.geojson
-            });
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                widgetID: this.soilMoistureNormalLayer.widgetID,
-                layerID: this.soilMoistureNormalLayer.layer.id,
-                geojson: this.soilMoistureNormalLayer.geojson
-            });
+            if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.soilMoistureLowLayer.widgetID,
+                    layerID: this.soilMoistureLowLayer.layer.id,
+                    geojson: this.soilMoistureLowLayer.geojson
+                });
+            }
+            if (Array.isArray(this.soilMoistureNormalLayer.geojson.features) && this.soilMoistureNormalLayer.geojson.features.length > 0) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.soilMoistureNormalLayer.widgetID,
+                    layerID: this.soilMoistureNormalLayer.layer.id,
+                    geojson: this.soilMoistureNormalLayer.geojson
+                });
+            }
         }
     }
 };
