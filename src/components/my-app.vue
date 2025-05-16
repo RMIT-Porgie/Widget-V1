@@ -15,8 +15,8 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
-// import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
-import treeGeoJSON from "@/assets/sundial_orchard_object_V2.geojson";
+import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
+// import treeGeoJSON from "@/assets/sundial_orchard_object_V2.geojson";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import { useGlobalStore } from "@/store/global";
 
@@ -40,10 +40,10 @@ export default {
                 render: {
                     anchor: true,
                     color: "green",
-                    scale: [2, 0.5, 0.5],
+                    scale: [0.5, 0.5, 2],
                     shape: "tube",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: 0.5
                 }
             },
 
@@ -167,7 +167,7 @@ export default {
                         }
                     }
                 });
-                this.updateSensor3DPOI();
+                // this.updateSensor3DPOI();
             }
         });
     },
