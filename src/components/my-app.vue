@@ -108,8 +108,8 @@ export default {
     },
 
     async mounted() {
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         const options = {
             protocol: "wss",
@@ -131,9 +131,10 @@ export default {
 
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil") {
-                this.soilData = JSON.parse(message.toString());
                 this.soilMoistureLowLayer.geojson.features = [];
                 this.soilMoistureNormalLayer.geojson.features = [];
+                
+                this.soilData = JSON.parse(message.toString());
                 this.soilData.forEach(data => {
                     const soilMoistureContent = data.fields.soil_moisture_content;
                     const temperature = data.fields.temperature_celsius;
@@ -154,7 +155,7 @@ export default {
                         }
                     }
                 });
-                // this.updateSensor3DPOI();
+                this.updateSensor3DPOI();
             }
         });
     },
