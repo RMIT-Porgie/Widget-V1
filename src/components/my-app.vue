@@ -159,7 +159,7 @@ export default {
     },
 
     async mounted() {
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         // this.createLayers();
