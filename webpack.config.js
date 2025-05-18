@@ -32,6 +32,19 @@ const vuetifyConf = {
             {
                 test: /\.geojson$/,
                 type: 'json'
+            },
+            {
+                test: /\.csv$/,
+                use: [
+                    {
+                        loader: 'csv-loader',
+                        options: {
+                            dynamicTyping: true,
+                            header: true,
+                            skipEmptyLines: true
+                        }
+                    }
+                ]
             }
         ]
     },
