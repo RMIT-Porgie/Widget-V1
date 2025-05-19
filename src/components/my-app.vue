@@ -120,9 +120,10 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [5, 5, 1],
+                    scale: [10, 10, .5],
                     shape: "sphere",
                     switchDistance: 500,
+                    type: "text",
                     opacity: 1
                 }
             },
@@ -144,11 +145,11 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "green",
-                    scale: [5, 5, 1],
+                    color: "blue",
+                    scale: [10, 10, .5],
                     shape: "sphere",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: .5
                 }
             },
 
