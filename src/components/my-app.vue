@@ -123,7 +123,6 @@ export default {
                     scale: [10, 10, .5],
                     shape: "sphere",
                     switchDistance: 500,
-                    type: "text",
                     opacity: 1
                 }
             },
