@@ -3,21 +3,85 @@
     "name": "sundial_orchard_soil_data",
     "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::7855" } },
     "features": [
-        { "type": "Feature", "properties": { "guid": "s01" }, "geometry": { "type": "Point", "coordinates": [344784.34631654195, 5966172.019848726] } },
-        { "type": "Feature", "properties": { "guid": "s02" }, "geometry": { "type": "Point", "coordinates": [344805.0506028623, 5966168.205827185] } },
-        { "type": "Feature", "properties": { "guid": "s03" }, "geometry": { "type": "Point", "coordinates": [344775.0412296374, 5966149.826234149] } },
-        { "type": "Feature", "properties": { "guid": "s04" }, "geometry": { "type": "Point", "coordinates": [344788.34803728183, 5966132.373010699] } },
-        { "type": "Feature", "properties": { "guid": "s05" }, "geometry": { "type": "Point", "coordinates": [344754.84128167527, 5966139.180299285] } },
-        { "type": "Feature", "properties": { "guid": "s06" }, "geometry": { "type": "Point", "coordinates": [344750.3982381533, 5966117.87320681] } },
-        { "type": "Feature", "properties": { "guid": "s07" }, "geometry": { "type": "Point", "coordinates": [344732.5904844153, 5966146.849327754] } },
-        { "type": "Feature", "properties": { "guid": "s08" }, "geometry": { "type": "Point", "coordinates": [344713.0583349855, 5966133.282659269] } },
-        { "type": "Feature", "properties": { "guid": "s09" }, "geometry": { "type": "Point", "coordinates": [344722.24584444036, 5966168.095169727] } },
-        { "type": "Feature", "properties": { "guid": "s10" }, "geometry": { "type": "Point", "coordinates": [344700.32329482696, 5966171.830141774] } },
-        { "type": "Feature", "properties": { "guid": "s11" }, "geometry": { "type": "Point", "coordinates": [344730.4849437171, 5966189.855149797] } },
-        { "type": "Feature", "properties": { "guid": "s12" }, "geometry": { "type": "Point", "coordinates": [344718.04024587956, 5966208.124236272] } },
-        { "type": "Feature", "properties": { "guid": "s13" }, "geometry": { "type": "Point", "coordinates": [344751.1007299073, 5966200.4615076] } },
-        { "type": "Feature", "properties": { "guid": "s14" }, "geometry": { "type": "Point", "coordinates": [344754.9301147748, 5966226.518636424] } },
-        { "type": "Feature", "properties": { "guid": "s15" }, "geometry": { "type": "Point", "coordinates": [344750.4762983912, 5966198.0378129585] } },
-        { "type": "Feature", "properties": { "guid": "s16" }, "geometry": { "type": "Point", "coordinates": [344754.74696413684, 5966223.574595446] } }
+        {
+            "type": "Feature",
+            "properties": { "guid": "s01" },
+            "geometry": { "type": "Point", "coordinates": [344784.34631654195, 5966172.019848726, 120.74966814180691] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s02" },
+            "geometry": { "type": "Point", "coordinates": [344805.0506028623, 5966168.205827185, 120.70005325012423] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s03" },
+            "geometry": { "type": "Point", "coordinates": [344775.0412296374, 5966149.826234149, 120.73059725619503] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s04" },
+            "geometry": { "type": "Point", "coordinates": [344788.34803728183, 5966132.373010699, 120.76017923419371] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s05" },
+            "geometry": { "type": "Point", "coordinates": [344754.84128167527, 5966139.180299285, 120.47838434054604] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s06" },
+            "geometry": { "type": "Point", "coordinates": [344750.3982381533, 5966117.87320681, 120.21705505989415] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s07" },
+            "geometry": { "type": "Point", "coordinates": [344732.5904844153, 5966146.849327754, 120.35819087204524] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s08" },
+            "geometry": { "type": "Point", "coordinates": [344713.0583349855, 5966133.282659269, 119.74574739809619] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s09" },
+            "geometry": { "type": "Point", "coordinates": [344722.24584444036, 5966168.095169727, 120.56499747519075] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s10" },
+            "geometry": { "type": "Point", "coordinates": [344700.32329482696, 5966171.830141774, 120.42346269810858] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s11" },
+            "geometry": { "type": "Point", "coordinates": [344730.4849437171, 5966189.855149797, 120.24129495301109] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s12" },
+            "geometry": { "type": "Point", "coordinates": [344718.04024587956, 5966208.124236272, 120.51786719658908] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s13" },
+            "geometry": { "type": "Point", "coordinates": [344751.1007299073, 5966200.4615076, 120.5172285143525] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s14" },
+            "geometry": { "type": "Point", "coordinates": [344754.9301147748, 5966226.518636424, 120.70885489102596] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s15" },
+            "geometry": { "type": "Point", "coordinates": [344750.4762983912, 5966198.0378129585, 1120.48742060984092] }
+        },
+        {
+            "type": "Feature",
+            "properties": { "guid": "s16" },
+            "geometry": { "type": "Point", "coordinates": [344754.74696413684, 5966223.574595446, 120.70154283209241] }
+        }
     ]
 }

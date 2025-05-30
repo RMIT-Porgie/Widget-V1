@@ -96,9 +96,7 @@ export default {
                     }
                 },
                 render: {
-                    color: "yellow",
-                    opacity: 1,
-                    lineWidth: 10
+                    color: "yellow"
                 }
             },
 
