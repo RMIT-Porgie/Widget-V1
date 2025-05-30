@@ -96,7 +96,8 @@ export default {
                     }
                 },
                 render: {
-                    color: "yellow"
+                    color: "black",
+                    extrusionHeight: 10,
                 }
             },
 
