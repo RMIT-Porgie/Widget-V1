@@ -3,6 +3,7 @@
         <v-main>
             <v-container>
                 <!-- create a button to create layer -->
+                <v-btn @click="createPolygonLayer">Create SolarPanel</v-btn>
                 <v-btn @click="createLayers">Create Layers</v-btn>
                 <!-- create a button to update layer -->
                 <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
@@ -58,10 +59,12 @@ import { mapStores } from "pinia";
 import { th } from "vuetify/locale";
 import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
+import solarPanelGeoJSON from "@/assets/solar_panel_polygon.geojson";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
 import { useGlobalStore } from "@/store/global";
-const csvData = require('@/assets/soil_data_time_series.csv');
+
+const csvData = require("@/assets/soil_data_time_series.csv");
 
 export default {
     name: "App",
@@ -81,6 +84,23 @@ export default {
             isPlaying: false,
             playInterval: null,
             playIndex: 0,
+
+            solarPanelLayer: {
+                widgetID: widget.id,
+                geojson: solarPanelGeoJSON,
+                layer: {
+                    id: "solarPanelLayer",
+                    name: "solarPanelLayer",
+                    attributeMapping: {
+                        STRID: "id"
+                    }
+                },
+                render: {
+                    color: "yellow",
+                    opacity: 1,
+                    lineWidth: 10
+                }
+            },
 
             treeLayer: {
                 widgetID: widget.id,
@@ -120,7 +140,7 @@ export default {
                 render: {
                     anchor: true,
                     color: "red",
-                    scale: [10, 10, .5],
+                    scale: [10, 10, 0.5],
                     shape: "sphere",
                     switchDistance: 500,
                     opacity: 1
@@ -145,13 +165,12 @@ export default {
                 render: {
                     anchor: true,
                     color: "blue",
-                    scale: [10, 10, .5],
+                    scale: [10, 10, 0.5],
                     shape: "sphere",
                     switchDistance: 500,
-                    opacity: .5
+                    opacity: 0.5
                 }
-            },
-
+            }
         };
     },
     computed: {
@@ -160,9 +179,6 @@ export default {
 
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-
-        // this.createLayers();
 
         const options = {
             protocol: "wss",
@@ -247,6 +263,11 @@ export default {
                 });
             }
         },
+
+        createPolygonLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
+        }
+
 
         async loadHistoricalCSV() {
             // csvData is already an array of objects from csv-loader
