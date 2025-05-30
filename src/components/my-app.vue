@@ -266,8 +266,7 @@ export default {
 
         createPolygonLayer() {
             this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
-        }
-
+        },
 
         async loadHistoricalCSV() {
             // csvData is already an array of objects from csv-loader
@@ -300,7 +299,6 @@ export default {
             this.isPlaying = false;
             if (this.playInterval) clearInterval(this.playInterval);
         },
-
         updateHistoricalPOI() {
             if (!this.isPlaying) return;
             const timestamps = this.timeSliderLabels;
