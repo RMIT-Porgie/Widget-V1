@@ -2,52 +2,21 @@
     <v-app>
         <v-main>
             <v-container>
-                <!-- create a button to create layer -->
-                <v-btn @click="createPolygonLayer">Create SolarPanel</v-btn>
-                <v-btn @click="createLayers">Create Layers</v-btn>
-                <!-- create a button to update layer -->
-                <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
-                <!-- Time slider for historical visualization -->
-                <v-row class="mt-4">
-                    <v-col cols="12">
-                        <v-range-slider
-                            v-model="timeRange"
-                            :min="timeSliderMin"
-                            :max="timeSliderMax"
-                            :step="1"
-                            ticks
-                            :tick-labels="timeSliderLabels"
-                            label="Time Range"
-                            thumb-label
-                            :disabled="!csvLoaded"
-                        ></v-range-slider>
-                        <div v-if="csvLoaded">
-                            <span>Start: {{ formatTimestamp(timeRange[0]) }}</span>
-                            <span class="ml-4">End: {{ formatTimestamp(timeRange[1]) }}</span>
-                        </div>
+                <v-row justify="end">
+                    <v-col cols="auto">
+                        <v-tabs v-model="activeTab" align-tabs="end">
+                            <v-tab value="management">Management</v-tab>
+                            <v-tab value="agrivoltaic">Agrivoltaic System Design</v-tab>
+                            <v-tab value="yield">Yield Estimation</v-tab>
+                        </v-tabs>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="12">
-                        <v-btn :disabled="!csvLoaded || isPlaying" @click="startHistoricalVisualization">Start Historical Visualization</v-btn>
-                        <v-btn :disabled="!isPlaying" @click="stopHistoricalVisualization">Stop Visualization</v-btn>
+                        <component :is="currentTabComponent" />
                     </v-col>
                 </v-row>
 
-                <!-- Display current historical data -->
-                <v-row v-if="isPlaying && csvLoaded" class="mb-4">
-                    <v-col cols="12">
-                        <v-card outlined>
-                            <v-card-title>Historical Data at {{ formatTimestamp(timeSliderLabels[playIndex]) }}</v-card-title>
-                            <v-card-text>
-                                <div v-for="data in historicalData.filter(d => d.timestamp === timeSliderLabels[playIndex])" :key="data.guid">
-                                    <strong>Sensor:</strong> {{ data.guid }} | <strong>Soil Moisture:</strong> {{ data.soil_moisture_content }} |
-                                    <strong>Temperature:</strong> {{ data.temperature_celsius }}
-                                </div>
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
             </v-container>
         </v-main>
     </v-app>
@@ -63,11 +32,19 @@ import solarPanelGeoJSON from "@/assets/solar_panel_polygon.geojson";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
 import { useGlobalStore } from "@/store/global";
+import Management from "@/components/Management.vue";
+import AgrivoltaicSystemDesign from "@/components/AgrivoltaicSystemDesign.vue";
+import YieldEstimation from "@/components/YieldEstimation.vue";
 
 const csvData = require("@/assets/soil_data_time_series.csv");
 
 export default {
     name: "App",
+    components: {
+        Management,
+        AgrivoltaicSystemDesign,
+        YieldEstimation
+    },
     data() {
         return {
             mqttClient: null,
@@ -169,15 +146,28 @@ export default {
                     switchDistance: 500,
                     opacity: 0.5
                 }
-            }
+            },
+            activeTab: 'management',
         };
     },
     computed: {
-        ...mapStores(useGlobalStore)
+        ...mapStores(useGlobalStore),
+        currentTabComponent() {
+            switch (this.activeTab) {
+                case 'management':
+                    return 'Management';
+                case 'agrivoltaic':
+                    return 'AgrivoltaicSystemDesign';
+                case 'yield':
+                    return 'YieldEstimation';
+                default:
+                    return 'Management';
+            }
+        }
     },
 
     async mounted() {
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
 
         const options = {
             protocol: "wss",
