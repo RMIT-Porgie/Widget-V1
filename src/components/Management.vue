@@ -1,9 +1,9 @@
 <template>
     <div>
         <h2>Management</h2>
-        <v-btn @click="createPolygonLayer">Create SolarPanel</v-btn>
-        <v-btn @click="createLayers">Create Layers</v-btn>
-        <v-btn @click="updateSensor3DPOI">Update Layers</v-btn>
+        <v-btn @click="createIoTSensorsLayer">Show IoT Sensors</v-btn>
+        <v-btn @click="removeIoTSensorsLayer">Hide IoT Sensors</v-btn>
+
         <v-row class="mt-4">
             <v-col cols="12">
                 <v-range-slider
@@ -88,6 +88,27 @@ export default {
                     opacity: 0.5
                 }
             },
+            
+            IoTSensorsLayer:{
+                widgetID: widget.id,
+                geojson: soilGeoJSON,
+                layer: {
+                    id: "IoTSensorsLayer",
+                    name: "IoTSensorsLayer",
+                    attributeMapping: {
+                        STRID: "guid"
+                    }
+                },
+                render: {
+                    anchor: true,
+                    color: "orange",
+                    scale: [5, 5, 5],
+                    shape: "sphere",
+                    switchDistance: 500,
+                    opacity: 1
+                }
+            },
+
             soilMoistureLowLayer: {
                 widgetID: widget.id,
                 geojson: {
@@ -190,6 +211,14 @@ export default {
         }
     },
     methods: {
+        createIoTSensorsLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.IoTSensorsLayer);
+        },
+
+        removeIoTSensorsLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.IoTSensorsLayer.layer.id);
+        },
+
         createLayers() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
