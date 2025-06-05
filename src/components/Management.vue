@@ -1,8 +1,8 @@
 <template>
     <div>
         <h2>Management</h2>
-        <v-btn @click="createIoTSensorsLayer">Show IoT Sensors</v-btn>
-        <v-btn @click="removeIoTSensorsLayer">Hide IoT Sensors</v-btn>
+        <v-btn @click="createSensorsLayer">Show IoT Sensors</v-btn>
+        <v-btn @click="removeSensorsLayer">Hide IoT Sensors</v-btn>
 
         <v-row class="mt-4">
             <v-col cols="12">
@@ -88,8 +88,8 @@ export default {
                     opacity: 0.5
                 }
             },
-            
-            IoTSensorsLayer:{
+
+            SensorsLayer: {
                 widgetID: widget.id,
                 geojson: soilGeoJSON,
                 layer: {
@@ -168,13 +168,7 @@ export default {
             clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
         };
         this.mqttClient = mqtt.connect(options);
-        this.mqttClient.on("connect", () => {
-            this.mqttClient.subscribe("sensor/soil", err => {
-                if (!err) {
-                    // Subscribed
-                }
-            });
-        });
+        this.mqttClient.on("connect", () => {});
         this.mqttClient.on("message", (topic, message) => {
             if (topic === "sensor/soil") {
                 this.soilMoistureLowLayer.geojson.features = [];
@@ -211,19 +205,18 @@ export default {
         }
     },
     methods: {
-        createIoTSensorsLayer() {
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.IoTSensorsLayer);
-        },
-
-        removeIoTSensorsLayer() {
-            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.IoTSensorsLayer.layer.id);
-        },
-
-        createLayers() {
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.treeLayer);
+        createSensorsLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
         },
+
+        removeSensorsLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.SensorsLayer.layer.id);
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.soilMoistureLowLayer.layer.id);
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.soilMoistureNormalLayer.layer.id);
+        },
+
         updateSensor3DPOI() {
             if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
                 this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
@@ -240,9 +233,7 @@ export default {
                 });
             }
         },
-        createPolygonLayer() {
-            this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
-        },
+
         async loadHistoricalCSV() {
             this.historicalData = csvData.map(row => ({
                 timestamp: row.timestamp,
@@ -262,6 +253,7 @@ export default {
             return this.timeSliderLabels[idx].replace("T", " ");
         },
         startHistoricalVisualization() {
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.SensorsLayer.layer.id);
             this.isPlaying = true;
             this.playIndex = this.timeRange[0];
             if (this.playInterval) clearInterval(this.playInterval);
@@ -270,6 +262,7 @@ export default {
         stopHistoricalVisualization() {
             this.isPlaying = false;
             if (this.playInterval) clearInterval(this.playInterval);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
         },
         updateHistoricalPOI() {
             if (!this.isPlaying) return;
