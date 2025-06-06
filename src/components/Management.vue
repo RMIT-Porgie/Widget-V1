@@ -126,7 +126,9 @@ export default {
     },
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", )(item => {
+            this.onItemSelect(item);
+        });
 
         const options = {
             protocol: "wss",
@@ -146,81 +148,75 @@ export default {
         }
     },
     methods: {
-        handleOnItemSelect(res) {
-            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
-            this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-                if (res.data && res.data.length > 0) {
-                    const selectedGuid = res.data[0].userData.GUID;
-                    console.log("Selected GUID:", selectedGuid);
-                }
-            });
-        }
-    },
-    createSensorsLayer() {
-        this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
-        this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
-        this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
-    },
+        onItemSelect(item) {
+            console.log("Item selected:", item);
+        },
+        createSensorsLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
+            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureNormalLayer);
+        },
 
-    removeSensorsLayer() {
-        this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.SensorsLayer.layer.id);
-        this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.soilMoistureLowLayer.layer.id);
-        this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.soilMoistureNormalLayer.layer.id);
-    },
+        removeSensorsLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.SensorsLayer.layer.id);
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.soilMoistureLowLayer.layer.id);
+            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.soilMoistureNormalLayer.layer.id);
+        },
 
-    updateSensor3DPOI() {
-        if (Array.isArray(this.SensorsLayer.geojson.features) && this.SensorsLayer.geojson.features.length > 0) {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                widgetID: this.SensorsLayer.widgetID,
-                layerID: this.SensorsLayer.layer.id,
-                geojson: this.SensorsLayer.geojson
-            });
-        }
-        if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                widgetID: this.soilMoistureLowLayer.widgetID,
-                layerID: this.soilMoistureLowLayer.layer.id,
-                geojson: this.soilMoistureLowLayer.geojson
-            });
-        }
-        if (Array.isArray(this.soilMoistureNormalLayer.geojson.features) && this.soilMoistureNormalLayer.geojson.features.length > 0) {
-            this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                widgetID: this.soilMoistureNormalLayer.widgetID,
-                layerID: this.soilMoistureNormalLayer.layer.id,
-                geojson: this.soilMoistureNormalLayer.geojson
-            });
-        }
-    },
-    async visualiseFilteredData() {
-        const dashboard = this.$refs.dashboardRef;
-        const filteredData = dashboard.filteredData;
-        if (!filteredData || !filteredData.length) return;
-        const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
-        for (const dateTime of allDateTimes) {
-            const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
-            updatedGeoJSON.features.forEach(feature => {
-                const guid = feature.properties.guid;
-                const sensorData = filteredData.filter(d => d.sensorId == guid);
-                if (sensorData && sensorData.length) {
-                    let moisture = null;
-                    let temperature = null;
-                    for (const d of sensorData) {
-                        if (d.measurementType === "moisture") moisture = d.value;
-                        if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
+        updateSensor3DPOI() {
+            if (Array.isArray(this.SensorsLayer.geojson.features) && this.SensorsLayer.geojson.features.length > 0) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.SensorsLayer.widgetID,
+                    layerID: this.SensorsLayer.layer.id,
+                    geojson: this.SensorsLayer.geojson
+                });
+            }
+            if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.soilMoistureLowLayer.widgetID,
+                    layerID: this.soilMoistureLowLayer.layer.id,
+                    geojson: this.soilMoistureLowLayer.geojson
+                });
+            }
+            if (Array.isArray(this.soilMoistureNormalLayer.geojson.features) && this.soilMoistureNormalLayer.geojson.features.length > 0) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.soilMoistureNormalLayer.widgetID,
+                    layerID: this.soilMoistureNormalLayer.layer.id,
+                    geojson: this.soilMoistureNormalLayer.geojson
+                });
+            }
+        },
+        async visualiseFilteredData() {
+            const dashboard = this.$refs.dashboardRef;
+            const filteredData = dashboard.filteredData;
+            if (!filteredData || !filteredData.length) return;
+            const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
+            for (const dateTime of allDateTimes) {
+                const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
+                updatedGeoJSON.features.forEach(feature => {
+                    const guid = feature.properties.guid;
+                    const sensorData = filteredData.filter(d => d.sensorId == guid);
+                    if (sensorData && sensorData.length) {
+                        let moisture = null;
+                        let temperature = null;
+                        for (const d of sensorData) {
+                            if (d.measurementType === "moisture") moisture = d.value;
+                            if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
+                        }
+                        feature.properties.moisture = moisture;
+                        feature.properties.temperature = temperature;
+                    } else {
+                        feature.properties.moisture = null;
+                        feature.properties.temperature = null;
                     }
-                    feature.properties.moisture = moisture;
-                    feature.properties.temperature = temperature;
-                } else {
-                    feature.properties.moisture = null;
-                    feature.properties.temperature = null;
-                }
-            });
-            this.SensorsLayer.geojson = updatedGeoJSON;
-            // console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
-            this.updateSensor3DPOI();
-            // Optionally add a delay for animation effect
-            await new Promise(res => setTimeout(res, 2000));
-        }
+                });
+                this.SensorsLayer.geojson = updatedGeoJSON;
+                // console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
+                this.updateSensor3DPOI();
+                // Optionally add a delay for animation effect
+                await new Promise(res => setTimeout(res, 2000));
+            }
+        },
     }
 };
 </script>
