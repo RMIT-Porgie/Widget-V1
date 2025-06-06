@@ -96,8 +96,8 @@ export default {
     computed: {
         filteredData() {
             if (!this.startDate || !this.endDate) return [];
+            // Return all data for selected sensor and date range, regardless of measurement type
             return this.soilData
-                .filter(d => d.measurementType === this.selectedMeasurementType)
                 .filter(d => this.selectedSensorId === "all" || d.sensorId == this.selectedSensorId)
                 .filter(d => {
                     const date = d.dateTime.split(" ")[0];

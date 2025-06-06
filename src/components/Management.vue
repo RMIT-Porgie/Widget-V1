@@ -173,49 +173,37 @@ export default {
             }
         },
         async visualiseFilteredData() {
-            // Get filteredData from Dashboard via ref
+            console.log("Visualising Filtered Data...");
             const dashboard = this.$refs.dashboardRef;
-            if (!dashboard) return;
             const filteredData = dashboard.filteredData;
+            console.log("Filtered Data:", filteredData);
             if (!filteredData || !filteredData.length) return;
-
-            // Clone geojson to avoid mutating import
-            const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
-
-            // Group filteredData by sensorId
-            const grouped = {};
-            filteredData.forEach(d => {
-                if (!grouped[d.sensorId]) grouped[d.sensorId] = [];
-                grouped[d.sensorId].push(d);
-            });
-
-            // For each feature, update properties if guid matches sensorId
-            updatedGeoJSON.features.forEach(feature => {
-                const guid = feature.properties.guid;
-                const sensorData = grouped[guid];
-                if (sensorData) {
-                    // Get latest moisture and temperature values
-                    let latestMoisture = null;
-                    let latestTemp = null;
-                    // Sort by dateTime descending
-                    const sorted = [...sensorData].sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-                    for (const d of sorted) {
-                        if (d.measurementType === "moisture" && latestMoisture === null) {
-                            latestMoisture = d.value;
+            const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
+            for (const dateTime of allDateTimes) {
+                const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
+                updatedGeoJSON.features.forEach(feature => {
+                    const guid = feature.properties.guid;
+                    const sensorData = filteredData.filter(d => d.sensorId == guid);
+                    if (sensorData && sensorData.length) {
+                        let moisture = null;
+                        let temperature = null;
+                        for (const d of sensorData) {
+                            if (d.measurementType === "moisture") moisture = d.value;
+                            if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
                         }
-                        if (d.measurementType.toLowerCase().includes("temp") && latestTemp === null) {
-                            latestTemp = d.value;
-                        }
-                        if (latestMoisture !== null && latestTemp !== null) break;
+                        feature.properties.moisture = moisture;
+                        feature.properties.temperature = temperature;
+                    } else {
+                        feature.properties.moisture = null;
+                        feature.properties.temperature = null;
                     }
-                    feature.properties.moisture = latestMoisture;
-                    feature.properties.temperature = latestTemp;
-                }
-            });
-
-            // Update SensorsLayer geojson and visualise
-            this.SensorsLayer.geojson = updatedGeoJSON;
-            this.updateSensor3DPOI();
+                });
+                this.SensorsLayer.geojson = updatedGeoJSON;
+                console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
+                this.updateSensor3DPOI();
+                // Optionally add a delay for animation effect
+                await new Promise(res => setTimeout(res, 500));
+            }
         },
     }
 };
