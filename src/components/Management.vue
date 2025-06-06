@@ -15,8 +15,6 @@ import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
 import Dashboard from "./Dashboard.vue";
 
-// const csvData = require("@/assets/soil_data_time_series.csv");
-
 export default {
     name: "Management",
     components: {
@@ -127,8 +125,7 @@ export default {
         };
     },
     async mounted() {
-        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        // this.loadHistoricalCSV();
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         const options = {
             protocol: "wss",
             hostname: "mqtt-sooft.duckdns.org",
