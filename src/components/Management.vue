@@ -4,7 +4,7 @@
         <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
         <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
 
-        <v-row class="mt-4">
+        <!-- <v-row class="mt-4">
             <v-col cols="12">
                 <v-range-slider
                     v-model="timeRange"
@@ -22,7 +22,7 @@
                     <span class="ml-4">End: {{ formatTimestamp(timeRange[1]) }}</span>
                 </div>
             </v-col>
-        </v-row>
+        </v-row> -->
         <v-row>
             <v-col cols="12">
                 <v-btn :disabled="!csvLoaded || isPlaying" @click="startHistoricalVisualization">Start Historical Visualization</v-btn>
@@ -42,6 +42,7 @@
                 </v-card>
             </v-col>
         </v-row>
+        <Dashboard />
     </div>
 </template>
 
@@ -50,11 +51,15 @@ import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
+import Dashboard from "./Dashboard.vue";
 
-const csvData = require("@/assets/soil_data_time_series.csv");
+// const csvData = require("@/assets/soil_data_time_series.csv");
 
 export default {
     name: "Management",
+    components: {
+        Dashboard
+    },
     data() {
         return {
             mqttClient: null,
@@ -161,6 +166,7 @@ export default {
     },
     async mounted() {
         // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.loadHistoricalCSV();
         const options = {
             protocol: "wss",
             hostname: "mqtt-sooft.duckdns.org",
@@ -169,32 +175,31 @@ export default {
         };
         this.mqttClient = mqtt.connect(options);
         this.mqttClient.on("connect", () => {});
-        this.mqttClient.on("message", (topic, message) => {
-            if (topic === "sensor/soil") {
-                this.soilMoistureLowLayer.geojson.features = [];
-                this.soilMoistureNormalLayer.geojson.features = [];
-                this.soilData = JSON.parse(message.toString());
-                this.soilData.forEach(data => {
-                    const soilMoistureContent = data.fields.soil_moisture_content;
-                    const temperature = data.fields.temperature_celsius;
-                    const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
-                    if (matchingFeature) {
-                        const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
-                        featureCopy.properties.soilMoisture = soilMoistureContent;
-                        featureCopy.properties.soilTemperature = temperature;
-                        if (soilMoistureContent < 20) {
-                            this.soilMoistureLowLayer.geojson.features.push(featureCopy);
-                        } else {
-                            this.soilMoistureNormalLayer.geojson.features.push(featureCopy);
-                        }
-                    }
-                });
-                if (!this.isPlaying) {
-                    this.updateSensor3DPOI();
-                }
-            }
-        });
-        this.loadHistoricalCSV();
+        // this.mqttClient.on("message", (topic, message) => {
+        //     if (topic === "sensor/soil") {
+        //         this.soilMoistureLowLayer.geojson.features = [];
+        //         this.soilMoistureNormalLayer.geojson.features = [];
+        //         this.soilData = JSON.parse(message.toString());
+        //         this.soilData.forEach(data => {
+        //             const soilMoistureContent = data.fields.soil_moisture_content;
+        //             const temperature = data.fields.temperature_celsius;
+        //             const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
+        //             if (matchingFeature) {
+        //                 const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
+        //                 featureCopy.properties.soilMoisture = soilMoistureContent;
+        //                 featureCopy.properties.soilTemperature = temperature;
+        //                 if (soilMoistureContent < 20) {
+        //                     this.soilMoistureLowLayer.geojson.features.push(featureCopy);
+        //                 } else {
+        //                     this.soilMoistureNormalLayer.geojson.features.push(featureCopy);
+        //                 }
+        //             }
+        //         });
+        //         if (!this.isPlaying) {
+        //             this.updateSensor3DPOI();
+        //         }
+        //     }
+        // });
     },
     beforeUnmount() {
         if (this.mqttClient) {
@@ -234,25 +239,39 @@ export default {
             }
         },
 
-        loadHistoricalCSV() {
-            this.historicalData = csvData.map(row => ({
-                timestamp: row.timestamp,
-                guid: row.guid,
-                soil_moisture_content: parseFloat(row.soil_moisture_content),
-                temperature_celsius: parseFloat(row.temperature_celsius)
-            }));
-            const timestamps = [...new Set(this.historicalData.map(d => d.timestamp))].sort();
-            this.timeSliderLabels = timestamps;
-            this.timeSliderMin = 0;
-            this.timeSliderMax = timestamps.length - 1;
-            this.timeRange = [0, timestamps.length - 1];
-            this.csvLoaded = true;
-        },
+        // loadHistoricalCSV() {
+        //     this.historicalData = csvData.map(row => ({
+        //         timestamp: row.timestamp,
+        //         guid: row.guid,
+        //         soil_moisture_content: parseFloat(row.soil_moisture_content),
+        //         temperature_celsius: parseFloat(row.temperature_celsius)
+        //     }));
+        //     const timestamps = [...new Set(this.historicalData.map(d => d.timestamp))].sort();
+        //     this.timeSliderLabels = timestamps;
+        //     this.timeSliderMin = 0;
+        //     this.timeSliderMax = timestamps.length - 1;
+        //     this.timeRange = [0, timestamps.length - 1];
+        //     this.csvLoaded = true;
+        // },
         formatTimestamp(idx) {
             if (!this.timeSliderLabels[idx]) return "";
             return this.timeSliderLabels[idx].replace("T", " ");
         },
         startHistoricalVisualization() {
+            // Use Dashboard's filteredChartData for visualization
+            const dashboardComponent = this.$children.find(
+                c => c.$options.name === "Dashboard"
+            );
+            if (dashboardComponent && dashboardComponent.filteredChartData) {
+                // Use the filteredChartData as the data source
+                this.historicalData = dashboardComponent.filteredChartData;
+                const timestamps = [...new Set(this.historicalData.map(d => d.dateTime))].sort();
+                this.timeSliderLabels = timestamps;
+                this.timeSliderMin = 0;
+                this.timeSliderMax = timestamps.length - 1;
+                this.timeRange = [0, timestamps.length - 1];
+                this.csvLoaded = true;
+            }
             this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.SensorsLayer.layer.id);
             this.isPlaying = true;
             this.playIndex = this.timeRange[0];

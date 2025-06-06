@@ -1,6 +1,21 @@
 <template>
     <div class="dashboard-container">
         <h2 class="dashboard-title">Soil Data Dashboard</h2>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="measurementTypeSelect">Measurement Type:</label>
+                <select id="measurementTypeSelect" v-model="selectedMeasurementType" class="type-select">
+                    <option v-for="type in measurementTypes" :key="type" :value="type">{{ type }}</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sensorIdSelect">Sensor ID:</label>
+                <select id="sensorIdSelect" v-model="selectedSensorId" class="type-select">
+                    <option value="all">All</option>
+                    <option v-for="id in sensorIds" :key="id" :value="id">{{ id }}</option>
+                </select>
+            </div>
+        </div>
         <div class="date-picker-row">
             <div class="date-picker-group">
                 <label for="startDatePicker">Start Date:</label>
@@ -16,7 +31,9 @@
             </div>
         </div>
         <div class="selected-range" v-if="startDate && endDate">
-            <span>Selected Range: <strong>{{ startDate }}</strong> to <strong>{{ endDate }}</strong></span>
+            <span
+                >Selected Range: <strong>{{ startDate }}</strong> to <strong>{{ endDate }}</strong></span
+            >
         </div>
         <div class="chart-container" v-if="filteredChartData.length">
             <LineChart :chart-data="chartData" :chart-options="chartOptions" />
@@ -25,18 +42,9 @@
 </template>
 
 <script>
-import { Line } from 'vue-chartjs';
-import {
-    Chart,
-    LineElement,
-    PointElement,
-    LinearScale,
-    Title,
-    CategoryScale,
-    Tooltip,
-    Legend
-} from 'chart.js';
-import { h } from 'vue';
+import { h } from "vue";
+import { CategoryScale, Chart, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from "chart.js";
+import { Line } from "vue-chartjs";
 
 Chart.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
@@ -47,11 +55,11 @@ export default {
     components: {
         LineChart: {
             extends: Line,
-            props: ['chartData', 'chartOptions'],
+            props: ["chartData", "chartOptions"],
             mounted() {
                 // For Vue 3 and vue-chartjs 5+, use this.$refs.canvas and Chart.js directly
-                this.chartInstance = new Chart(this.$refs.canvas.getContext('2d'), {
-                    type: 'line',
+                this.chartInstance = new Chart(this.$refs.canvas.getContext("2d"), {
+                    type: "line",
                     data: this.chartData,
                     options: this.chartOptions
                 });
@@ -70,8 +78,7 @@ export default {
                 }
             },
             render() {
-                // Use Vue 3 render function (h) instead of this.$createElement
-                return h('canvas', { ref: 'canvas' });
+                return h("canvas", { ref: "canvas" });
             }
         }
     },
@@ -80,27 +87,34 @@ export default {
             soilData: [],
             availableDates: [],
             startDate: "",
-            endDate: ""
+            endDate: "",
+            measurementTypes: [],
+            selectedMeasurementType: "moisture",
+            sensorIds: [],
+            selectedSensorId: "all"
         };
     },
     computed: {
         filteredChartData() {
             if (!this.startDate || !this.endDate) return [];
-            return this.soilData.filter(d => {
-                const date = d.dateTime.split(' ')[0];
-                return date >= this.startDate && date <= this.endDate;
-            });
+            return this.soilData
+                .filter(d => d.measurementType === this.selectedMeasurementType)
+                .filter(d => this.selectedSensorId === "all" || d.sensorId == this.selectedSensorId)
+                .filter(d => {
+                    const date = d.dateTime.split(" ")[0];
+                    return date >= this.startDate && date <= this.endDate;
+                });
         },
         chartData() {
             return {
                 labels: this.filteredChartData.map(d => d.dateTime),
                 datasets: [
                     {
-                        label: 'Soil Value',
+                        label: "Soil Value",
                         data: this.filteredChartData.map(d => d.value),
                         fill: false,
-                        borderColor: '#1976d2',
-                        backgroundColor: '#1976d2',
+                        borderColor: "#1976d2",
+                        backgroundColor: "#1976d2",
                         tension: 0.2,
                         pointRadius: 2
                     }
@@ -114,18 +128,18 @@ export default {
                     legend: { display: true },
                     title: {
                         display: true,
-                        text: 'Soil Data Over Time',
+                        text: "Soil Data Over Time",
                         font: { size: 18 }
                     },
                     tooltip: { enabled: true }
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: 'Date Time' },
+                        title: { display: true, text: "Date Time" },
                         ticks: { autoSkip: true, maxTicksLimit: 12 }
                     },
                     y: {
-                        title: { display: true, text: 'Value' },
+                        title: { display: true, text: "Value" },
                         beginAtZero: false
                     }
                 }
@@ -146,6 +160,14 @@ export default {
                     value: parseFloat(row.value)
                 };
             });
+            // Get unique measurement types
+            this.measurementTypes = [...new Set(this.soilData.map(d => d.measurementType))];
+            // Get unique sensor IDs
+            this.sensorIds = [...new Set(this.soilData.map(d => d.sensorId))];
+            // Set default to 'all'
+            this.selectedSensorId = "all";
+            // Sort by dateTime ascending
+            this.soilData.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
             // Find min and max date
             const dates = this.soilData.map(d => d.dateTime.split(" ")[0]);
             const jsDates = dates.map(d => new Date(d));
@@ -165,8 +187,8 @@ export default {
     padding: 32px 24px;
     background: #fff;
     border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    font-family: 'Segoe UI', Arial, sans-serif;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .dashboard-title {
@@ -175,6 +197,18 @@ export default {
     margin-bottom: 28px;
     color: #2a3d4d;
     letter-spacing: 1px;
+}
+
+.filter-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+    margin-bottom: 18px;
+}
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
 }
 
 .date-picker-row {
@@ -194,6 +228,20 @@ export default {
     margin-bottom: 6px;
     font-weight: 500;
     color: #3a4a5a;
+}
+
+.type-select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #b0bec5;
+    font-size: 1rem;
+    background: #f7fafc;
+    transition: border 0.2s;
+}
+
+.type-select:focus {
+    border: 1.5px solid #1976d2;
+    outline: none;
 }
 
 .date-select {
