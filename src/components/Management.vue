@@ -3,46 +3,8 @@
         <h2>Management</h2>
         <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
         <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
-
-        <!-- <v-row class="mt-4">
-            <v-col cols="12">
-                <v-range-slider
-                    v-model="timeRange"
-                    :min="timeSliderMin"
-                    :max="timeSliderMax"
-                    :step="1"
-                    ticks
-                    :tick-labels="timeSliderLabels"
-                    label="Time Range"
-                    thumb-label
-                    :disabled="!csvLoaded"
-                ></v-range-slider>
-                <div v-if="csvLoaded">
-                    <span>Start: {{ formatTimestamp(timeRange[0]) }}</span>
-                    <span class="ml-4">End: {{ formatTimestamp(timeRange[1]) }}</span>
-                </div>
-            </v-col>
-        </v-row> -->
-        <v-row>
-            <v-col cols="12">
-                <v-btn :disabled="!csvLoaded || isPlaying" @click="startHistoricalVisualization">Start Historical Visualization</v-btn>
-                <v-btn :disabled="!isPlaying" @click="stopHistoricalVisualization">Stop Visualization</v-btn>
-            </v-col>
-        </v-row>
-        <v-row v-if="isPlaying && csvLoaded" class="mb-4">
-            <v-col cols="12">
-                <v-card outlined>
-                    <v-card-title>Historical Data at {{ formatTimestamp(timeSliderLabels[playIndex]) }}</v-card-title>
-                    <v-card-text>
-                        <div v-for="data in historicalData.filter(d => d.timestamp === timeSliderLabels[playIndex])" :key="data.guid">
-                            <strong>Sensor:</strong> {{ data.guid }} | <strong>Soil Moisture:</strong> {{ data.soil_moisture_content }} |
-                            <strong>Temperature:</strong> {{ data.temperature_celsius }}
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
-        <Dashboard />
+        <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
+        <Dashboard ref="dashboardRef" />
     </div>
 </template>
 
@@ -175,31 +137,6 @@ export default {
         };
         this.mqttClient = mqtt.connect(options);
         this.mqttClient.on("connect", () => {});
-        // this.mqttClient.on("message", (topic, message) => {
-        //     if (topic === "sensor/soil") {
-        //         this.soilMoistureLowLayer.geojson.features = [];
-        //         this.soilMoistureNormalLayer.geojson.features = [];
-        //         this.soilData = JSON.parse(message.toString());
-        //         this.soilData.forEach(data => {
-        //             const soilMoistureContent = data.fields.soil_moisture_content;
-        //             const temperature = data.fields.temperature_celsius;
-        //             const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
-        //             if (matchingFeature) {
-        //                 const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
-        //                 featureCopy.properties.soilMoisture = soilMoistureContent;
-        //                 featureCopy.properties.soilTemperature = temperature;
-        //                 if (soilMoistureContent < 20) {
-        //                     this.soilMoistureLowLayer.geojson.features.push(featureCopy);
-        //                 } else {
-        //                     this.soilMoistureNormalLayer.geojson.features.push(featureCopy);
-        //                 }
-        //             }
-        //         });
-        //         if (!this.isPlaying) {
-        //             this.updateSensor3DPOI();
-        //         }
-        //     }
-        // });
     },
     beforeUnmount() {
         if (this.mqttClient) {
@@ -238,80 +175,51 @@ export default {
                 });
             }
         },
+        async visualiseFilteredData() {
+            // Get filteredData from Dashboard via ref
+            const dashboard = this.$refs.dashboardRef;
+            if (!dashboard) return;
+            const filteredData = dashboard.filteredData;
+            if (!filteredData || !filteredData.length) return;
 
-        // loadHistoricalCSV() {
-        //     this.historicalData = csvData.map(row => ({
-        //         timestamp: row.timestamp,
-        //         guid: row.guid,
-        //         soil_moisture_content: parseFloat(row.soil_moisture_content),
-        //         temperature_celsius: parseFloat(row.temperature_celsius)
-        //     }));
-        //     const timestamps = [...new Set(this.historicalData.map(d => d.timestamp))].sort();
-        //     this.timeSliderLabels = timestamps;
-        //     this.timeSliderMin = 0;
-        //     this.timeSliderMax = timestamps.length - 1;
-        //     this.timeRange = [0, timestamps.length - 1];
-        //     this.csvLoaded = true;
-        // },
-        formatTimestamp(idx) {
-            if (!this.timeSliderLabels[idx]) return "";
-            return this.timeSliderLabels[idx].replace("T", " ");
-        },
-        startHistoricalVisualization() {
-            // Use Dashboard's filteredChartData for visualization
-            const dashboardComponent = this.$children.find(
-                c => c.$options.name === "Dashboard"
-            );
-            if (dashboardComponent && dashboardComponent.filteredChartData) {
-                // Use the filteredChartData as the data source
-                this.historicalData = dashboardComponent.filteredChartData;
-                const timestamps = [...new Set(this.historicalData.map(d => d.dateTime))].sort();
-                this.timeSliderLabels = timestamps;
-                this.timeSliderMin = 0;
-                this.timeSliderMax = timestamps.length - 1;
-                this.timeRange = [0, timestamps.length - 1];
-                this.csvLoaded = true;
-            }
-            this.platformAPI.publish("3DEXPERIENCity.RemoveContent", this.SensorsLayer.layer.id);
-            this.isPlaying = true;
-            this.playIndex = this.timeRange[0];
-            if (this.playInterval) clearInterval(this.playInterval);
-            this.playInterval = setInterval(this.updateHistoricalPOI, 1000);
-        },
-        stopHistoricalVisualization() {
-            this.isPlaying = false;
-            if (this.playInterval) clearInterval(this.playInterval);
-            this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
-        },
-        updateHistoricalPOI() {
-            if (!this.isPlaying) return;
-            const timestamps = this.timeSliderLabels;
-            const currentTimestamp = timestamps[this.playIndex];
-            const dataSlice = this.historicalData.filter(d => d.timestamp === currentTimestamp);
-            this.soilMoistureLowLayer.geojson.features = [];
-            this.soilMoistureNormalLayer.geojson.features = [];
-            dataSlice.forEach(data => {
-                const soilMoistureContent = data.soil_moisture_content;
-                const temperature = data.temperature_celsius;
-                const matchingFeature = soilGeoJSON.features.find(feature => feature.properties && feature.properties.guid === data.guid);
-                if (matchingFeature) {
-                    const featureCopy = JSON.parse(JSON.stringify(matchingFeature));
-                    featureCopy.properties.soilMoisture = soilMoistureContent;
-                    featureCopy.properties.soilTemperature = temperature;
-                    if (soilMoistureContent < 20) {
-                        this.soilMoistureLowLayer.geojson.features.push(featureCopy);
-                    } else {
-                        this.soilMoistureNormalLayer.geojson.features.push(featureCopy);
+            // Clone geojson to avoid mutating import
+            const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
+
+            // Group filteredData by sensorId
+            const grouped = {};
+            filteredData.forEach(d => {
+                if (!grouped[d.sensorId]) grouped[d.sensorId] = [];
+                grouped[d.sensorId].push(d);
+            });
+
+            // For each feature, update properties if guid matches sensorId
+            updatedGeoJSON.features.forEach(feature => {
+                const guid = feature.properties.guid;
+                const sensorData = grouped[guid];
+                if (sensorData) {
+                    // Get latest moisture and temperature values
+                    let latestMoisture = null;
+                    let latestTemp = null;
+                    // Sort by dateTime descending
+                    const sorted = [...sensorData].sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+                    for (const d of sorted) {
+                        if (d.measurementType === "moisture" && latestMoisture === null) {
+                            latestMoisture = d.value;
+                        }
+                        if (d.measurementType.toLowerCase().includes("temp") && latestTemp === null) {
+                            latestTemp = d.value;
+                        }
+                        if (latestMoisture !== null && latestTemp !== null) break;
                     }
+                    feature.properties.moisture = latestMoisture;
+                    feature.properties.temperature = latestTemp;
                 }
             });
+
+            // Update SensorsLayer geojson and visualise
+            this.SensorsLayer.geojson = updatedGeoJSON;
             this.updateSensor3DPOI();
-            if (this.playIndex < this.timeRange[1]) {
-                this.playIndex++;
-            } else {
-                this.stopHistoricalVisualization();
-            }
-        }
+        },
     }
 };
 </script>
