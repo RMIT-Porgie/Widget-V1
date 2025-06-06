@@ -126,9 +126,8 @@ export default {
     },
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", )(item => {
-            this.onItemSelect(item);
-        });
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+
 
         const options = {
             protocol: "wss",
@@ -148,8 +147,8 @@ export default {
         }
     },
     methods: {
-        onItemSelect(item) {
-            console.log("Item selected:", item);
+        handleOnItemSelect(res) {
+            console.log("Item selected:", res);
         },
         createSensorsLayer() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
