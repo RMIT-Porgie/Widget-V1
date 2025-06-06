@@ -157,6 +157,13 @@ export default {
         },
 
         updateSensor3DPOI() {
+            if (Array.isArray(this.SensorsLayer.geojson.features) && this.SensorsLayer.geojson.features.length > 0) {
+                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+                    widgetID: this.SensorsLayer.widgetID,
+                    layerID: this.SensorsLayer.layer.id,
+                    geojson: this.SensorsLayer.geojson
+                });
+            }
             if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
                 this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                     widgetID: this.soilMoistureLowLayer.widgetID,
@@ -173,10 +180,8 @@ export default {
             }
         },
         async visualiseFilteredData() {
-            console.log("Visualising Filtered Data...");
             const dashboard = this.$refs.dashboardRef;
             const filteredData = dashboard.filteredData;
-            console.log("Filtered Data:", filteredData);
             if (!filteredData || !filteredData.length) return;
             const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
             for (const dateTime of allDateTimes) {
@@ -202,7 +207,7 @@ export default {
                 console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
                 this.updateSensor3DPOI();
                 // Optionally add a delay for animation effect
-                await new Promise(res => setTimeout(res, 500));
+                await new Promise(res => setTimeout(res, 2000));
             }
         },
     }
