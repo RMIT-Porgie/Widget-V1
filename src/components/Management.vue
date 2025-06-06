@@ -126,6 +126,10 @@ export default {
     },
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", )(item => {
+            this.onItemSelect(item);
+        });
+
         const options = {
             protocol: "wss",
             hostname: "mqtt-sooft.duckdns.org",
@@ -144,6 +148,9 @@ export default {
         }
     },
     methods: {
+        onItemSelect(item) {
+            console.log("Item selected:", item);
+        },
         createSensorsLayer() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
@@ -204,7 +211,7 @@ export default {
                     }
                 });
                 this.SensorsLayer.geojson = updatedGeoJSON;
-                console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
+                // console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
                 this.updateSensor3DPOI();
                 // Optionally add a delay for animation effect
                 await new Promise(res => setTimeout(res, 2000));

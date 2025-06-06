@@ -26,11 +26,6 @@
                 </div>
             </div>
         </div>
-        <div class="selected-range" v-if="startDate && endDate">
-            <span>
-                Selected Range: <strong>{{ startDate }}</strong> to <strong>{{ endDate }}</strong>
-            </span>
-        </div>
         <div class="chart-container" v-if="moistureChartData.labels.length">
             <h3>Moisture</h3>
             <LineChart :chart-data="moistureChartData" :chart-options="chartOptions" />
