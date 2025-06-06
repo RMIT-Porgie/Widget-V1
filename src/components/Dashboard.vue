@@ -18,12 +18,6 @@
             </div>
             <div class="dashboard-row">
                 <div class="dashboard-col">
-                    <label for="measurementTypeSelect">Measurement Type:</label>
-                    <select id="measurementTypeSelect" v-model="selectedMeasurementType" class="type-select">
-                        <option v-for="type in measurementTypes" :key="type" :value="type">{{ type }}</option>
-                    </select>
-                </div>
-                <div class="dashboard-col">
                     <label for="sensorIdSelect">Sensor ID:</label>
                     <select id="sensorIdSelect" v-model="selectedSensorId" class="type-select">
                         <option value="all">All</option>
@@ -37,8 +31,13 @@
                 Selected Range: <strong>{{ startDate }}</strong> to <strong>{{ endDate }}</strong>
             </span>
         </div>
-        <div class="chart-container" v-if="filteredChartData.length">
-            <LineChart :chart-data="chartData" :chart-options="chartOptions" />
+        <div class="chart-container" v-if="moistureChartData.labels.length">
+            <h3>Moisture</h3>
+            <LineChart :chart-data="moistureChartData" :chart-options="chartOptions" />
+        </div>
+        <div class="chart-container" v-if="tempChartData.labels.length">
+            <h3>Temperature</h3>
+            <LineChart :chart-data="tempChartData" :chart-options="chartOptions" />
         </div>
     </div>
 </template>
@@ -50,7 +49,7 @@ import { Line } from "vue-chartjs";
 
 Chart.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
-const csvData = require("@/assets/soil_data_cleaned.csv");
+const soilDataCSV = require("@/assets/soil_data_cleaned.csv");
 
 export default {
     name: "Dashboard",
@@ -59,7 +58,6 @@ export default {
             extends: Line,
             props: ["chartData", "chartOptions"],
             mounted() {
-                // For Vue 3 and vue-chartjs 5+, use this.$refs.canvas and Chart.js directly
                 this.chartInstance = new Chart(this.$refs.canvas.getContext("2d"), {
                     type: "line",
                     data: this.chartData,
@@ -91,13 +89,12 @@ export default {
             startDate: "",
             endDate: "",
             measurementTypes: [],
-            selectedMeasurementType: "moisture",
             sensorIds: [],
             selectedSensorId: "all"
         };
     },
     computed: {
-        filteredChartData() {
+        filteredData() {
             if (!this.startDate || !this.endDate) return [];
             return this.soilData
                 .filter(d => d.measurementType === this.selectedMeasurementType)
@@ -107,15 +104,79 @@ export default {
                     return date >= this.startDate && date <= this.endDate;
                 });
         },
+        moistureChartData() {
+            const filtered = this.soilData
+                .filter(d => d.measurementType === "moisture")
+                .filter(d => this.selectedSensorId === "all" || d.sensorId == this.selectedSensorId)
+                .filter(d => {
+                    const date = d.dateTime.split(" ")[0];
+                    return date >= this.startDate && date <= this.endDate;
+                });
+            const grouped = {};
+            filtered.forEach(d => {
+                if (!grouped[d.sensorId]) grouped[d.sensorId] = [];
+                grouped[d.sensorId].push(d);
+            });
+            const allLabels = [...new Set(filtered.map(d => d.dateTime))];
+            return {
+                labels: allLabels,
+                datasets: Object.keys(grouped).map((sensorId, idx) => {
+                    const dataMap = new Map(grouped[sensorId].map(d => [d.dateTime, d.value]));
+                    const data = allLabels.map(label => dataMap.get(label) ?? null);
+                    return {
+                        label: `Sensor ${sensorId}`,
+                        data,
+                        fill: false,
+                        borderColor: this.getColor(idx),
+                        backgroundColor: this.getColor(idx),
+                        tension: 0.2,
+                        pointRadius: 2
+                    };
+                })
+            };
+        },
+        tempChartData() {
+            // Filter for Temp (case-insensitive)
+            const filtered = this.soilData
+                .filter(d => d.measurementType.toLowerCase().includes("temp"))
+                .filter(d => this.selectedSensorId === "all" || d.sensorId == this.selectedSensorId)
+                .filter(d => {
+                    const date = d.dateTime.split(" ")[0];
+                    return date >= this.startDate && date <= this.endDate;
+                });
+            const grouped = {};
+            filtered.forEach(d => {
+                if (!grouped[d.sensorId]) grouped[d.sensorId] = [];
+                grouped[d.sensorId].push(d);
+            });
+            const allLabels = [...new Set(filtered.map(d => d.dateTime))];
+            return {
+                labels: allLabels,
+                datasets: Object.keys(grouped).map((sensorId, idx) => {
+                    const dataMap = new Map(grouped[sensorId].map(d => [d.dateTime, d.value]));
+                    const data = allLabels.map(label => dataMap.get(label) ?? null);
+                    return {
+                        label: `Sensor ${sensorId}`,
+                        data,
+                        fill: false,
+                        borderColor: this.getColor(idx),
+                        backgroundColor: this.getColor(idx),
+                        tension: 0.2,
+                        pointRadius: 2
+                    };
+                })
+            };
+        },
+        //
         chartData() {
             // Always group by sensorId for legend, even if only one sensor is selected
             const grouped = {};
-            this.filteredChartData.forEach(d => {
+            this.filteredData.forEach(d => {
                 if (!grouped[d.sensorId]) grouped[d.sensorId] = [];
                 grouped[d.sensorId].push(d);
             });
             // Get all unique datetimes for x-axis
-            const allLabels = [...new Set(this.filteredChartData.map(d => d.dateTime))];
+            const allLabels = [...new Set(this.filteredData.map(d => d.dateTime))];
             return {
                 labels: allLabels,
                 datasets: Object.keys(grouped).map((sensorId, idx) => {
@@ -146,12 +207,12 @@ export default {
                     },
                     tooltip: {
                         enabled: true,
-                        mode: 'index',
+                        mode: "index",
                         intersect: false,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 // Show sensor, value, and date
-                                const label = context.dataset.label || '';
+                                const label = context.dataset.label || "";
                                 const value = context.parsed.y;
                                 const date = context.label;
                                 return `${label}: ${value} at ${date}`;
@@ -160,7 +221,7 @@ export default {
                     }
                 },
                 hover: {
-                    mode: 'index',
+                    mode: "index",
                     intersect: false
                 },
                 scales: {
@@ -171,7 +232,7 @@ export default {
                     y: {
                         title: { display: true, text: "Value" },
                         beginAtZero: true,
-                        
+
                         max: 50
                     }
                 }
@@ -183,7 +244,7 @@ export default {
     },
     methods: {
         loadCSV() {
-            this.soilData = csvData.map(row => {
+            this.soilData = soilDataCSV.map(row => {
                 return {
                     sensorId: row.sensor_id,
                     date: row.date,
