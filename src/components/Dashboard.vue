@@ -1,39 +1,41 @@
 <template>
     <div class="dashboard-container">
         <h2 class="dashboard-title">Soil Data Dashboard</h2>
-        <div class="filter-row">
-            <div class="filter-group">
-                <label for="measurementTypeSelect">Measurement Type:</label>
-                <select id="measurementTypeSelect" v-model="selectedMeasurementType" class="type-select">
-                    <option v-for="type in measurementTypes" :key="type" :value="type">{{ type }}</option>
-                </select>
+        <div class="dashboard-grid">
+            <div class="dashboard-row">
+                <div class="dashboard-col">
+                    <label for="startDatePicker">Start Date:</label>
+                    <select id="startDatePicker" v-model="startDate" class="date-select">
+                        <option v-for="date in availableDates" :key="date" :value="date">{{ date }}</option>
+                    </select>
+                </div>
+                <div class="dashboard-col">
+                    <label for="endDatePicker">End Date:</label>
+                    <select id="endDatePicker" v-model="endDate" class="date-select">
+                        <option v-for="date in availableDates" :key="date" :value="date" :disabled="date < startDate">{{ date }}</option>
+                    </select>
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="sensorIdSelect">Sensor ID:</label>
-                <select id="sensorIdSelect" v-model="selectedSensorId" class="type-select">
-                    <option value="all">All</option>
-                    <option v-for="id in sensorIds" :key="id" :value="id">{{ id }}</option>
-                </select>
-            </div>
-        </div>
-        <div class="date-picker-row">
-            <div class="date-picker-group">
-                <label for="startDatePicker">Start Date:</label>
-                <select id="startDatePicker" v-model="startDate" class="date-select">
-                    <option v-for="date in availableDates" :key="date" :value="date">{{ date }}</option>
-                </select>
-            </div>
-            <div class="date-picker-group">
-                <label for="endDatePicker">End Date:</label>
-                <select id="endDatePicker" v-model="endDate" class="date-select">
-                    <option v-for="date in availableDates" :key="date" :value="date" :disabled="date < startDate">{{ date }}</option>
-                </select>
+            <div class="dashboard-row">
+                <div class="dashboard-col">
+                    <label for="measurementTypeSelect">Measurement Type:</label>
+                    <select id="measurementTypeSelect" v-model="selectedMeasurementType" class="type-select">
+                        <option v-for="type in measurementTypes" :key="type" :value="type">{{ type }}</option>
+                    </select>
+                </div>
+                <div class="dashboard-col">
+                    <label for="sensorIdSelect">Sensor ID:</label>
+                    <select id="sensorIdSelect" v-model="selectedSensorId" class="type-select">
+                        <option value="all">All</option>
+                        <option v-for="id in sensorIds" :key="id" :value="id">{{ id }}</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div class="selected-range" v-if="startDate && endDate">
-            <span
-                >Selected Range: <strong>{{ startDate }}</strong> to <strong>{{ endDate }}</strong></span
-            >
+            <span>
+                Selected Range: <strong>{{ startDate }}</strong> to <strong>{{ endDate }}</strong>
+            </span>
         </div>
         <div class="chart-container" v-if="filteredChartData.length">
             <LineChart :chart-data="chartData" :chart-options="chartOptions" />
@@ -106,19 +108,30 @@ export default {
                 });
         },
         chartData() {
+            // Always group by sensorId for legend, even if only one sensor is selected
+            const grouped = {};
+            this.filteredChartData.forEach(d => {
+                if (!grouped[d.sensorId]) grouped[d.sensorId] = [];
+                grouped[d.sensorId].push(d);
+            });
+            // Get all unique datetimes for x-axis
+            const allLabels = [...new Set(this.filteredChartData.map(d => d.dateTime))];
             return {
-                labels: this.filteredChartData.map(d => d.dateTime),
-                datasets: [
-                    {
-                        label: "Soil Value",
-                        data: this.filteredChartData.map(d => d.value),
+                labels: allLabels,
+                datasets: Object.keys(grouped).map((sensorId, idx) => {
+                    // Map data to the correct label order, fill missing with null
+                    const dataMap = new Map(grouped[sensorId].map(d => [d.dateTime, d.value]));
+                    const data = allLabels.map(label => dataMap.get(label) ?? null);
+                    return {
+                        label: `Sensor ${sensorId}`,
+                        data,
                         fill: false,
-                        borderColor: "#1976d2",
-                        backgroundColor: "#1976d2",
+                        borderColor: this.getColor(idx),
+                        backgroundColor: this.getColor(idx),
                         tension: 0.2,
                         pointRadius: 2
-                    }
-                ]
+                    };
+                })
             };
         },
         chartOptions() {
@@ -131,16 +144,35 @@ export default {
                         text: "Soil Data Over Time",
                         font: { size: 18 }
                     },
-                    tooltip: { enabled: true }
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                // Show sensor, value, and date
+                                const label = context.dataset.label || '';
+                                const value = context.parsed.y;
+                                const date = context.label;
+                                return `${label}: ${value} at ${date}`;
+                            }
+                        }
+                    }
+                },
+                hover: {
+                    mode: 'index',
+                    intersect: false
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: "Date Time" },
-                        ticks: { autoSkip: true, maxTicksLimit: 12 }
+                        // Hide x axis ticks
+                        display: false
                     },
                     y: {
                         title: { display: true, text: "Value" },
-                        beginAtZero: false
+                        beginAtZero: true,
+                        
+                        max: 50
                     }
                 }
             };
@@ -173,8 +205,13 @@ export default {
             const jsDates = dates.map(d => new Date(d));
             this.availableDates = [...new Set(jsDates.map(d => d.toISOString().slice(0, 10)))];
             this.availableDates.sort();
-            this.startDate = this.availableDates[0] || "";
+            this.startDate = this.availableDates[this.availableDates.length - 2] || "";
             this.endDate = this.availableDates[this.availableDates.length - 1] || "";
+        },
+        getColor(idx) {
+            // Simple color palette, can be expanded
+            const palette = ["#1976d2", "#e53935", "#43a047", "#fbc02d", "#8e24aa", "#00897b", "#6d4c41", "#d81b60", "#757575", "#039be5"];
+            return palette[idx % palette.length];
         }
     }
 };
@@ -182,7 +219,7 @@ export default {
 
 <style scoped>
 .dashboard-container {
-    max-width: 500px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 32px 24px;
     background: #fff;
@@ -199,51 +236,32 @@ export default {
     letter-spacing: 1px;
 }
 
-.filter-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 24px;
-    margin-bottom: 18px;
-}
-.filter-group {
+.dashboard-grid {
     display: flex;
     flex-direction: column;
-    min-width: 180px;
-}
-
-.date-picker-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
+    gap: 16px;
     margin-bottom: 18px;
 }
 
-.date-picker-group {
+.dashboard-row {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 24px;
+}
+
+.dashboard-col {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-.date-picker-group label {
+.dashboard-col label {
     margin-bottom: 6px;
     font-weight: 500;
     color: #3a4a5a;
 }
 
-.type-select {
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid #b0bec5;
-    font-size: 1rem;
-    background: #f7fafc;
-    transition: border 0.2s;
-}
-
-.type-select:focus {
-    border: 1.5px solid #1976d2;
-    outline: none;
-}
-
+.type-select,
 .date-select {
     padding: 8px 10px;
     border-radius: 6px;
@@ -253,6 +271,7 @@ export default {
     transition: border 0.2s;
 }
 
+.type-select:focus,
 .date-select:focus {
     border: 1.5px solid #1976d2;
     outline: none;
@@ -269,7 +288,16 @@ export default {
     margin-top: 32px;
     background: #f7fafc;
     border-radius: 12px;
-    padding: 18px 12px 12px 12px;
     box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+    padding: 18px 12px 12px 12px;
+}
+
+.chart-container canvas {
+    /* Let Chart.js handle the height naturally */
+    min-height: unset;
+    height: unset !important;
+    max-height: unset;
+    width: 100% !important;
+    display: block;
 }
 </style>
