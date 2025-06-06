@@ -126,7 +126,7 @@ export default {
     },
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+        // this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
         const options = {
             protocol: "wss",
@@ -152,17 +152,6 @@ export default {
                 if (res.data && res.data.length > 0) {
                     const selectedGuid = res.data[0].userData.GUID;
                     console.log("Selected GUID:", selectedGuid);
-
-                //     // Find matching moisture data from MQTT data
-                //     const matchingMoistureData = this.mqtt_data?.find(sensor => sensor.guid === selectedGuid);
-
-                //     this.selectedItem = {
-                //         id: res.data[0].id,
-                //         guid: selectedGuid,
-                //         moisture: matchingMoistureData.fields.soil_moisture_content
-                //     };
-                // } else {
-                //     this.selectedItem = null;
                 }
             });
         }
