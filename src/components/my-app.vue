@@ -16,6 +16,11 @@
                         <component :is="currentTabComponent" />
                     </v-col>
                 </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <Dashboard />
+                    </v-col>
+                </v-row>
             </v-container>
         </v-main>
     </v-app>
@@ -27,13 +32,15 @@ import { useGlobalStore } from "@/store/global";
 import Management from "@/components/Management.vue";
 import AgrivoltaicSystemDesign from "@/components/AgrivoltaicSystemDesign.vue";
 import YieldEstimation from "@/components/YieldEstimation.vue";
+import Dashboard from "@/components/Dashboard.vue";
 
 export default {
     name: "App",
     components: {
         Management,
         AgrivoltaicSystemDesign,
-        YieldEstimation
+        YieldEstimation,
+        Dashboard
     },
     data() {
         return {

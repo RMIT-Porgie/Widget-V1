@@ -1,8 +1,8 @@
 <template>
     <div>
         <h2>Management</h2>
-        <v-btn @click="createSensorsLayer">Show IoT Sensors</v-btn>
-        <v-btn @click="removeSensorsLayer">Hide IoT Sensors</v-btn>
+        <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
+        <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
 
         <v-row class="mt-4">
             <v-col cols="12">
@@ -160,7 +160,7 @@ export default {
         };
     },
     async mounted() {
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        // this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         const options = {
             protocol: "wss",
             hostname: "mqtt-sooft.duckdns.org",
@@ -234,7 +234,7 @@ export default {
             }
         },
 
-        async loadHistoricalCSV() {
+        loadHistoricalCSV() {
             this.historicalData = csvData.map(row => ({
                 timestamp: row.timestamp,
                 guid: row.guid,
