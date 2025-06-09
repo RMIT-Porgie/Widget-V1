@@ -3,7 +3,6 @@
         <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
         <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
         <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
-        <Dashboard ref="dashboardRef" />
         <v-card class="mt-4 selected-item-card">
             <v-card-title>Selected Sensor Information</v-card-title>
             <v-card-text>
@@ -14,6 +13,8 @@
                 </div>
             </v-card-text>
         </v-card>
+        <Dashboard ref="dashboardRef" />
+
     </div>
 </template>
 
@@ -162,18 +163,12 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
-                    console.log("Selected item data:", res.data[0]);
-                    const sensorId = res.data[0].userData.guid; 
-                    const moisture = res.data[0].userData.moisture;
-                    const temperature = res.data[0].userData.temperature;
-                    console.log("Selected sensorId:", sensorId, "Moisture:", moisture, "Temperature:", temperature);
-                    
+                    const sensorId = res.data[0].userData.guid;
                     this.selectedItem = {
                         sensorId: sensorId,
-                        moisture: moisture,
-                        temperature: temperature
+                        moisture: null,
+                        temperature: null
                     };
-                    console.log("Selected item:", this.selectedItem);
                 } else {
                     this.selectedItem = null;
                 }
@@ -245,6 +240,20 @@ export default {
                 await new Promise(res => setTimeout(res, 2000));
             }
         },
+    },
+    watch: {
+        'SensorsLayer.geojson': {
+            handler(newGeojson) {
+                if (this.selectedItem && this.selectedItem.sensorId) {
+                    const feature = newGeojson.features.find(f => f.properties.guid == this.selectedItem.sensorId);
+                    if (feature) {
+                        this.selectedItem.moisture = feature.properties.moisture;
+                        this.selectedItem.temperature = feature.properties.temperature;
+                    }
+                }
+            },
+            deep: true
+        }
     }
 };
 </script>
