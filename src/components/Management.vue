@@ -4,6 +4,16 @@
         <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
         <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
         <Dashboard ref="dashboardRef" />
+        <v-card v-if="selectedItem" class="mt-4 selected-item-card">
+            <v-card-title>Selected Sensor Information</v-card-title>
+            <v-card-text>
+                <div class="selected-item-info">
+                    <p><strong>Sensor ID:</strong> {{ selectedItem.sensorId }}</p>
+                    <p><strong>Moisture:</strong> {{ selectedItem.moisture !== undefined && selectedItem.moisture !== null ? selectedItem.moisture : 'N/A' }}</p>
+                    <p><strong>Temperature:</strong> {{ selectedItem.temperature !== undefined && selectedItem.temperature !== null ? selectedItem.temperature : 'N/A' }}</p>
+                </div>
+            </v-card-text>
+        </v-card>
     </div>
 </template>
 
@@ -24,6 +34,8 @@ export default {
             mqttClient: null,
             platformAPI: null,
             soilData: null,
+            selectedItem: null,
+
             csvLoaded: false,
             historicalData: [],
             timeSliderMin: 0,
@@ -120,7 +132,7 @@ export default {
                     switchDistance: 500,
                     opacity: 0.5
                 }
-            }
+            },
         };
     },
     async mounted() {
@@ -149,7 +161,19 @@ export default {
         handleOnItemSelect(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
-            console.log("Item selected:", res);
+                if (res.data && res.data.length > 0) {
+                    const sensorId = res.data[0].userData.guid; 
+                    const moisture = res.data[0].userData.moisture;
+                    const temperature = res.data[0].userData.temperature;
+                    
+                    this.selectedItem = {
+                        sensorId: sensorId,
+                        moisture: moisture,
+                        temperature: temperature
+                    };
+                } else {
+                    this.selectedItem = null;
+                }
             });
         },
         createSensorsLayer() {
