@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2>Management</h2>
         <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
         <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
         <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
@@ -148,7 +147,10 @@ export default {
     },
     methods: {
         handleOnItemSelect(res) {
+            this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
+            this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
             console.log("Item selected:", res);
+            });
         },
         createSensorsLayer() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
