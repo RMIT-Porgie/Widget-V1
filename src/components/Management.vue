@@ -7,7 +7,6 @@
             <v-card-title>Selected Sensor Information</v-card-title>
             <v-card-text>
                 <div class="selected-item-info">
-                    <p v-if="!selectedItem">No sensor selected</p>
                     <p><strong>Sensor ID:</strong> {{ selectedID }}</p>
                     <p v-if="selectedItem"><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
                     <p v-if="selectedItem"><strong>Moisture:</strong> {{ selectedItem.moisture }}</p>
@@ -36,19 +35,18 @@ export default {
             mqttClient: null,
             platformAPI: null,
             soilData: null,
-            // selectedID: "9166378",
             selectedID: null,
             selectedItem: null,
 
-            csvLoaded: false,
-            historicalData: [],
-            timeSliderMin: 0,
-            timeSliderMax: 0,
-            timeSliderLabels: [],
-            timeRange: [0, 0],
-            isPlaying: false,
-            playInterval: null,
-            playIndex: 0,
+            // csvLoaded: false,
+            // historicalData: [],
+            // timeSliderMin: 0,
+            // timeSliderMax: 0,
+            // timeSliderLabels: [],
+            // timeRange: [0, 0],
+            // isPlaying: false,
+            // playInterval: null,
+            // playIndex: 0,
             treeLayer: {
                 widgetID: widget.id,
                 geojson: treeGeoJSON,
@@ -143,23 +141,23 @@ export default {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
 
-        const options = {
-            protocol: "wss",
-            hostname: "mqtt-sooft.duckdns.org",
-            port: 443,
-            clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
-        };
-        this.mqttClient = mqtt.connect(options);
-        this.mqttClient.on("connect", () => {});
+        // const options = {
+        //     protocol: "wss",
+        //     hostname: "mqtt-sooft.duckdns.org",
+        //     port: 443,
+        //     clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
+        // };
+        // this.mqttClient = mqtt.connect(options);
+        // this.mqttClient.on("connect", () => {});
     },
-    beforeUnmount() {
-        if (this.mqttClient) {
-            this.mqttClient.end();
-        }
-        if (this.playInterval) {
-            clearInterval(this.playInterval);
-        }
-    },
+    // beforeUnmount() {
+    //     if (this.mqttClient) {
+    //         this.mqttClient.end();
+    //     }
+    //     if (this.playInterval) {
+    //         clearInterval(this.playInterval);
+    //     }
+    // },
     methods: {
         handleOnItemSelect(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
@@ -221,28 +219,26 @@ export default {
             // console.log("All DateTimes:", allDateTimes);
             for (const dateTime of allDateTimes) {
                 // delay for one second
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // await new Promise(resolve => setTimeout(resolve, 1000));
                 const sensorData = filteredData.filter(d => d.dateTime === dateTime);
                 sensorData.forEach(d => {
                     const guid = d.sensorId;
-                    const moisture = d.moisture;
-                    const temperature = d.temperature;
+                    // const moisture = d.moisture;
+                    // const temperature = d.temperature;
                     // console.log("selectedID:", this.selectedID, typeof this.selectedID);
                     // console.log("guid:", guid, typeof guid);
 
-                    if (
-                      this.selectedID && String(this.selectedID).trim() === String(guid).trim()
-                    ) {
-                      // Find both moisture and temperature for this sensor and datetime
-                      const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === 'moisture');
-                      const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes('temp'));
-                      this.selectedItem = {
-                        datetime: dateTime,
-                        sensorId: guid,
-                        moisture: moistureObj ? moistureObj.value : null,
-                        temperature: tempObj ? tempObj.value : null
-                      };
-                      console.log("Selected Item:", this.selectedItem);
+                    if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
+                        // Find both moisture and temperature for this sensor and datetime
+                        const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
+                        const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
+                        this.selectedItem = {
+                            datetime: dateTime,
+                            sensorId: guid,
+                            moisture: moistureObj ? moistureObj.value : null,
+                            temperature: tempObj ? tempObj.value : null
+                        };
+                        console.log("Selected Item:", this.selectedItem);
                     }
                 });
             }
