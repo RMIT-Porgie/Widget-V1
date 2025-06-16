@@ -71,8 +71,8 @@ export default {
                 render: {
                     anchor: true,
                     color: "orange",
-                    scale: [5, 5, 5],
-                    shape: "sphere",
+                    scale: [10, 10, 1],
+                    shape: "disc",
                     switchDistance: 500,
                     opacity: 1
                 }
