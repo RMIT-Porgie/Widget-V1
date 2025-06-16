@@ -140,39 +140,14 @@ export default {
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-
-        // const options = {
-        //     protocol: "wss",
-        //     hostname: "mqtt-sooft.duckdns.org",
-        //     port: 443,
-        //     clientId: "vue-client-" + Math.random().toString(16).substr(2, 8)
-        // };
-        // this.mqttClient = mqtt.connect(options);
-        // this.mqttClient.on("connect", () => {});
     },
-    // beforeUnmount() {
-    //     if (this.mqttClient) {
-    //         this.mqttClient.end();
-    //     }
-    //     if (this.playInterval) {
-    //         clearInterval(this.playInterval);
-    //     }
-    // },
+
     methods: {
         handleOnItemSelect(res) {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
                     this.selectedID = res.data[0].userData.guid;
-                    // const sensorId = res.data[0].userData.guid;
-
-                    // this.selectedItem = {
-                    //     sensorId: sensorId,
-                    //     moisture: null,
-                    //     temperature: null
-                    // };
-                    // } else {
-                    // this.selectedItem = null;
                 }
             });
         },
@@ -216,20 +191,11 @@ export default {
             const filteredData = dashboard.filteredData;
             if (!filteredData || !filteredData.length) return;
             const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
-            // console.log("All DateTimes:", allDateTimes);
             for (const dateTime of allDateTimes) {
-                // delay for one second
-                // await new Promise(resolve => setTimeout(resolve, 1000));
                 const sensorData = filteredData.filter(d => d.dateTime === dateTime);
                 sensorData.forEach(d => {
                     const guid = d.sensorId;
-                    // const moisture = d.moisture;
-                    // const temperature = d.temperature;
-                    // console.log("selectedID:", this.selectedID, typeof this.selectedID);
-                    // console.log("guid:", guid, typeof guid);
-
                     if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
-                        // Find both moisture and temperature for this sensor and datetime
                         const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
                         const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
                         this.selectedItem = {
@@ -241,41 +207,28 @@ export default {
                         console.log("Selected Item:", this.selectedItem);
                     }
                 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
 
-            const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
-            updatedGeoJSON.features.forEach(feature => {
-                const guid = feature.properties.guid;
-                const sensorData = filteredData.filter(d => d.sensorId == guid);
-                if (sensorData && sensorData.length) {
-                    let moisture = null;
-                    let temperature = null;
-                    for (const d of sensorData) {
-                        if (d.measurementType === "moisture") moisture = d.value;
-                        if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
-                    }
-                    feature.properties.moisture = moisture;
-                    feature.properties.temperature = temperature;
-                }
-            });
-            this.SensorsLayer.geojson = updatedGeoJSON;
-            this.updateSensor3DPOI();
-            await new Promise(res => setTimeout(res, 2000));
+            // const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
+            // updatedGeoJSON.features.forEach(feature => {
+            //     const guid = feature.properties.guid;
+            //     const sensorData = filteredData.filter(d => d.sensorId == guid);
+            //     if (sensorData && sensorData.length) {
+            //         let moisture = null;
+            //         let temperature = null;
+            //         for (const d of sensorData) {
+            //             if (d.measurementType === "moisture") moisture = d.value;
+            //             if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
+            //         }
+            //         feature.properties.moisture = moisture;
+            //         feature.properties.temperature = temperature;
+            //     }
+            // });
+            // this.SensorsLayer.geojson = updatedGeoJSON;
+            // this.updateSensor3DPOI();
+            // await new Promise(res => setTimeout(res, 2000));
         }
     }
-    // watch: {
-    //     'SensorsLayer.geojson': {
-    //         handler(newGeojson) {
-    //             if (this.selectedItem && this.selectedItem.sensorId) {
-    //                 const feature = newGeojson.features.find(f => f.properties.guid == this.selectedItem.sensorId);
-    //                 if (feature) {
-    //                     this.selectedItem.moisture = feature.properties.moisture;
-    //                     this.selectedItem.temperature = feature.properties.temperature;
-    //                 }
-    //             }
-    //         },
-    //         deep: true
-    //     }
-    // }
 };
 </script>
