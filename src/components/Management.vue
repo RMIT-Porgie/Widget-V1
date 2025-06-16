@@ -7,6 +7,8 @@
             <v-card-title>Selected Sensor Information</v-card-title>
             <v-card-text>
                 <div class="selected-item-info">
+                    <p v-if="!selectedItem">No sensor selected</p>
+                    <p><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
                     <p><strong>Sensor ID:</strong> {{ selectedItem.sensorId }}</p>
                     <p><strong>Moisture:</strong> {{ selectedItem.moisture}}</p>
                     <p><strong>Temperature:</strong> {{ selectedItem.temperature}}</p>
@@ -35,6 +37,7 @@ export default {
             mqttClient: null,
             platformAPI: null,
             soilData: null,
+            selectedID: null,
             selectedItem: null,
 
             csvLoaded: false,
@@ -163,14 +166,16 @@ export default {
             this.platformAPI.publish("3DEXPERIENCity.GetSelectedItems", res);
             this.platformAPI.subscribe("3DEXPERIENCity.GetSelectedItemsReturn", res => {
                 if (res.data && res.data.length > 0) {
-                    const sensorId = res.data[0].userData.guid;
-                    this.selectedItem = {
-                        sensorId: sensorId,
-                        moisture: null,
-                        temperature: null
-                    };
-                } else {
-                    this.selectedItem = null;
+                    this.selectedID = res.data[0].userData.id;
+                    // const sensorId = res.data[0].userData.guid;
+
+                    // this.selectedItem = {
+                    //     sensorId: sensorId,
+                    //     moisture: null,
+                    //     temperature: null
+                    // };
+                // } else {
+                    // this.selectedItem = null;
                 }
             });
         },
@@ -228,6 +233,14 @@ export default {
                         }
                         feature.properties.moisture = moisture;
                         feature.properties.temperature = temperature;
+                        if (this.selectedID && this.selectedID === guid) {
+                            this.selectedItem = {
+                                datetime: dateTime,
+                                sensorId: guid,
+                                moisture: moisture,
+                                temperature: temperature
+                            };
+                        }
                     } else {
                         feature.properties.moisture = null;
                         feature.properties.temperature = null;
