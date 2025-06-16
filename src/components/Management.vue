@@ -8,15 +8,14 @@
             <v-card-text>
                 <div class="selected-item-info">
                     <p v-if="!selectedItem">No sensor selected</p>
-                    <p><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
-                    <p><strong>Sensor ID:</strong> {{ selectedItem.sensorId }}</p>
-                    <p><strong>Moisture:</strong> {{ selectedItem.moisture}}</p>
-                    <p><strong>Temperature:</strong> {{ selectedItem.temperature}}</p>
+                    <p><strong>Sensor ID:</strong> {{ selectedID }}</p>
+                    <p v-if="selectedItem"><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
+                    <p v-if="selectedItem"><strong>Moisture:</strong> {{ selectedItem.moisture }}</p>
+                    <p v-if="selectedItem"><strong>Temperature:</strong> {{ selectedItem.temperature }}</p>
                 </div>
             </v-card-text>
         </v-card>
         <Dashboard ref="dashboardRef" />
-
     </div>
 </template>
 
@@ -37,6 +36,7 @@ export default {
             mqttClient: null,
             platformAPI: null,
             soilData: null,
+            // selectedID: "9166378",
             selectedID: null,
             selectedItem: null,
 
@@ -136,13 +136,12 @@ export default {
                     switchDistance: 500,
                     opacity: 0.5
                 }
-            },
+            }
         };
     },
     async mounted() {
         this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
         this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-
 
         const options = {
             protocol: "wss",
@@ -174,7 +173,7 @@ export default {
                     //     moisture: null,
                     //     temperature: null
                     // };
-                // } else {
+                    // } else {
                     // this.selectedItem = null;
                 }
             });
@@ -219,41 +218,55 @@ export default {
             const filteredData = dashboard.filteredData;
             if (!filteredData || !filteredData.length) return;
             const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
+            // console.log("All DateTimes:", allDateTimes);
             for (const dateTime of allDateTimes) {
-                const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
-                updatedGeoJSON.features.forEach(feature => {
-                    const guid = feature.properties.guid;
-                    const sensorData = filteredData.filter(d => d.sensorId == guid);
-                    if (sensorData && sensorData.length) {
-                        let moisture = null;
-                        let temperature = null;
-                        for (const d of sensorData) {
-                            if (d.measurementType === "moisture") moisture = d.value;
-                            if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
-                        }
-                        feature.properties.moisture = moisture;
-                        feature.properties.temperature = temperature;
-                        if (this.selectedID && this.selectedID === guid) {
-                            this.selectedItem = {
-                                datetime: dateTime,
-                                sensorId: guid,
-                                moisture: moisture,
-                                temperature: temperature
-                            };
-                        }
-                    } else {
-                        feature.properties.moisture = null;
-                        feature.properties.temperature = null;
+                // delay for one second
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const sensorData = filteredData.filter(d => d.dateTime === dateTime);
+                sensorData.forEach(d => {
+                    const guid = d.sensorId;
+                    const moisture = d.moisture;
+                    const temperature = d.temperature;
+                    // console.log("selectedID:", this.selectedID, typeof this.selectedID);
+                    // console.log("guid:", guid, typeof guid);
+
+                    if (
+                      this.selectedID && String(this.selectedID).trim() === String(guid).trim()
+                    ) {
+                      // Find both moisture and temperature for this sensor and datetime
+                      const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === 'moisture');
+                      const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes('temp'));
+                      this.selectedItem = {
+                        datetime: dateTime,
+                        sensorId: guid,
+                        moisture: moistureObj ? moistureObj.value : null,
+                        temperature: tempObj ? tempObj.value : null
+                      };
+                      console.log("Selected Item:", this.selectedItem);
                     }
                 });
-                this.SensorsLayer.geojson = updatedGeoJSON;
-                // console.log("Updated geojson for datetime", dateTime, JSON.stringify(updatedGeoJSON));
-                this.updateSensor3DPOI();
-                // Optionally add a delay for animation effect
-                await new Promise(res => setTimeout(res, 2000));
             }
-        },
-    },
+
+            const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
+            updatedGeoJSON.features.forEach(feature => {
+                const guid = feature.properties.guid;
+                const sensorData = filteredData.filter(d => d.sensorId == guid);
+                if (sensorData && sensorData.length) {
+                    let moisture = null;
+                    let temperature = null;
+                    for (const d of sensorData) {
+                        if (d.measurementType === "moisture") moisture = d.value;
+                        if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
+                    }
+                    feature.properties.moisture = moisture;
+                    feature.properties.temperature = temperature;
+                }
+            });
+            this.SensorsLayer.geojson = updatedGeoJSON;
+            this.updateSensor3DPOI();
+            await new Promise(res => setTimeout(res, 2000));
+        }
+    }
     // watch: {
     //     'SensorsLayer.geojson': {
     //         handler(newGeojson) {
