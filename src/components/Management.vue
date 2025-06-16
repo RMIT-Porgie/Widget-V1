@@ -203,9 +203,15 @@ export default {
                     if (moistureObj && moistureObj.value < 30) {
                         // Add to soilMoistureLowLayer
                         this.soilMoistureLowLayer.geojson.features.push(feature);
+                        console.log("Low moisture feature added:");
+                        console.log(feature);
+                        console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
                     } else {
                         // Add to SensorsLayer
                         this.SensorsLayer.geojson.features.push(feature);
+                        console.log("Normal moisture feature added:");
+                        console.log(feature);
+                        console.log(`Normal moisture for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
                     }
                     if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
                         this.selectedItem = {
