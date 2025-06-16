@@ -190,16 +190,19 @@ export default {
                 const sensorData = filteredData.filter(d => d.dateTime === dateTime);
                 sensorData.forEach(d => {
                     const guid = d.sensorId;
-                    // Find the matching feature in the original geojson (soilGeoJSON)
+                    console.log(`Processing sensor ${guid} at ${dateTime}`);
                     const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
                     if (!baseFeature) return;
+                    console.log("Base feature found:", baseFeature);
                     // Clone the feature to avoid mutating the original
                     const feature = JSON.parse(JSON.stringify(baseFeature));
+
                     // Find moisture and temperature values for this sensor at this time
                     const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
                     const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
                     feature.properties.moisture = moistureObj ? moistureObj.value : null;
                     feature.properties.temperature = tempObj ? tempObj.value : null;
+                    console.log("Feature properties set:", feature.properties);
                     if (moistureObj && moistureObj.value < 30) {
                         // Add to soilMoistureLowLayer
                         this.soilMoistureLowLayer.geojson.features.push(feature);
