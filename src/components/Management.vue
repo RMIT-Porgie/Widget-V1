@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import mqtt from "mqtt";
 import { widget } from "@widget-lab/3ddashboard-utils";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
@@ -36,17 +35,9 @@ export default {
             platformAPI: null,
             soilData: null,
             selectedID: null,
+            // selectedID: "9166378",
             selectedItem: null,
 
-            // csvLoaded: false,
-            // historicalData: [],
-            // timeSliderMin: 0,
-            // timeSliderMax: 0,
-            // timeSliderLabels: [],
-            // timeRange: [0, 0],
-            // isPlaying: false,
-            // playInterval: null,
-            // playIndex: 0,
             treeLayer: {
                 widgetID: widget.id,
                 geojson: treeGeoJSON,
@@ -186,6 +177,7 @@ export default {
                 });
             }
         },
+
         async visualiseFilteredData() {
             const dashboard = this.$refs.dashboardRef;
             const filteredData = dashboard.filteredData;
@@ -193,8 +185,22 @@ export default {
             const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
             for (const dateTime of allDateTimes) {
                 const sensorData = filteredData.filter(d => d.dateTime === dateTime);
+                console.log("sensorData:", sensorData);
                 sensorData.forEach(d => {
+                    // Ensure sensorId is defined
                     const guid = d.sensorId;
+                    // Find the matching feature in SensorsLayer.geojson
+                    const feature = this.SensorsLayer.geojson.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
+                    if (feature) {
+                        // Update moisture and temperature properties
+                        if (d.measurementType.toLowerCase() === "moisture") {
+                            feature.properties.moisture = d.value;
+                        }
+                        if (d.measurementType.toLowerCase().includes("temp")) {
+                            feature.properties.temperature = d.value;
+                        }
+                    }
+                    // console.log("Updated feature:", feature);
                     if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
                         const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
                         const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
@@ -204,30 +210,13 @@ export default {
                             moisture: moistureObj ? moistureObj.value : null,
                             temperature: tempObj ? tempObj.value : null
                         };
-                        console.log("Selected Item:", this.selectedItem);
                     }
                 });
+                console.log("geojson features:", this.SensorsLayer.geojson.features);
+                this.updateSensor3DPOI();
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
-
-            // const updatedGeoJSON = JSON.parse(JSON.stringify(this.SensorsLayer.geojson));
-            // updatedGeoJSON.features.forEach(feature => {
-            //     const guid = feature.properties.guid;
-            //     const sensorData = filteredData.filter(d => d.sensorId == guid);
-            //     if (sensorData && sensorData.length) {
-            //         let moisture = null;
-            //         let temperature = null;
-            //         for (const d of sensorData) {
-            //             if (d.measurementType === "moisture") moisture = d.value;
-            //             if (d.measurementType.toLowerCase().includes("temp")) temperature = d.value;
-            //         }
-            //         feature.properties.moisture = moisture;
-            //         feature.properties.temperature = temperature;
-            //     }
-            // });
-            // this.SensorsLayer.geojson = updatedGeoJSON;
-            // this.updateSensor3DPOI();
-            // await new Promise(res => setTimeout(res, 2000));
+            // Update the 3D POI after all features are updated
         }
     }
 };
