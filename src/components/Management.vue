@@ -4,14 +4,14 @@
         <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
         <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
         <v-card class="mt-4 selected-item-card">
-            <!-- <v-card-title>Selected Sensor Information</v-card-title>
+            <v-card-title>Selected Sensor Information</v-card-title>
             <v-card-text>
                 <div class="selected-item-info">
                     <p><strong>Sensor ID:</strong> {{ selectedItem.sensorId }}</p>
                     <p><strong>Moisture:</strong> {{ selectedItem.moisture}}</p>
                     <p><strong>Temperature:</strong> {{ selectedItem.temperature}}</p>
                 </div>
-            </v-card-text> -->
+            </v-card-text>
         </v-card>
         <Dashboard ref="dashboardRef" />
 
