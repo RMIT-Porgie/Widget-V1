@@ -71,10 +71,10 @@ export default {
                 render: {
                     anchor: true,
                     color: "orange",
-                    scale: [10, 10, 1],
+                    scale: [20, 20, 1],
                     shape: "disc",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: 0.5
                 }
             },
 
