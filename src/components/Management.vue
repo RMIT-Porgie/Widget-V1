@@ -182,7 +182,7 @@ export default {
                     feature.properties.moisture = moistureObj ? moistureObj.value : null;
                     feature.properties.temperature = tempObj ? tempObj.value : null;
                     console.log("Feature properties set:", feature.properties);
-                    if (moistureObj && moistureObj.value < 30) {
+                    if (moistureObj && moistureObj.value < 25) {
                         this.soilMoistureLowLayer.geojson.features.push(feature);
                         console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
                     } else {
