@@ -178,62 +178,106 @@ export default {
             }
         },
 
-        async visualiseFilteredData() {
+         async visualiseFilteredData() {
             const dashboard = this.$refs.dashboardRef;
             const filteredData = dashboard.filteredData;
             if (!filteredData || !filteredData.length) return;
-            // Clear previous low moisture features
-            this.soilMoistureLowLayer.geojson.features = [];
-            this.SensorsLayer.geojson.features = [];
             const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
             for (const dateTime of allDateTimes) {
                 const sensorData = filteredData.filter(d => d.dateTime === dateTime);
+                console.log("sensorData:", sensorData);
                 sensorData.forEach(d => {
+                    // Ensure sensorId is defined
                     const guid = d.sensorId;
-                    console.log(`Processing sensor ${guid} at ${dateTime}`);
-                    const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
-                    console.log("Looking for guid:", guid);
-                    console.log(
-                        "Available guids:",
-                        soilGeoJSON.features.map(f => f.properties.guid)
-                    );
-                    console.log("Base feature found:", baseFeature);
-                    if (!baseFeature) return;
-                    // Clone the feature to avoid mutating the original
-                    const feature = JSON.parse(JSON.stringify(baseFeature));
-
-                    // Find moisture and temperature values for this sensor at this time
-                    const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
-                    const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
-                    feature.properties.moisture = moistureObj ? moistureObj.value : null;
-                    feature.properties.temperature = tempObj ? tempObj.value : null;
-                    console.log("Feature properties set:", feature.properties);
-                    if (moistureObj && moistureObj.value < 30) {
-                        // Add to soilMoistureLowLayer
-                        this.soilMoistureLowLayer.geojson.features.push(feature);
-                        console.log("Low moisture feature added:");
-                        console.log(feature);
-                        console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
-                    } else {
-                        // Add to SensorsLayer
-                        this.SensorsLayer.geojson.features.push(feature);
-                        console.log("Normal moisture feature added:");
-                        console.log(feature);
-                        console.log(`Normal moisture for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
+                    // Find the matching feature in SensorsLayer.geojson
+                    const feature = this.SensorsLayer.geojson.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
+                    if (feature) {
+                        // Update moisture and temperature properties
+                        if (d.measurementType.toLowerCase() === "moisture") {
+                            feature.properties.moisture = d.value;
+                        }
+                        if (d.measurementType.toLowerCase().includes("temp")) {
+                            feature.properties.temperature = d.value;
+                        }
                     }
+                    // console.log("Updated feature:", feature);
                     if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
+                        const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
+                        const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
                         this.selectedItem = {
                             datetime: dateTime,
                             sensorId: guid,
-                            moisture: feature.properties.moisture,
-                            temperature: feature.properties.temperature
+                            moisture: moistureObj ? moistureObj.value : null,
+                            temperature: tempObj ? tempObj.value : null
                         };
                     }
                 });
+                console.log("geojson features:", this.SensorsLayer.geojson.features);
                 this.updateSensor3DPOI();
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
-        }
+            // Update the 3D POI after all features are updated
+        },
+
+
+        // async visualiseFilteredData() {
+        //     const dashboard = this.$refs.dashboardRef;
+        //     const filteredData = dashboard.filteredData;
+        //     if (!filteredData || !filteredData.length) return;
+        //     // Clear previous low moisture features
+        //     this.soilMoistureLowLayer.geojson.features = [];
+        //     this.SensorsLayer.geojson.features = [];
+        //     const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
+        //     for (const dateTime of allDateTimes) {
+        //         const sensorData = filteredData.filter(d => d.dateTime === dateTime);
+        //         sensorData.forEach(d => {
+        //             const guid = d.sensorId;
+        //             console.log(`Processing sensor ${guid} at ${dateTime}`);
+        //             const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
+        //             console.log("Looking for guid:", guid);
+        //             console.log(
+        //                 "Available guids:",
+        //                 soilGeoJSON.features.map(f => f.properties.guid)
+        //             );
+        //             console.log("Base feature found:", baseFeature);
+        //             if (!baseFeature) return;
+        //             // Clone the feature to avoid mutating the original
+        //             const feature = JSON.parse(JSON.stringify(baseFeature));
+
+        //             // Find moisture and temperature values for this sensor at this time
+        //             const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
+        //             const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
+        //             feature.properties.moisture = moistureObj ? moistureObj.value : null;
+        //             feature.properties.temperature = tempObj ? tempObj.value : null;
+        //             console.log("Feature properties set:", feature.properties);
+        //             if (moistureObj && moistureObj.value < 30) {
+        //                 // Add to soilMoistureLowLayer
+        //                 this.soilMoistureLowLayer.geojson.features.push(feature);
+        //                 console.log("Low moisture feature added:");
+        //                 console.log(feature);
+        //                 console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
+        //             } else {
+        //                 // Add to SensorsLayer
+        //                 this.SensorsLayer.geojson.features.push(feature);
+        //                 console.log("Normal moisture feature added:");
+        //                 console.log(feature);
+        //                 console.log(`Normal moisture for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
+        //             }
+        //             if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
+        //                 this.selectedItem = {
+        //                     datetime: dateTime,
+        //                     sensorId: guid,
+        //                     moisture: feature.properties.moisture,
+        //                     temperature: feature.properties.temperature
+        //                 };
+        //             }
+        //         });
+        //         this.updateSensor3DPOI();
+        //         await new Promise(resolve => setTimeout(resolve, 1000));
+        //     }
+        // }
+
+        
     }
 };
 </script>
