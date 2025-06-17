@@ -48,14 +48,14 @@ export default {
                         STRID: "guid"
                     }
                 },
-                // render: {
-                //     anchor: true,
-                //     color: "blue",
-                //     scale: [20, 20, 1],
-                //     shape: "disc",
-                //     switchDistance: 500,
-                //     opacity: 0.5
-                // }
+                render: {
+                    anchor: true,
+                    color: "white",
+                    scale: [20, 20, 1],
+                    shape: "disc",
+                    switchDistance: 500,
+                    opacity: 0.5
+                }
             },
 
             soilMoistureLowLayer: {
