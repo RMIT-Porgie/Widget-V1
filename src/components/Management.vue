@@ -38,26 +38,6 @@ export default {
             // selectedID: "9166378",
             selectedItem: null,
 
-            // treeLayer: {
-            //     widgetID: widget.id,
-            //     geojson: treeGeoJSON,
-            //     layer: {
-            //         id: "treeLayer",
-            //         name: "treeLayer",
-            //         attributeMapping: {
-            //             STRID: "guid"
-            //         }
-            //     },
-            //     render: {
-            //         anchor: true,
-            //         color: "green",
-            //         scale: [0.5, 0.5, 2],
-            //         shape: "tube",
-            //         switchDistance: 500,
-            //         opacity: 0.5
-            //     }
-            // },
-
             SensorsLayer: {
                 widgetID: widget.id,
                 geojson: soilGeoJSON,
@@ -70,7 +50,7 @@ export default {
                 },
                 render: {
                     anchor: true,
-                    color: "orange",
+                    color: "blue",
                     scale: [20, 20, 1],
                     shape: "disc",
                     switchDistance: 500,
@@ -93,13 +73,13 @@ export default {
                         STRID: "guid"
                     }
                 },
-                render: {
+                   render: {
                     anchor: true,
                     color: "red",
-                    scale: [10, 10, 0.5],
-                    shape: "sphere",
+                    scale: [20, 20, 1],
+                    shape: "disc",
                     switchDistance: 500,
-                    opacity: 1
+                    opacity: 0.5
                 }
             },
             soilMoistureNormalLayer: {
@@ -183,16 +163,7 @@ export default {
             const filteredData = dashboard.filteredData;
             if (!filteredData || !filteredData.length) return;
 
-            // Debug: Check structure of soilGeoJSON import
-            console.log('soilGeoJSON:', soilGeoJSON);
-            console.log('soilGeoJSON.features:', soilGeoJSON.features);
-            console.log('soilGeoJSON.default:', soilGeoJSON.default);
-            console.log('soilGeoJSON.default?.features:', soilGeoJSON.default?.features);
-
-            // Use the correct features array depending on import style
             const baseFeatures = soilGeoJSON.features || (soilGeoJSON.default && soilGeoJSON.default.features) || [];
-            console.log('Available guids:', baseFeatures.map(f => f.properties.guid));
-
             // Clear previous features
             this.soilMoistureLowLayer.geojson.features = [];
             this.SensorsLayer.geojson.features = [];
