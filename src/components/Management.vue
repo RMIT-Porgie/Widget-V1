@@ -191,8 +191,12 @@ export default {
                 sensorData.forEach(d => {
                     const guid = d.sensorId;
                     console.log(`Processing sensor ${guid} at ${dateTime}`);
-                    // const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
-                    const baseFeature = this.SensorsLayer.geojson.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
+                    const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
+                    console.log("Looking for guid:", guid);
+                    console.log(
+                        "Available guids:",
+                        soilGeoJSON.features.map(f => f.properties.guid)
+                    );
                     console.log("Base feature found:", baseFeature);
                     if (!baseFeature) return;
                     // Clone the feature to avoid mutating the original
