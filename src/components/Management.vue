@@ -73,7 +73,7 @@ export default {
                         STRID: "guid"
                     }
                 },
-                   render: {
+                render: {
                     anchor: true,
                     color: "red",
                     scale: [20, 20, 1],
@@ -97,7 +97,7 @@ export default {
                         STRID: "guid"
                     }
                 },
-                   render: {
+                render: {
                     anchor: true,
                     color: "blue",
                     scale: [20, 20, 1],
@@ -135,13 +135,13 @@ export default {
         },
 
         updateSensor3DPOI() {
-            if (Array.isArray(this.SensorsLayer.geojson.features) && this.SensorsLayer.geojson.features.length > 0) {
-                this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-                    widgetID: this.SensorsLayer.widgetID,
-                    layerID: this.SensorsLayer.layer.id,
-                    geojson: this.SensorsLayer.geojson
-                });
-            }
+            // if (Array.isArray(this.SensorsLayer.geojson.features) && this.SensorsLayer.geojson.features.length > 0) {
+            //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
+            //         widgetID: this.SensorsLayer.widgetID,
+            //         layerID: this.SensorsLayer.layer.id,
+            //         geojson: this.SensorsLayer.geojson
+            //     });
+            // }
             if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
                 this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                     widgetID: this.soilMoistureLowLayer.widgetID,
@@ -158,13 +158,12 @@ export default {
             }
         },
 
-         async visualiseFilteredData() {
+        async visualiseFilteredData() {
             const dashboard = this.$refs.dashboardRef;
             const filteredData = dashboard.filteredData;
             if (!filteredData || !filteredData.length) return;
 
             const baseFeatures = soilGeoJSON.features || (soilGeoJSON.default && soilGeoJSON.default.features) || [];
-            // Clear previous features
             this.SensorsLayer.geojson.features = [];
             this.soilMoistureLowLayer.geojson.features = [];
             this.soilMoistureNormalLayer.geojson.features = [];
@@ -174,19 +173,15 @@ export default {
                 const sensorData = filteredData.filter(d => d.dateTime === dateTime);
                 sensorData.forEach(d => {
                     const guid = d.sensorId;
-                    console.log(`Processing sensor ${guid} at ${dateTime}`);
-                    // Find the matching feature in the original geojson
                     const baseFeature = baseFeatures.find(f => String(f.properties.guid).trim() === String(guid).trim());
-                    console.log('Base feature found:', baseFeature);
                     if (!baseFeature) return;
                     // Clone the feature to avoid mutating the original
                     const feature = JSON.parse(JSON.stringify(baseFeature));
-                    // Find moisture and temperature values for this sensor at this time
                     const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
                     const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
                     feature.properties.moisture = moistureObj ? moistureObj.value : null;
                     feature.properties.temperature = tempObj ? tempObj.value : null;
-                    console.log('Feature properties set:', feature.properties);
+                    console.log("Feature properties set:", feature.properties);
                     if (moistureObj && moistureObj.value < 30) {
                         this.soilMoistureLowLayer.geojson.features.push(feature);
                         console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
@@ -208,10 +203,7 @@ export default {
                 this.updateSensor3DPOI();
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
-        },
-
-
-
+        }
     }
 };
 </script>
