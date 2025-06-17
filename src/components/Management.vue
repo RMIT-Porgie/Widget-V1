@@ -48,14 +48,14 @@ export default {
                         STRID: "guid"
                     }
                 },
-                render: {
-                    anchor: true,
-                    color: "blue",
-                    scale: [20, 20, 1],
-                    shape: "disc",
-                    switchDistance: 500,
-                    opacity: 0.5
-                }
+                // render: {
+                //     anchor: true,
+                //     color: "blue",
+                //     scale: [20, 20, 1],
+                //     shape: "disc",
+                //     switchDistance: 500,
+                //     opacity: 0.5
+                // }
             },
 
             soilMoistureLowLayer: {
@@ -97,11 +97,11 @@ export default {
                         STRID: "guid"
                     }
                 },
-                render: {
+                   render: {
                     anchor: true,
                     color: "blue",
-                    scale: [10, 10, 0.5],
-                    shape: "sphere",
+                    scale: [20, 20, 1],
+                    shape: "disc",
                     switchDistance: 500,
                     opacity: 0.5
                 }
@@ -165,8 +165,9 @@ export default {
 
             const baseFeatures = soilGeoJSON.features || (soilGeoJSON.default && soilGeoJSON.default.features) || [];
             // Clear previous features
-            this.soilMoistureLowLayer.geojson.features = [];
             this.SensorsLayer.geojson.features = [];
+            this.soilMoistureLowLayer.geojson.features = [];
+            this.soilMoistureNormalLayer.geojson.features = [];
 
             const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
             for (const dateTime of allDateTimes) {
@@ -190,7 +191,7 @@ export default {
                         this.soilMoistureLowLayer.geojson.features.push(feature);
                         console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
                     } else {
-                        this.SensorsLayer.geojson.features.push(feature);
+                        this.soilMoistureNormalLayer.geojson.features.push(feature);
                         if (moistureObj) {
                             console.log(`Normal moisture for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
                         }
@@ -209,63 +210,6 @@ export default {
             }
         },
 
-
-        // async visualiseFilteredData() {
-        //     const dashboard = this.$refs.dashboardRef;
-        //     const filteredData = dashboard.filteredData;
-        //     if (!filteredData || !filteredData.length) return;
-        //     // Clear previous low moisture features
-        //     this.soilMoistureLowLayer.geojson.features = [];
-        //     this.SensorsLayer.geojson.features = [];
-        //     const allDateTimes = [...new Set(filteredData.map(d => d.dateTime))].sort();
-        //     for (const dateTime of allDateTimes) {
-        //         const sensorData = filteredData.filter(d => d.dateTime === dateTime);
-        //         sensorData.forEach(d => {
-        //             const guid = d.sensorId;
-        //             console.log(`Processing sensor ${guid} at ${dateTime}`);
-        //             const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
-        //             console.log("Looking for guid:", guid);
-        //             console.log(
-        //                 "Available guids:",
-        //                 soilGeoJSON.features.map(f => f.properties.guid)
-        //             );
-        //             console.log("Base feature found:", baseFeature);
-        //             if (!baseFeature) return;
-        //             // Clone the feature to avoid mutating the original
-        //             const feature = JSON.parse(JSON.stringify(baseFeature));
-
-        //             // Find moisture and temperature values for this sensor at this time
-        //             const moistureObj = sensorData.find(x => x.measurementType.toLowerCase() === "moisture");
-        //             const tempObj = sensorData.find(x => x.measurementType.toLowerCase().includes("temp"));
-        //             feature.properties.moisture = moistureObj ? moistureObj.value : null;
-        //             feature.properties.temperature = tempObj ? tempObj.value : null;
-        //             console.log("Feature properties set:", feature.properties);
-        //             if (moistureObj && moistureObj.value < 30) {
-        //                 // Add to soilMoistureLowLayer
-        //                 this.soilMoistureLowLayer.geojson.features.push(feature);
-        //                 console.log("Low moisture feature added:");
-        //                 console.log(feature);
-        //                 console.log(`Low moisture detected for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
-        //             } else {
-        //                 // Add to SensorsLayer
-        //                 this.SensorsLayer.geojson.features.push(feature);
-        //                 console.log("Normal moisture feature added:");
-        //                 console.log(feature);
-        //                 console.log(`Normal moisture for sensor ${guid} at ${dateTime}: ${moistureObj.value}`);
-        //             }
-        //             if (this.selectedID && String(this.selectedID).trim() === String(guid).trim()) {
-        //                 this.selectedItem = {
-        //                     datetime: dateTime,
-        //                     sensorId: guid,
-        //                     moisture: feature.properties.moisture,
-        //                     temperature: feature.properties.temperature
-        //                 };
-        //             }
-        //         });
-        //         this.updateSensor3DPOI();
-        //         await new Promise(resolve => setTimeout(resolve, 1000));
-        //     }
-        // }
 
 
     }
