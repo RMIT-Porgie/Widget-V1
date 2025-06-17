@@ -192,8 +192,8 @@ export default {
                     const guid = d.sensorId;
                     console.log(`Processing sensor ${guid} at ${dateTime}`);
                     const baseFeature = soilGeoJSON.features.find(f => String(f.properties.guid).trim() === String(guid).trim());
-                    if (!baseFeature) return;
                     console.log("Base feature found:", baseFeature);
+                    if (!baseFeature) return;
                     // Clone the feature to avoid mutating the original
                     const feature = JSON.parse(JSON.stringify(baseFeature));
 
