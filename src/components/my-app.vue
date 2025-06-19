@@ -5,8 +5,8 @@
                 <v-row justify="end">
                     <v-col cols="auto">
                         <v-tabs v-model="activeTab" align-tabs="end">
-                            <v-tab value="management">Management</v-tab>
-                            <v-tab value="agrivoltaic">Agrivoltaic System Design</v-tab>
+                            <v-tab value="agrivoltaic">Agrivoltaic Digital Twin</v-tab>
+                            <v-tab value="management">Farm Management</v-tab>
                             <v-tab value="yield">Yield Estimation</v-tab>
                         </v-tabs>
                     </v-col>

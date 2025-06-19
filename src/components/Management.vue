@@ -1,12 +1,12 @@
 <template>
     <div>
-        <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
-        <!-- <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn> -->
-        <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
-        <v-card class="mt-4 selected-item-card">
-            <v-card-title>Selected Sensor Information</v-card-title>
+        <v-btn color="primary" class="ma-2" @click="createSensorsLayer">Show IoT Devices</v-btn>
+        <!-- <v-btn color="primary" class="ma-2" @click="removeSensorsLayer">Hide IoT Devices</v-btn> -->
+        <v-btn color="secondary" class="ma-2" @click="visualiseFilteredData">Visualise Data</v-btn>
+        <v-card class="mt-4" elevation="4" rounded>
+            <v-card-title class="text-primary">Selected Sensor Information</v-card-title>
             <v-card-text>
-                <div class="selected-item-info">
+                <div>
                     <p><strong>Sensor ID:</strong> {{ selectedID }}</p>
                     <p v-if="selectedItem"><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
                     <p v-if="selectedItem"><strong>Moisture:</strong> {{ selectedItem.moisture }}</p>
@@ -228,65 +228,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-:root {
-    --primary-color: #1976d2;
-    --secondary-color: #f5f5f5;
-    --card-radius: 12px;
-    --card-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-    --card-padding: 24px 16px 8px 16px;
-}
-
-.v-btn {
-    font-weight: 500;
-    border-radius: 8px;
-    margin: 8px 8px 8px 0;
-    min-width: 140px;
-    letter-spacing: 0.5px;
-}
-
-.selected-item-card, .solar-data-display {
-    max-width: 600px;
-    margin: 24px auto 0 auto;
-    background: #fff;
-    border-radius: var(--card-radius);
-    box-shadow: var(--card-shadow);
-    padding: var(--card-padding);
-}
-
-.selected-item-info p {
-    margin: 8px 0;
-    font-size: 1.05rem;
-    color: #333;
-}
-
-.v-card-title, .headline {
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 12px;
-    font-size: 1.2rem;
-}
-
-.v-card-text {
-    padding-top: 0;
-}
-
-.solar-data-display .v-sheet {
-    background: var(--secondary-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    color: #222;
-}
-
-.solar-data-display .font-weight-bold {
-    color: var(--primary-color);
-}
-
-@media (max-width: 700px) {
-    .selected-item-card, .solar-data-display {
-        max-width: 98vw;
-        padding: 16px 4px 8px 4px;
-    }
-}
-</style>

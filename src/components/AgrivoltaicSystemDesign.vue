@@ -1,8 +1,7 @@
 <template>
     <div>
-        <v-btn color="primary" @click="createSolarPanelLayer">Show Solar Panels</v-btn>
+        <v-btn color="primary" class="ma-2" @click="createSolarPanelLayer">Show Solar Panels</v-btn>
         <v-card class="mb-4 pa-4" max-width="600" style="margin:0 auto;">
-
             <v-row>
                 <v-col cols="12" sm="6">
                     <v-text-field
@@ -14,7 +13,7 @@
                         outlined
                         dense
                     ></v-text-field>
-                    <v-btn color="success" @click="publishAngle('LR_Angle', lrAngleInput)">Set Left Right Angle</v-btn>
+                    <v-btn color="success" class="mt-2" @click="publishAngle('LR_Angle', lrAngleInput)">Set Left Right Angle</v-btn>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <v-text-field
@@ -26,13 +25,12 @@
                         outlined
                         dense
                     ></v-text-field>
-                    <v-btn color="success" @click="publishAngle('UD_Angle', udAngleInput)">Set Up Down Angle</v-btn>
+                    <v-btn color="success" class="mt-2" @click="publishAngle('UD_Angle', udAngleInput)">Set Up Down Angle</v-btn>
                 </v-col>
             </v-row>
         </v-card>
-        <!-- Display solar data if available -->
-        <v-card v-if="showSolarData && solarData" class="solar-data-display" elevation="4">
-            <v-card-title class="headline">Solar Data</v-card-title>
+        <v-card v-if="showSolarData && solarData" class="mb-4" elevation="4" rounded max-width="600" style="margin:0 auto;">
+            <v-card-title class="text-primary">Solar Data</v-card-title>
             <v-card-text>
                 <v-row>
                     <v-col cols="6" sm="4" v-for="(value, key) in solarData" :key="key">
@@ -139,67 +137,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-/* Shared color palette */
-:root {
-    --primary-color: #1976d2;
-    --secondary-color: #f5f5f5;
-    --card-radius: 12px;
-    --card-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-    --card-padding: 24px 16px 8px 16px;
-}
-
-.v-btn {
-    font-weight: 500;
-    border-radius: 8px;
-    margin: 8px 8px 8px 0;
-    min-width: 140px;
-    letter-spacing: 0.5px;
-}
-
-.selected-item-card, .solar-data-display {
-    max-width: 600px;
-    margin: 24px auto 0 auto;
-    background: #fff;
-    border-radius: var(--card-radius);
-    box-shadow: var(--card-shadow);
-    padding: var(--card-padding);
-}
-
-.selected-item-info p {
-    margin: 8px 0;
-    font-size: 1.05rem;
-    color: #333;
-}
-
-.v-card-title, .headline {
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 12px;
-    font-size: 1.2rem;
-}
-
-.v-card-text {
-    padding-top: 0;
-}
-
-.solar-data-display .v-sheet {
-    background: var(--secondary-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    color: #222;
-}
-
-.solar-data-display .font-weight-bold {
-    color: var(--primary-color);
-}
-
-/* Responsive adjustments */
-@media (max-width: 700px) {
-    .selected-item-card, .solar-data-display {
-        max-width: 98vw;
-        padding: 16px 4px 8px 4px;
-    }
-}
-</style>
