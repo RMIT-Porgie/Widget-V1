@@ -3,24 +3,17 @@
   "name": "solar_panel_polygon",
   "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::7855" } },
   "features": [
-
     {
       "type": "Feature",
-      "properties": {
-        "id": "solar_panel_02",
-        "name": "Solar Panel 02",
-        "description": "A solar panel centered at the specified point, width in y, height in z."
-      },
+      "properties": { "id": "solar_panel_01", "name": "Solar Panel 01", "description": "A solar panel installation." },
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [344498.35188105877,5966007.604891302, 121],
-          [344752.8986807797, 5966211.126476282,121],
-          [344752.70367273124,5966140.891249694, 121]
+          [344784.34631654195, 5966172.019848726, 120.74966814180691],
+          [344805.0506028623, 5966168.205827185, 120.70005325012423],
+          [344775.0412296374, 5966149.826234149, 120.73059725619503]
         ]]
       }
     }
   ]
 }
-
-

@@ -144,6 +144,8 @@ export default {
         createSolarPanelLayer() {
             this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
         },
+
+    
         createSensorsLayer() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);
