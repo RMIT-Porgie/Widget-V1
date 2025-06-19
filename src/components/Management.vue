@@ -51,8 +51,7 @@ export default {
                     }
                 },
                 render: {
-                    color: "black"
-                    // extrusionHeight: 10
+                    color: "red"
                 }
             },
 
