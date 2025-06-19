@@ -2,7 +2,6 @@
     <div>
         <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
         <!-- <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn> -->
-        <v-btn @click="createSolarPanelLayer">Show Solar Panels</v-btn>
         <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
         <v-card class="mt-4 selected-item-card">
             <v-card-title>Selected Sensor Information</v-card-title>
@@ -144,11 +143,6 @@ export default {
             });
         },
 
-        createSolarPanelLayer() {
-            this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
-        },
-
-    
         createSensorsLayer() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.soilMoistureLowLayer);

@@ -6,26 +6,26 @@
                 <v-col cols="12" sm="6">
                     <v-text-field
                         v-model.number="lrAngleInput"
-                        label="Set LR Angle"
+                        label="Left Right Angle"
                         type="number"
                         min="0"
                         max="180"
                         outlined
                         dense
                     ></v-text-field>
-                    <v-btn color="success" @click="publishAngle('LR_Angle', lrAngleInput)">Set LR Angle</v-btn>
+                    <v-btn color="success" @click="publishAngle('LR_Angle', lrAngleInput)">Set Left Right Angle</v-btn>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <v-text-field
                         v-model.number="udAngleInput"
-                        label="Set UD Angle"
+                        label="Up Down Angle"
                         type="number"
                         min="0"
                         max="90"
                         outlined
                         dense
                     ></v-text-field>
-                    <v-btn color="success" @click="publishAngle('UD_Angle', udAngleInput)">Set UD Angle</v-btn>
+                    <v-btn color="success" @click="publishAngle('UD_Angle', udAngleInput)">Set Up Down Angle</v-btn>
                 </v-col>
             </v-row>
         </v-card>
@@ -43,12 +43,14 @@
                 </v-row>
             </v-card-text>
         </v-card>
+        <v-btn color="primary" @click="createSolarPanelLayer">Show Solar Panels</v-btn>
     </div>
 </template>
 
 <script>
 import mqtt from "mqtt";
 import solarPanelGeoJSON from "@/assets/solar_panel_polygon.geojson";
+import { widget } from "@widget-lab/3ddashboard-utils";
 
 export default {
     name: "AgrivoltaicSystemDesign",
@@ -70,8 +72,10 @@ export default {
                     }
                 },
                 render: {
+                    geometricMode: "extruded",
                     color: "black",
-                    extrusionHeight: 10
+                    opacity: 0.8,
+                    extrusionHeight: 0.2
                 }
             }
         };
@@ -126,6 +130,9 @@ export default {
                 }
                 this.mqttClient.publish('solar/motor', msg);
             }
+        },
+        createSolarPanelLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
         },
     }
 };
