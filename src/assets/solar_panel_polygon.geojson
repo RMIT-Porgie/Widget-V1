@@ -29,6 +29,36 @@
           [344776, 5966178, 125]
         ]]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "solar_panel_03", "name": "Solar Panel 03", "description": "A solar panel installation." },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [344788, 5966178, 125],
+          [344790, 5966178, 125],
+          [344790, 5966179, 125],
+          [344788, 5966179, 125],
+          [344788, 5966178, 125]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "solar_panel_04", "name": "Solar Panel 04", "description": "A solar panel installation." },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [344812, 5966178, 125],
+          [344814, 5966178, 125],
+          [344814, 5966179, 125],
+          [344812, 5966179, 125],
+          [344812, 5966178, 125]
+        ]]
+      }
     }
   ]
 }
+
+
