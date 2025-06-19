@@ -54,7 +54,7 @@ export default {
                     geometricMode:"extruded",
                     color: "yellow",
                     opacity: 0.8,
-                    extrusionHeight: 10
+                    extrusionHeight: 0.2
                 }
             },
 
