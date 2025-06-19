@@ -1,7 +1,8 @@
 <template>
     <div>
         <v-btn @click="createSensorsLayer">Show IoT Devices</v-btn>
-        <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn>
+        <!-- <v-btn @click="removeSensorsLayer">Hide IoT Devices</v-btn> -->
+        <v-btn @click="createSolarPanelLayer">Show Solar Panels</v-btn>
         <v-btn @click="visualiseFilteredData">Visualise Data</v-btn>
         <v-card class="mt-4 selected-item-card">
             <v-card-title>Selected Sensor Information</v-card-title>
@@ -21,7 +22,8 @@
 <script>
 import { widget } from "@widget-lab/3ddashboard-utils";
 import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
-import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
+import solarPanelGeoJSON from "@/assets/solar_panel_polygon.geojson";
+// import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
 import Dashboard from "./Dashboard.vue";
 
 export default {
@@ -37,6 +39,23 @@ export default {
             selectedID: null,
             // selectedID: "9166378",
             selectedItem: null,
+
+            solarPanelLayer: {
+                widgetID: widget.id,
+                geojson: solarPanelGeoJSON,
+                layer: {
+                    id: "solarPanelLayer",
+                    name: "solarPanelLayer",
+                    attributeMapping: {
+                        STRID: "id"
+                    }
+                },
+                render: {
+                    color: "black",
+                    extrusionHeight: 10
+                }
+            },
+
 
             SensorsLayer: {
                 widgetID: widget.id,
@@ -121,6 +140,10 @@ export default {
                     this.selectedID = res.data[0].userData.guid;
                 }
             });
+        },
+
+        createSolarPanelLayer() {
+            this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
         },
         createSensorsLayer() {
             this.platformAPI.publish("3DEXPERIENCity.Add3DPOI", this.SensorsLayer);

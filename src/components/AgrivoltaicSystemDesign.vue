@@ -1,8 +1,6 @@
 <template>
     <div>
         <h2 class="title">Agrivoltaic System Design</h2>
-        <v-btn color="primary" class="mb-4" @click="$emit('create-polygon-layer')">Create SolarPanel</v-btn>
-        <!-- Angle Controls -->
         <v-card class="mb-4 pa-4" max-width="600" style="margin:0 auto;">
             <v-row>
                 <v-col cols="12" sm="6">
