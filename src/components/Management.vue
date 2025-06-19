@@ -51,7 +51,10 @@ export default {
                     }
                 },
                 render: {
-                    color: "black",
+                    geometricMode:"extruded",
+                    color: "yellow",
+                    opacity: 0.8,
+                    extrusionHeight: 10
                 }
             },
 
