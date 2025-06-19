@@ -51,7 +51,7 @@ export default {
                     }
                 },
                 render: {
-                    color: "red"
+                    color: "black",
                 }
             },
 
