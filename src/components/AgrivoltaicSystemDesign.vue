@@ -1,7 +1,8 @@
 <template>
     <div>
-        <h2 class="title">Agrivoltaic System Design</h2>
+        <v-btn color="primary" @click="createSolarPanelLayer">Show Solar Panels</v-btn>
         <v-card class="mb-4 pa-4" max-width="600" style="margin:0 auto;">
+
             <v-row>
                 <v-col cols="12" sm="6">
                     <v-text-field
@@ -30,7 +31,7 @@
             </v-row>
         </v-card>
         <!-- Display solar data if available -->
-        <v-card v-if="solarData" class="solar-data-display" elevation="4">
+        <v-card v-if="showSolarData && solarData" class="solar-data-display" elevation="4">
             <v-card-title class="headline">Solar Data</v-card-title>
             <v-card-text>
                 <v-row>
@@ -43,7 +44,6 @@
                 </v-row>
             </v-card-text>
         </v-card>
-        <v-btn color="primary" @click="createSolarPanelLayer">Show Solar Panels</v-btn>
     </div>
 </template>
 
@@ -61,6 +61,7 @@ export default {
             solarData: null, // Add this to store the latest solar data
             lrAngleInput: 0, // User input for LR angle
             udAngleInput: 0, // User input for UD angle
+            showSolarData: false, // Controls solar data card visibility
             solarPanelLayer: {
                 widgetID: widget.id,
                 geojson: solarPanelGeoJSON,
@@ -133,29 +134,72 @@ export default {
         },
         createSolarPanelLayer() {
             this.platformAPI.publish("3DEXPERIENCity.AddPolygon", this.solarPanelLayer);
+            this.showSolarData = true; // Show solar data card when button is clicked
         },
     }
 };
 </script>
 
 <style scoped>
-.title {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    font-weight: 600;
-    color: #1976d2;
-    margin-bottom: 16px;
+/* Shared color palette */
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #f5f5f5;
+    --card-radius: 12px;
+    --card-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+    --card-padding: 24px 16px 8px 16px;
 }
-.solar-data-display {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-    padding: 24px 16px 8px 16px;
-}
-.headline {
-    color: #1976d2;
+
+.v-btn {
     font-weight: 500;
+    border-radius: 8px;
+    margin: 8px 8px 8px 0;
+    min-width: 140px;
+    letter-spacing: 0.5px;
+}
+
+.selected-item-card, .solar-data-display {
+    max-width: 600px;
+    margin: 24px auto 0 auto;
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    padding: var(--card-padding);
+}
+
+.selected-item-info p {
+    margin: 8px 0;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+.v-card-title, .headline {
+    color: var(--primary-color);
+    font-weight: 600;
     margin-bottom: 12px;
+    font-size: 1.2rem;
+}
+
+.v-card-text {
+    padding-top: 0;
+}
+
+.solar-data-display .v-sheet {
+    background: var(--secondary-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #222;
+}
+
+.solar-data-display .font-weight-bold {
+    color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+    .selected-item-card, .solar-data-display {
+        max-width: 98vw;
+        padding: 16px 4px 8px 4px;
+    }
 }
 </style>
