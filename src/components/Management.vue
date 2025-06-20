@@ -122,10 +122,10 @@ export default {
             }
         };
     },
-    // async mounted() {
-    //     this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-    //     this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-    // },
+    async mounted() {
+        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+    },
 
     methods: {
         handleOnItemSelect(res) {
