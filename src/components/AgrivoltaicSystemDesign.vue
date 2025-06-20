@@ -14,7 +14,7 @@
                         <v-row dense>
                             <v-col v-for="(value, key) in solarData" :key="key" cols="12" sm="6" class="d-flex justify-end">
                                 <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
-                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                    <div class="d-flex justify-space-between flex-row">
                                         <span class="font-weight-medium">{{ getLabelWithUnit(key) }}</span>
                                         <span>{{ value }}</span>
                                     </div>

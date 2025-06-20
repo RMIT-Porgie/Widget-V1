@@ -19,7 +19,7 @@
                         <v-row dense>
                             <v-col cols="12" sm="6" class="d-flex justify-end">
                                 <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
-                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                    <div class="d-flex justify-space-between flex-row">
                                         <span class="font-weight-medium">Sensor ID</span>
                                         <span>{{ selectedItem && selectedItem.sensorId ? selectedItem.sensorId : "-" }}</span>
                                     </div>
@@ -27,7 +27,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" class="d-flex justify-end">
                                 <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
-                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                    <div class="d-flex justify-space-between flex-row">
                                         <span class="font-weight-medium">Date/Time</span>
                                         <span>{{ selectedItem && selectedItem.datetime ? selectedItem.datetime : "-" }}</span>
                                     </div>
@@ -35,7 +35,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" class="d-flex justify-end">
                                 <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
-                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                    <div class="d-flex justify-space-between flex-row">
                                         <span class="font-weight-medium">Moisture</span>
                                         <span>{{
                                             selectedItem && selectedItem.moisture !== undefined && selectedItem.moisture !== null ? selectedItem.moisture : "-"
@@ -45,7 +45,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" class="d-flex justify-end">
                                 <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
-                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                    <div class="d-flex justify-space-between flex-row">
                                         <span class="font-weight-medium">Temperature</span>
                                         <span>{{
                                             selectedItem && selectedItem.temperature !== undefined && selectedItem.temperature !== null
