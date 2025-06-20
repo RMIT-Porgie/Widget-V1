@@ -1,40 +1,60 @@
 <template>
-    <div class="dashboard-container">
-        <h2 class="dashboard-title">Soil Data Dashboard</h2>
-        <div class="dashboard-grid">
-            <div class="dashboard-row">
-                <div class="dashboard-col">
-                    <label for="startDatePicker">Start Date:</label>
-                    <select id="startDatePicker" v-model="startDate" class="date-select">
-                        <option v-for="date in availableDates" :key="date" :value="date">{{ date }}</option>
-                    </select>
-                </div>
-                <div class="dashboard-col">
-                    <label for="endDatePicker">End Date:</label>
-                    <select id="endDatePicker" v-model="endDate" class="date-select">
-                        <option v-for="date in availableDates" :key="date" :value="date" :disabled="date < startDate">{{ date }}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="dashboard-row">
-                <div class="dashboard-col">
-                    <label for="sensorIdSelect">Sensor ID:</label>
-                    <select id="sensorIdSelect" v-model="selectedSensorId" class="type-select">
-                        <option value="all">All</option>
-                        <option v-for="id in sensorIds" :key="id" :value="id">{{ id }}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="chart-container" v-if="moistureChartData.labels.length">
-            <h3>Moisture</h3>
-            <LineChart :chart-data="moistureChartData" :chart-options="chartOptions" />
-        </div>
-        <div class="chart-container" v-if="tempChartData.labels.length">
-            <h3>Temperature</h3>
-            <LineChart :chart-data="tempChartData" :chart-options="chartOptions" />
-        </div>
-    </div>
+    <v-row justify="center">
+      <v-col cols="12">
+        <v-card class="pa-4" elevation="4" rounded>
+          <v-card-text>
+            <v-row class="mb-2" no-gutters align="center">
+              <v-col cols="12" sm="4" xs="4">
+                <v-select
+                  :items="availableDates"
+                  v-model="startDate"
+                  label="Start Date"
+                  outlined
+                  dense
+                  :menu-props="{ maxHeight: '300' }"
+                />
+              </v-col>
+              <v-col cols="12" sm="4" xs="4">
+                <v-select
+                  :items="availableDates"
+                  v-model="endDate"
+                  label="End Date"
+                  outlined
+                  dense
+                  :menu-props="{ maxHeight: '300' }"
+                  :item-disabled="date => date < startDate"
+                />
+              </v-col>
+              <v-col cols="12" sm="4" xs="4">
+                <v-select
+                  :items="['all', ...sensorIds]"
+                  v-model="selectedSensorId"
+                  label="Sensor ID"
+                  outlined
+                  dense
+                  :menu-props="{ maxHeight: '300' }"
+                />
+              </v-col>
+            </v-row>
+            <v-divider class="my-4" />
+            <v-row no-gutters align="stretch">
+              <v-col v-if="moistureChartData.labels.length" cols="12" sm="6">
+                <v-sheet class="pa-3" rounded>
+                  <h3 class="text-h6 mb-2">Soil Moisture</h3>
+                  <LineChart :chart-data="moistureChartData" :chart-options="chartOptions" />
+                </v-sheet>
+              </v-col>
+              <v-col v-if="tempChartData.labels.length" cols="12" sm="6">
+                <v-sheet class="pa-3" rounded>
+                  <h3 class="text-h6 mb-2">Soil Temperature</h3>
+                  <LineChart :chart-data="tempChartData" :chart-options="chartOptions" />
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 </template>
 
 <script>
@@ -162,7 +182,6 @@ export default {
                 })
             };
         },
-        //
         chartData() {
             // Always group by sensorId for legend, even if only one sensor is selected
             const grouped = {};
@@ -194,12 +213,7 @@ export default {
             return {
                 responsive: true,
                 plugins: {
-                    legend: { display: true },
-                    title: {
-                        display: true,
-                        text: "Soil Data Over Time",
-                        font: { size: 18 }
-                    },
+                    legend: { display: false }, // Hide the legend
                     tooltip: {
                         enabled: true,
                         mode: "index",
@@ -272,88 +286,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-.dashboard-container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 32px 24px;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-    font-family: "Segoe UI", Arial, sans-serif;
-}
-
-.dashboard-title {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 28px;
-    color: #2a3d4d;
-    letter-spacing: 1px;
-}
-
-.dashboard-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
-.dashboard-row {
-    display: flex;
-    flex-direction: row;
-    gap: 24px;
-}
-
-.dashboard-col {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.dashboard-col label {
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #3a4a5a;
-}
-
-.type-select,
-.date-select {
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid #b0bec5;
-    font-size: 1rem;
-    background: #f7fafc;
-    transition: border 0.2s;
-}
-
-.type-select:focus,
-.date-select:focus {
-    border: 1.5px solid #1976d2;
-    outline: none;
-}
-
-.selected-range {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 1.1rem;
-    color: #1976d2;
-}
-
-.chart-container {
-    margin-top: 32px;
-    background: #f7fafc;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-    padding: 18px 12px 12px 12px;
-}
-
-.chart-container canvas {
-    /* Let Chart.js handle the height naturally */
-    min-height: unset;
-    height: unset !important;
-    max-height: unset;
-    width: 100% !important;
-    display: block;
-}
-</style>

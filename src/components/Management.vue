@@ -1,28 +1,23 @@
 <template>
     <div>
-        <v-btn color="primary" class="ma-2" @click="createSensorsLayer">Show IoT Devices</v-btn>
-        <!-- <v-btn color="primary" class="ma-2" @click="removeSensorsLayer">Hide IoT Devices</v-btn> -->
-        <v-btn color="secondary" class="ma-2" @click="visualiseFilteredData">Visualise Data</v-btn>
-        <v-card class="mt-4" elevation="4" rounded>
-            <v-card-title class="text-primary">Selected Sensor Information</v-card-title>
-            <v-card-text>
-                <div>
-                    <p><strong>Sensor ID:</strong> {{ selectedID }}</p>
-                    <p v-if="selectedItem"><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
-                    <p v-if="selectedItem"><strong>Moisture:</strong> {{ selectedItem.moisture }}</p>
-                    <p v-if="selectedItem"><strong>Temperature:</strong> {{ selectedItem.temperature }}</p>
-                </div>
-            </v-card-text>
+        <v-btn color="primary" class="ma-2" @click="handleShowFarmAssets">Show Farm Assets</v-btn>
+        <v-card v-if="showFarmAssets" class="mt-4" elevation="4" rounded>
+            <Dashboard ref="dashboardRef" />
+            <div>
+                <p v-if="selectedItem"><strong>Sensor ID:</strong> {{ selectedID }}</p>
+                <p v-if="selectedItem"><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
+                <p v-if="selectedItem"><strong>Moisture:</strong> {{ selectedItem.moisture }}</p>
+                <p v-if="selectedItem"><strong>Temperature:</strong> {{ selectedItem.temperature }}</p>
+            </div>
+            <v-btn color="secondary" class="ma-2" @click="visualiseFilteredData">Visualise Farm Assets</v-btn>
         </v-card>
-        <Dashboard ref="dashboardRef" />
     </div>
 </template>
 
 <script>
 import { widget } from "@widget-lab/3ddashboard-utils";
-import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import solarPanelGeoJSON from "@/assets/solar_panel_polygon.geojson";
-// import treeGeoJSON from "@/assets/sundial_orchard_tree.geojson";
+import soilGeoJSON from "@/assets/sundial_orchard_soil_data.geojson";
 import Dashboard from "./Dashboard.vue";
 
 export default {
@@ -36,8 +31,8 @@ export default {
             platformAPI: null,
             soilData: null,
             selectedID: null,
-            // selectedID: "9166378",
             selectedItem: null,
+            showFarmAssets: false,
 
             solarPanelLayer: {
                 widgetID: widget.id,
@@ -50,13 +45,12 @@ export default {
                     }
                 },
                 render: {
-                    geometricMode:"extruded",
+                    geometricMode: "extruded",
                     color: "black",
                     opacity: 0.8,
                     extrusionHeight: 0.2
                 }
             },
-
 
             SensorsLayer: {
                 widgetID: widget.id,
@@ -128,10 +122,10 @@ export default {
             }
         };
     },
-    async mounted() {
-        this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
-        this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
-    },
+    // async mounted() {
+    //     this.platformAPI = await requirejs("DS/PlatformAPI/PlatformAPI");
+    //     this.platformAPI.subscribe("3DEXPERIENCity.OnItemSelect", this.handleOnItemSelect);
+    // },
 
     methods: {
         handleOnItemSelect(res) {
@@ -156,13 +150,6 @@ export default {
         },
 
         updateSensor3DPOI() {
-            // if (Array.isArray(this.SensorsLayer.geojson.features) && this.SensorsLayer.geojson.features.length > 0) {
-            //     this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
-            //         widgetID: this.SensorsLayer.widgetID,
-            //         layerID: this.SensorsLayer.layer.id,
-            //         geojson: this.SensorsLayer.geojson
-            //     });
-            // }
             if (Array.isArray(this.soilMoistureLowLayer.geojson.features) && this.soilMoistureLowLayer.geojson.features.length > 0) {
                 this.platformAPI.publish("3DEXPERIENCity.Update3DPOIContent", {
                     widgetID: this.soilMoistureLowLayer.widgetID,
@@ -223,6 +210,14 @@ export default {
                 });
                 this.updateSensor3DPOI();
                 await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        },
+        handleShowFarmAssets() {
+            this.showFarmAssets = !this.showFarmAssets;
+            if (this.showFarmAssets) {
+                this.createSensorsLayer();
+            } else {
+                this.removeSensorsLayer && this.removeSensorsLayer();
             }
         }
     }
