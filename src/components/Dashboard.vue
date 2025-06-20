@@ -1,7 +1,7 @@
 <template>
     <v-row justify="center">
       <v-col cols="12">
-        <v-card class="pa-4" elevation="4" rounded>
+        <!-- <v-card class="pa-4" elevation="4" rounded> -->
           <v-card-text>
             <v-row class="mb-2" no-gutters align="center">
               <v-col cols="12" sm="4" xs="4">
@@ -52,7 +52,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-        </v-card>
+        <!-- </v-card> -->
       </v-col>
     </v-row>
 </template>

@@ -1,17 +1,66 @@
 <template>
-    <div>
-        <v-btn color="primary" class="ma-2" @click="handleShowFarmAssets">Show Farm Assets</v-btn>
-        <v-card v-if="showFarmAssets" class="mt-4" elevation="4" rounded>
-            <Dashboard ref="dashboardRef" />
-            <div>
-                <p v-if="selectedItem"><strong>Sensor ID:</strong> {{ selectedID }}</p>
-                <p v-if="selectedItem"><strong>Date/Time:</strong> {{ selectedItem.datetime }}</p>
-                <p v-if="selectedItem"><strong>Moisture:</strong> {{ selectedItem.moisture }}</p>
-                <p v-if="selectedItem"><strong>Temperature:</strong> {{ selectedItem.temperature }}</p>
-            </div>
-            <v-btn color="secondary" class="ma-2" @click="visualiseFilteredData">Visualise Farm Assets</v-btn>
-        </v-card>
-    </div>
+    <v-container class="pa-4" fluid>
+        <v-row justify="end">
+            <v-col cols="12" md="8" lg="6">
+                <div class="d-flex flex-row-reverse">
+                    <v-btn color="primary" class="mb-4 ml-2" large @click="handleShowFarmAssets" aria-label="Show Farm Assets">
+                        <v-icon left>mdi-tree</v-icon>
+                        Show Farm Assets
+                    </v-btn>
+                    <v-btn color="secondary" class="mb-4 ml-2" large @click="visualiseFilteredData" aria-label="Visualise Farm Assets">
+                        <v-icon left>mdi-chart-bar</v-icon>
+                        Visualise Farm Assets
+                    </v-btn>
+                </div>
+
+                <v-card v-if="showFarmAssets" elevation="4" rounded class="text-right">
+                    <v-card-text>
+                        <Dashboard ref="dashboardRef" />
+                        <v-row dense>
+                            <v-col cols="12" sm="6" class="d-flex justify-end">
+                                <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
+                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                        <span class="font-weight-medium">Sensor ID</span>
+                                        <span>{{ selectedItem && selectedItem.sensorId ? selectedItem.sensorId : "-" }}</span>
+                                    </div>
+                                </v-sheet>
+                            </v-col>
+                            <v-col cols="12" sm="6" class="d-flex justify-end">
+                                <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
+                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                        <span class="font-weight-medium">Date/Time</span>
+                                        <span>{{ selectedItem && selectedItem.datetime ? selectedItem.datetime : "-" }}</span>
+                                    </div>
+                                </v-sheet>
+                            </v-col>
+                            <v-col cols="12" sm="6" class="d-flex justify-end">
+                                <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
+                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                        <span class="font-weight-medium">Moisture</span>
+                                        <span>{{
+                                            selectedItem && selectedItem.moisture !== undefined && selectedItem.moisture !== null ? selectedItem.moisture : "-"
+                                        }}</span>
+                                    </div>
+                                </v-sheet>
+                            </v-col>
+                            <v-col cols="12" sm="6" class="d-flex justify-end">
+                                <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
+                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                        <span class="font-weight-medium">Temperature</span>
+                                        <span>{{
+                                            selectedItem && selectedItem.temperature !== undefined && selectedItem.temperature !== null
+                                                ? selectedItem.temperature
+                                                : "-"
+                                        }}</span>
+                                    </div>
+                                </v-sheet>
+                            </v-col>
+                        </v-row>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>

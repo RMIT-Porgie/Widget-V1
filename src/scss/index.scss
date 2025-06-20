@@ -3,3 +3,9 @@ body {
     overflow-y: auto !important;
     overflow-x: hidden !important;
 }
+
+.agrivoltaic-align-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end !important;
+}

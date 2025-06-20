@@ -1,117 +1,72 @@
 <template>
-  <v-container class="pa-4" fluid>
-    <v-row justify="center">
-      <v-col cols="12" md="8" lg="6">
-        <v-btn
-          color="primary"
-          class="mb-4"
-          large
-          @click="createSolarPanelLayer"
-          aria-label="Show Solar Panels"
-        >
-          <v-icon left>mdi-weather-sunny</v-icon>
-          Show Solar Panels
-        </v-btn>
-
-        <v-card
-          v-if="showSolarData && solarData"
-          elevation="4"
-          rounded
-        >
-          <v-card-title class="text-h6 text--primary">
-            Solar Data Overview
-          </v-card-title>
-
-          <v-card-text>
-            <v-row dense>
-              <v-col
-                v-for="(value, key) in solarData"
-                :key="key"
-                cols="12"
-                sm="6"
-                class="d-flex"
-              >
-                <v-sheet
-                  class="pa-3 flex-grow-1"
-                  color="grey lighten-4"
-                  rounded
-                >
-                  <div class="d-flex justify-space-between">
-                    <span class="font-weight-medium">{{ getLabelWithUnit(key) }}</span>
-                    <span>{{ value }}</span>
-                  </div>
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </v-card-text>
-
-          <v-divider></v-divider>
-
-          <v-card-actions class="pa-4">
-            <v-row no-gutters>
-              <v-col cols="12" sm="6" class="pr-2">
-                <v-text-field
-                  v-model.number="azimuthInput"
-                  label="Azimuth Angle (°)"
-                  type="number"
-                  min="0"
-                  max="180"
-                  outlined
-                  dense
-                  :disabled="!showSolarData"
-                  required
-                ></v-text-field>
-                <v-btn
-                  color="success"
-                  class="mt-2"
-                  block
-                  :disabled="azimuthInput === null"
-                  @click="publishAngle('Azimuth', azimuthInput)"
-                >
-                  <v-icon left>mdi-sine-wave</v-icon>
-                  Set Azimuth
-                </v-btn>
-              </v-col>
-
-              <v-col cols="12" sm="6" class="pl-2">
-                <v-text-field
-                  v-model.number="tiltInput"
-                  label="Tilt Angle (°)"
-                  type="number"
-                  min="0"
-                  max="90"
-                  outlined
-                  dense
-                  :disabled="!showSolarData"
-                  required
-                ></v-text-field>
-                <v-btn
-                  color="success"
-                  class="mt-2"
-                  block
-                  :disabled="tiltInput === null"
-                  @click="publishAngle('Tilt', tiltInput)"
-                >
-                  <v-icon left>mdi-angle-acute</v-icon>
-                  Set Tilt
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card-actions>
-        </v-card>
-
-        <v-alert
-          v-else-if="showSolarData && !solarData"
-          type="warning"
-          border="left"
-          colored-border
-          elevation="2"
-        >
-          No solar data available at this moment.
-        </v-alert>
-      </v-col>
-    </v-row>
-  </v-container>
+    <v-container class="pa-4" fluid>
+        <v-row justify="end">
+            <v-col cols="12" md="8" lg="6">
+                <div class="d-flex flex-row-reverse">
+                    <v-btn color="primary" class="mb-4 ml-2" large @click="createSolarPanelLayer" aria-label="Show Solar Panels">
+                        <v-icon left>mdi-weather-sunny</v-icon>
+                        Show Solar Panels
+                    </v-btn>
+                </div>
+                <v-card v-if="showSolarData && solarData" elevation="4" rounded class="text-right">
+                    <v-card-title class="text-h6 text--primary justify-end"> Solar Data Overview </v-card-title>
+                    <v-card-text>
+                        <v-row dense>
+                            <v-col v-for="(value, key) in solarData" :key="key" cols="12" sm="6" class="d-flex justify-end">
+                                <v-sheet class="pa-3 flex-grow-1 text-right" color="grey lighten-4" rounded>
+                                    <div class="d-flex justify-space-between flex-row-reverse">
+                                        <span class="font-weight-medium">{{ getLabelWithUnit(key) }}</span>
+                                        <span>{{ value }}</span>
+                                    </div>
+                                </v-sheet>
+                            </v-col>
+                        </v-row>
+                    </v-card-text>
+                    <v-divider></v-divider>
+                    <v-card-actions class="pa-4">
+                        <v-row no-gutters>
+                            <v-col cols="12" sm="6" class="pr-2 d-flex justify-end">
+                                <v-text-field
+                                    v-model.number="azimuthInput"
+                                    label="Azimuth Angle (°)"
+                                    type="number"
+                                    min="0"
+                                    max="180"
+                                    outlined
+                                    dense
+                                    :disabled="!showSolarData"
+                                    required
+                                    class="text-right"
+                                ></v-text-field>
+                                <v-btn color="success" class="mt-2 ml-2" :disabled="azimuthInput === null" @click="publishAngle('Azimuth', azimuthInput)">
+                                    <v-icon left>mdi-sine-wave</v-icon>
+                                    Set Azimuth
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="12" sm="6" class="pl-2 d-flex justify-end">
+                                <v-text-field
+                                    v-model.number="tiltInput"
+                                    label="Tilt Angle (°)"
+                                    type="number"
+                                    min="0"
+                                    max="90"
+                                    outlined
+                                    dense
+                                    :disabled="!showSolarData"
+                                    required
+                                    class="text-right"
+                                ></v-text-field>
+                                <v-btn color="success" class="mt-2 ml-2" :disabled="tiltInput === null" @click="publishAngle('Tilt', tiltInput)">
+                                    <v-icon left>mdi-angle-acute</v-icon>
+                                    Set Tilt
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -204,18 +159,18 @@ export default {
         },
         getLabelWithUnit(key) {
             const labelMap = {
-                L: 'Left Light Sensor', // unitless
-                R: 'Right Light Sensor', // unitless
-                U: 'Up Light Sensor', // unitless
-                D: 'Down Light Sensor', // unitless
-                Temp: 'Temperature (°C)',
-                Humidity: 'Relative Humidity (%)',
-                Light: 'Light Intensity (lux)',
-                LR_Angle: 'Azimuth Angle (°)',
-                UD_Angle: 'Tilt Angle (°)',
+                L: "Left Light Sensor", // unitless
+                R: "Right Light Sensor", // unitless
+                U: "Up Light Sensor", // unitless
+                D: "Down Light Sensor", // unitless
+                Temp: "Temperature (°C)",
+                Humidity: "Relative Humidity (%)",
+                Light: "Light Intensity (lux)",
+                LR_Angle: "Azimuth Angle (°)",
+                UD_Angle: "Tilt Angle (°)"
             };
             return labelMap[key] || key;
-        },
+        }
     }
 };
 </script>

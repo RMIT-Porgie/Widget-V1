@@ -53,7 +53,7 @@ export default {
                 case 'yield':
                     return 'YieldEstimation';
                 default:
-                    return 'Management';
+                    return 'agrivoltaic';
             }
         }
     }
